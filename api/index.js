@@ -53,7 +53,62 @@ const Request = sequelize.define('fp_request', {
     description: Sequelize.TEXT,
 });
 Requests.hasOne(User,{as: 'Creator'});
-
+const RequestCompletion = sequelize.define('fp_request_completion', {
+    id: {
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
+        primaryKey: true
+    },
+    completionTimestamp: { 
+        type: Sequelize.DATE, 
+        defaultValue: Sequelize.NOW 
+    },
+    imgPath: Sequelize.TEXT,
+    description: Sequelize.TEXT,
+});
+RequestCompletion.hasOne(Request,{as: 'Request'});
+RequestCompletion.hasOne(User,{as: 'Completer'});
+const RequestReward = sequelize.define('fp_request_reward', {
+    id: {
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
+        primaryKey: true
+    },
+    count: { 
+        type: Sequelize.INTEGER, 
+        defaultValue: 1 
+    },
+    status: {
+        type: Sequelize.ENUM,
+        value: ['Pending','Claimed']
+    },
+    creationTimestamp: { 
+        type: Sequelize.DATE, 
+        defaultValue: Sequelize.NOW 
+    },
+});
+RequestReward.hasOne(User,{as: 'Sponsor'});
+RequestReward.hasOne(Request,{as: 'Request'});
+RequestReward.hasOne(Reward,{as: 'Reward'});
+const Favor = sequelize.define('fp_favor', {
+    id: {
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
+        primaryKey: true
+    },
+    creationTimestamp: { 
+        type: Sequelize.DATE, 
+        defaultValue: Sequelize.NOW 
+    },
+    usedTimestamp:  Sequelize.DATE,
+    status: {
+        type: Sequelize.ENUM,
+        value: ['Pending','Paid']
+    },
+});
+Favor.hasOne(User,{as: 'Payer'});
+Favor.hasOne(User,{as: 'Payee'});
+Favor.hasOne(Reward,{as: 'Reward'});
 // ------------------------------------------------
 // Initialize database and create sample data
 // ------------------------------------------------
