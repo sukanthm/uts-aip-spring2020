@@ -3,10 +3,15 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "initdb": "initdb -D ../pgdb/",
+    "postgres": "postgres -D ../pgdb/ -k ''",
+    "createdb": "createdb -h localhost forward_pay"
   },
   "dependencies": {
     "express": "~4.16.1",
+    "pg": "^8.3.3",
+    "pg-hstore": "^2.3.3",
     "sequelize": "^6.3.5"
   }
 }

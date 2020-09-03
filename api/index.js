@@ -52,7 +52,7 @@ const Request = sequelize.define('fp_request', {
     imgPath: Sequelize.TEXT,
     description: Sequelize.TEXT,
 });
-Requests.hasOne(User,{as: 'Creator'});
+Request.hasOne(User,{as: 'Creator'});
 const RequestCompletion = sequelize.define('fp_request_completion', {
     id: {
         type: Sequelize.INTEGER,
@@ -80,7 +80,8 @@ const RequestReward = sequelize.define('fp_request_reward', {
     },
     status: {
         type: Sequelize.ENUM,
-        value: ['Pending','Claimed']
+        values: ['Pending','Claimed'],
+        defaultValue: 'Pending'
     },
     creationTimestamp: { 
         type: Sequelize.DATE, 
@@ -103,7 +104,8 @@ const Favor = sequelize.define('fp_favor', {
     usedTimestamp:  Sequelize.DATE,
     status: {
         type: Sequelize.ENUM,
-        value: ['Pending','Paid']
+        values: ['Pending','Paid'],
+        defaultValue: 'Pending'
     },
 });
 Favor.hasOne(User,{as: 'Payer'});
