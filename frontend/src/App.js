@@ -1,20 +1,30 @@
-import React from 'react';
-import logo from './logo.svg';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import React, { Component } from 'react';
+import LoginPage from './login'
+import './ForwardPay.css';
 import './App.css';
 import Signup from './Signup';
-import 'bootstrap/dist/css/bootstrap.min.css';
 
 
-class App extends React.Component {
-  constructor(props){
-    super(props);
+
+
+
+class login extends Component {
+  constructor() {
+    super();
+    this.state = {
+      username: '',
+      password: ''
+    }
   }
 
-  render(){
-  return (
-    <Signup></Signup>
-  );
+  render() {
+    return (
+      // <LoginPage></LoginPage>
+      <Signup></Signup>
+    );
+
   }
 }
 
-export default App;
+export default login;
