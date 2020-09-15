@@ -1,12 +1,11 @@
-import React from 'react';
-
-
-
-
-const Signup = () => {
+import Header from '../template-parts/Header';
+const Register = () => {
     return(
-        <div>
-                <h2>Signup</h2>
+        <>
+            <Header />
+            <div className="register-class">
+            <div className="container">
+                <h2>Register</h2>
                 <div className="form-group">
                     <label htmlFor="register-name">Full Name</label>
                     <input type="email" className="form-control" id="register-name"  placeholder="Your Name"/>
@@ -22,7 +21,9 @@ const Signup = () => {
                 </div>
                 <button type="submit" className="btn btn-primary">Submit</button>
             </div>
+        </div>
+        </>
     )
 }
 
-export default Signup;
+export default Register;
