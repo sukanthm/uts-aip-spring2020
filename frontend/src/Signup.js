@@ -8,18 +8,17 @@ const Signup = () => {
         <div>
                 <h2>Signup</h2>
                 <div className="form-group">
-                    <label htmlFor="signUpName">Full Name</label>
-                    <input type="email" className="form-control" id="signUpName"  placeholder="Your Name"/>
+                    <label htmlFor="register-name">Full Name</label>
+                    <input type="email" className="form-control" id="register-name"  placeholder="Your Name"/>
                 </div>
                 <div className="form-group">
-                    <label htmlFor="signUpMail">Email address</label>
-                    <input type="email" className="form-control" id="signUpMail" aria-describedby="signUpEmailHelp" placeholder="Enter email"/>
-                    <small id="signUpEmailHelp" className="form-text text-muted">We'll never share your email with anyone else.</small>
+                    <label htmlFor="register-email">Email address</label>
+                    <input type="email" className="form-control" id="register-email" placeholder="Enter email"/>
                 </div>
                 <div className="form-group">
-                    <label htmlFor="signUpPassword">Password</label>
-                    <input type="email" className="form-control" id="signUpPassword" aria-describedby="signUpPasswordHelp" placeholder="Your secret code"/>
-                    <small id="signUpPasswordHelp" className="form-text text-muted">Password should contain atleast 1 uppercase, lowercase and numeric letter</small>
+                    <label htmlFor="register-password">Password</label>
+                    <input type="email" className="form-control" id="register-password" aria-describedby="register-password-help" placeholder="Create a password"/>
+                    <small id="register-password-help" className="form-text text-muted d-none">Password should contain atleast 1 uppercase, lowercase and numeric letter</small>
                 </div>
                 <button type="submit" className="btn btn-primary">Submit</button>
             </div>
