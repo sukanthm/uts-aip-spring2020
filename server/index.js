@@ -25,8 +25,8 @@ async function initialize() {
 }
 
 initialize().then(() =>
-    app.listen(3500, () => {
-        console.log('Running on http://localhost:3000/');
+    app.listen(4000, () => {
+        console.log('Running on http://localhost:4000/');
         
     })
 
