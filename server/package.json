@@ -3,13 +3,14 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node index.js",
+    "start": "node -r esm index.js",
     "initdb": "initdb -D ../pgdb/",
     "postgres": "postgres -D ../pgdb/ -k ''",
     "createdb": "createdb -h localhost forward_pay"
   },
   "dependencies": {
-    "express": "~4.16.1",
+    "esm": "^3.2.25",
+    "express": "^4.16.4",
     "pg": "^8.3.3",
     "pg-hstore": "^2.3.3",
     "sequelize": "^6.3.5"

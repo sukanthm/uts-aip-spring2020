@@ -5,6 +5,11 @@
 /frontend/.pnp.js
 
 
+/server/node_modules
+/server/.pnp
+/server/.pnp.js
+
+
 /api/node_modules
 /pgdb
 
