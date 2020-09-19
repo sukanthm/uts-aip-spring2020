@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
+const cookieParser = require('cookie-parser');
 
 import {
     sequelize, Sequelize, fpUser, 
@@ -11,6 +12,7 @@ import {
 } from './persistence/initORM.js';
 
 const app = express();
+app.use(cookieParser());
 app.use(helmet());
 app.use(bodyParser.json());
 app.use(cors());
