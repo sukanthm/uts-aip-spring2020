@@ -24,7 +24,13 @@ require('./api/routes.js')(app);
 // ------------------------------------------------
 async function initialize() {
     // Create the database tables (force them to be created from scratch)
-    await sequelize.sync();
+    await sequelize.sync().catch(function (err) {
+        if(err.constructor.name == 'ConnectionRefusedError'){
+            console.log('Connection refused, have you run `npm run postgres` ?')
+        }
+        
+        
+      });
 }
 
 initialize().then(() =>
