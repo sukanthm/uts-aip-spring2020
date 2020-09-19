@@ -15,6 +15,6 @@ const fpRequest = sequelize.define('fp_request', {
     imgPath: Sequelize.TEXT,
     description: Sequelize.TEXT,
 });
-fpRequest.hasOne(fpUser,{as: 'Creator'});
+fpRequest.belongsTo(fpUser,{as: 'Creator'});
 
 export default fpRequest;

@@ -19,8 +19,8 @@ const fpFavor = sequelize.define('fp_favor', {
         defaultValue: 'Pending'
     },
 });
-fpFavor.hasOne(fpUser,{as: 'Payer'});
-fpFavor.hasOne(fpUser,{as: 'Payee'});
-fpFavor.hasOne(fpReward,{as: 'Reward'});
+fpFavor.belongsTo(fpUser,{as: 'Payer'});
+fpFavor.belongsTo(fpUser,{as: 'Payee'});
+fpFavor.belongsTo(fpReward,{as: 'Reward'});
 
 export default fpFavor;

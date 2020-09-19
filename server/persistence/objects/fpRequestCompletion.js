@@ -15,7 +15,7 @@ const fpRequestCompletion = sequelize.define('fp_request_completion', {
     imgPath: Sequelize.TEXT,
     description: Sequelize.TEXT,
 });
-fpRequestCompletion.hasOne(fpRequest,{as: 'Request'});
-fpRequestCompletion.hasOne(fpUser,{as: 'Completer'});
+fpRequestCompletion.belongsTo(fpRequest,{as: 'Request'});
+fpRequestCompletion.belongsTo(fpUser,{as: 'Completer'});
 
 export default fpRequestCompletion;

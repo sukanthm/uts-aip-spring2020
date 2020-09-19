@@ -23,8 +23,8 @@ const fpRequestReward = sequelize.define('fp_request_reward', {
         defaultValue: Sequelize.NOW 
     },
 });
-fpRequestReward.hasOne(fpUser,{as: 'Sponsor'});
-fpRequestReward.hasOne(fpRequest,{as: 'Request'});
-fpRequestReward.hasOne(fpReward,{as: 'Reward'});
+fpRequestReward.belongsTo(fpUser,{as: 'Sponsor'});
+fpRequestReward.belongsTo(fpRequest,{as: 'Request'});
+fpRequestReward.belongsTo(fpReward,{as: 'Reward'});
 
 export default fpRequestReward;

@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node -r esm index.js",
+    "builddb": "node -r esm ./persistence/buildDatabase.js",
     "initdb": "initdb -D ../pgdb/",
     "postgres": "postgres -D ../pgdb/ -k ''",
     "createdb": "createdb -h localhost forward_pay"
@@ -11,6 +12,7 @@
   "dependencies": {
     "esm": "^3.2.25",
     "express": "^4.16.4",
+    "express-autoroute": "^2.1.1",
     "pg": "^8.3.3",
     "pg-hstore": "^2.3.3",
     "sequelize": "^6.3.5"
