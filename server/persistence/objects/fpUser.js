@@ -1,13 +1,16 @@
 
 import {sequelize, Sequelize} from './sequelize';
+const DataTypes = require('sequelize');
 
 const fpUser = sequelize.define('fp_user', {
     id: {
-        type: Sequelize.INTEGER,
-        autoIncrement: true,
-        primaryKey: true
+        type: DataTypes.UUID,
+        defaultValue: Sequelize.UUIDV4,
     },
-    email: Sequelize.TEXT,
+    email: {
+        type: Sequelize.TEXT,
+        primaryKey: true,
+    },
     name: Sequelize.TEXT,
     password: Sequelize.TEXT,
     isAdmin: {
