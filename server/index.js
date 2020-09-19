@@ -1,11 +1,7 @@
 
 const express = require('express');
 const app = express();
-import {
-    sequelize, Sequelize, fpUser, 
-    fpReward, fpRequest, fpRequestCompletion,
-    fpRequestReward, fpFavor
-} from './persistence/initORM.js';
+import {sequelize} from './persistence/initORM.js';
 
 require('./api/initRoutes.js');
 
@@ -22,7 +18,13 @@ require('./api/initRoutes.js');
 // ------------------------------------------------
 async function initialize() {
     // Create the database tables (force them to be created from scratch)
-    await sequelize.sync();
+    await sequelize.sync().catch(function (err) {
+        if(err.constructor.name == 'ConnectionRefusedError'){
+            console.log('Connection refused, have you run `npm run postgres` ?')
+        }
+        
+        
+      });
 }
 
 initialize().then(() =>
