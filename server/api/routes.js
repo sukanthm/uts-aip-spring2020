@@ -17,18 +17,20 @@ module.exports = function(app){
         res headers:
             success (bool)
             message (string)
+        TODO:
+            add checks for empty input strings and test flow
         */
         let email, password, name;
         try {
             email = req.header('email');
             password = req.header('password');
             name = req.header('name');
+            //add checks for empty strings
         } catch (error) {
             console.error('mandatory request headers missing');
-            res.status(400);
             res.set('success', false);
             res.set('message', 'mandatory request headers missing');
-            res.send('add html');
+            res.redirect(400, '/signup');
             return;
         }
 
@@ -48,21 +50,19 @@ module.exports = function(app){
 
             await newUser.save();
 
-            res.status(200);
             res.set('success', true);
             res.set('message', 'user created');
-            res.send('add html');
+            res.redirect(200, '/login');
         }
         else {
             console.info(email + ' already exists');
-            res.status(409);
             res.set('success', false);
             res.set('message', 'email already exists');
-            res.send('add html');
+            res.redirect(409, '/login');
         }
     });
 
-    app.get('/login', function(req, res){
+    app.get('/login', async function(req, res){
         /*
         req headers:
             email (string): regex checked in react
@@ -71,17 +71,19 @@ module.exports = function(app){
             success (bool)
             message (string)
             token (string)
+        TODO:
+            add checks for empty input strings and test flow
         */
         let email, password, name;
         try {
             email = req.header('email');
             password = req.header('password');
+            //add checks for empty strings
         } catch (error) {
             console.error('mandatory request headers missing');
-            res.status(400);
             res.set('success', false);
             res.set('message', 'mandatory request headers missing');
-            res.send('add html');
+            res.redirect(400, '/login');
             return;
         }
 
@@ -91,37 +93,38 @@ module.exports = function(app){
 
         if (user === null) {
             console.info(email + ' not registered');
-            res.status(401);
             res.set('success', false);
             res.set('message', 'email not registered');
-            res.send('add html');
+            res.redirect(401, '/signup');
             return;
         } 
         else {
-            const cookie = req.cookies.aip_fp;
-            if (cookie === undefined) {
-                const login_token = await new Promise((resolve, reject) => {
-                    bcrypt.hash(user.id.toString(), saltRounds, function(err, hash) {
-                      if (err) reject(err);
-                      resolve(hash);
-                    });
+            const is_valid_password = await new Promise((resolve, reject) => {
+                bcrypt.compare(password, user.password, function(err, result) {
+                if (err) reject(err);
+                resolve(result);
                 });
-                res.cookie('aip_fp', login_token, {maxAge: 3600});
-                res.set('message', 'login token generated and cookie set');
+            });
+            if (!is_valid_password) {
+                res.set('message', 'incorrect email password combo');
+                res.set('success', false);
+                res.redirect(401, '/login');                
             } 
             else {
-                const is_valid_token = await new Promise((resolve, reject) => {
-                    bcrypt.compare(user.id.toString(), cookie, function(err, result) {
-                      if (err) reject(err);
-                      resolve(result);
+                const cookie = req.cookies.aip_fp;
+                if (cookie === undefined) {
+                    const login_token = await new Promise((resolve, reject) => {
+                        bcrypt.hash(user.id.toString(), saltRounds, function(err, hash) {
+                        if (err) reject(err);
+                        resolve(hash);
+                        });
                     });
-                });
-                res.set('message', 'valid cookie exists');
+                    res.cookie('aip_fp', login_token, {maxAge: 3600});
+                    res.set('message', 'login token generated and cookie set');
+                    res.set('success', true);
+                    res.redirect(200, '/');
+                } 
             }
-
-            res.status(200);
-            res.set('success', true);
-            res.send('add html');
         }
     });
 }
