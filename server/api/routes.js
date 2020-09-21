@@ -11,9 +11,9 @@ async function custom_hash(input){
     });
 }
 
-async function is_password_valid(plaintextPassword, hashedPassword){
+async function is_secret_valid(plaintext, hashed){
     return new Promise((resolve, reject) => {
-        bcrypt.compare(plaintextPassword, hashedPassword, function(err, result) {
+        bcrypt.compare(plaintext, hashed, function(err, result) {
         if (err) reject(err);
         resolve(result);
         });
@@ -88,7 +88,7 @@ module.exports = function(app){
         response headers:
             success (bool)
             message (string)
-            cooke with login token (string)
+            cookie {aip_fp}: sets login token
         TODO:
 
         */
@@ -113,14 +113,13 @@ module.exports = function(app){
             return;
         } 
         else {
-            const isPasswordValid = await is_password_valid(password, user.password);
+            const isPasswordValid = await is_secret_valid(password, user.password);
             if (!isPasswordValid) {
                 res.set('message', 'incorrect email password combo');
                 res.set('success', false);
                 res.redirect(401, '/login');                
             } 
             else {
-                //const cookie = req.cookies.aip_fp;
                 const loginToken = await custom_hash(user.id.toString());
                 res.cookie('aip_fp', loginToken, {maxAge: 3600});
                 res.set('message', 'login token generated and cookie set');
