@@ -1,8 +1,8 @@
 const express = require('express');
 const app = express();
 import {sequelize} from './initORM.js';
-import create_rewards from './objects/fpReward.js';
-
+//import create_rewards from './objects/fpReward.js';
+const fpRewardModule = require('./objects/fpReward.js');
 
 
 // ------------------------------------------------
@@ -15,9 +15,9 @@ async function buildDatabase() {
             console.log('Connection refused, have you run `npm run postgres` ?')
         }
     });
-    //await create_rewards().catch(function(){}); //Y NOT WORKING :@
+    await fpRewardModule.create_rewards();
 }
 
 buildDatabase().then(() =>
-console.log('Database Table Built, script will end momentarily')
+console.log('\n\n Database Table Built, script will end momentarily \n\n')
 );
