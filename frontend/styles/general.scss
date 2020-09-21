@@ -1,0 +1,32 @@
+.right{
+    float: right;
+    margin: 2%
+}
+
+.center{
+    text-align:center;
+}
+
+.reward-num{
+    border: none;
+    text-align: center;
+    outline: none;
+}
+
+.reward-num::-webkit-inner-spin-button,
+.reward-num::-webkit-outer-spin-button{
+    -webkit-appearance: none; 
+    margin: 0; 
+}
+
+.reward-update{
+    font-size: 1.25em;
+}
+
+.reward-num-btn{
+    font-weight: bold;
+}
+
+.task-image-upload>input{
+    display: none;
+}
