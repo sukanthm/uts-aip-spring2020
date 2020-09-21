@@ -15,7 +15,7 @@ const Login = (props) => {
                     <label htmlFor="login-password">Password</label>
                     <input type="password" className="form-control" id="login-password" placeholder="Password" />
                     </div>
-                    <button type="submit" className="btn btn-primary btn-forward-cstm">Submit</button>
+                    <button type="submit" className="btn btn-primary">Submit</button>
                 </form>
                 </div>
             </div>
