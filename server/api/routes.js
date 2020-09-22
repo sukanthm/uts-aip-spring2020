@@ -85,8 +85,6 @@ module.exports = function(app){
         response headers:
             success (bool)
             message (string)
-        TODO:
-
         */
         let [successFlag, [email, password, name]] = get_req_headers(req, ['email', 'password', 'name']);
         if (!successFlag){
@@ -120,8 +118,6 @@ module.exports = function(app){
             success (bool)
             message (string)
             cookie {aip_fp}: sets login token
-        TODO:
-
         */
         let [successFlag, [email, password]] = get_req_headers(req, ['email', 'password']);
         if (!successFlag){
@@ -164,8 +160,6 @@ module.exports = function(app){
             success (bool)
             message (string)
             output (json)
-        TODO:
-
         */
         let [successFlag, [email, loginToken]] = get_req_headers(req, ['email', 'loginToken']);
         if (!successFlag){
@@ -277,10 +271,15 @@ module.exports = function(app){
             newFavor.proofPath = req.file.path;
         }
 
-        await newFavor.save();
-        res.set('newFavorID', newFavor.id);
-        manipulate_response_and_send(res, true, 'new favor (id: '+await newFavor.id+') created', 200);
-        return;
+        try{
+            await newFavor.save();
+            res.set('newFavorID', newFavor.id);
+            manipulate_response_and_send(res, true, 'new favor (id: '+await newFavor.id+') created', 200);
+            return;
+        } catch (err){
+            manipulate_response_and_send(res, true, err, 200);
+            return;
+        }
     });
 
 
