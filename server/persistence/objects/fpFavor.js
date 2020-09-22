@@ -17,9 +17,19 @@ const fpFavor = sequelize.define('fp_favor', {
         type: Sequelize.INTEGER,
         defaultValue: 1,
     },
+    proofPath: {
+        type: Sequelize.STRING,
+        defaultValue: ''
+    },
 });
-fpFavor.belongsTo(fpUser,{as: 'Payer'});
-fpFavor.belongsTo(fpUser,{as: 'Payee'});
-fpFavor.belongsTo(fpReward,{as: 'Reward'});
+fpFavor.belongsTo(fpUser, {foreignKey: 'payerID', as: 'payer_id'});
+fpFavor.belongsTo(fpUser, {foreignKey: 'payeeID', as: 'payee_id'});
+
+fpUser.hasMany(fpFavor, {foreignKey: 'payerID', as: 'payer_id'});
+fpUser.hasMany(fpFavor, {foreignKey: 'payeeID', as: 'payee_id'});
+
+
+fpFavor.belongsTo(fpReward, {foreignKey: 'rewardID'});
+fpReward.hasMany(fpFavor, {foreignKey: 'rewardID'});
 
 export default fpFavor;
