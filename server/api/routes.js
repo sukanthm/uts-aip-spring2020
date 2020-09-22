@@ -2,6 +2,30 @@ import fpUser from '../persistence/objects/fpUser';
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
+function manipulate_response_and_send(res, successFlag, message, httpCode, redirectUrl=false){
+    console.log(message);
+    res.set('success', successFlag);
+    res.set('message', message);
+    res.status(httpCode);
+    if (redirectUrl != false)
+        res.redirect(redirectUrl);
+    else
+        res.send();
+    return;
+}
+
+async function validate_user(email, loginToken){
+    const user = await fpUser.findOne({
+        where: {email: email},
+    });
+    if (is_secret_valid(await user.id, loginToken)){
+        return [true, user];
+    }
+    else{
+        return [false, undefined];
+    }
+}
+
 async function custom_hash(input){
     return new Promise((resolve, reject) => {
         bcrypt.hash(input, saltRounds, function(err, hash) {
@@ -20,11 +44,11 @@ async function is_secret_valid(plaintext, hashed){
     });
 }
 
-function get_req_headers(req, headers) {
+function get_req_headers(req, headers){
     let header, output = [];
     for (let i = 0, len = headers.length; i < len; i++) {
         header = req.header(headers[i]);
-        if (header === undefined || header === 'null'){
+        if ([undefined, null, '', 'null'].includes(header)){
             return [false, headers];
         }
         output.push(header);
@@ -36,6 +60,7 @@ module.exports = function(app){
 
     app.get('/signup', function(req, res){
         //show signup HTML here
+        res.send('HI, use the post API to login');
     });
 
     app.post('/signup', async function(req, res){
@@ -52,10 +77,7 @@ module.exports = function(app){
         */
         let [successFlag, [email, password, name]] = get_req_headers(req, ['email', 'password', 'name']);
         if (!successFlag){
-            console.error('mandatory request headers missing');
-            res.set('success', false);
-            res.set('message', 'mandatory request headers missing');
-            res.redirect(400, '/signup');
+            manipulate_response_and_send(res, false, 'mandatory request headers missing', 400);
             return;
         }
 
@@ -68,16 +90,12 @@ module.exports = function(app){
             newUser.name = name;
             await newUser.save();
 
-            res.set('success', true);
-            res.set('message', 'user created');
-            res.redirect(200, '/login');
+            manipulate_response_and_send(res, true, 'user '+email+' created', 200);
+            return;
         }
-        else {;
-            console.info(email + ' already exists');
-            res.set('success', false);
-            res.set('message', 'email already exists');
-            res.redirect(409, '/login');
-        }
+
+        manipulate_response_and_send(res, false, email+' already exists', 409);
+        return;
     });
 
     app.get('/login', async function(req, res){
@@ -94,10 +112,7 @@ module.exports = function(app){
         */
         let [successFlag, [email, password]] = get_req_headers(req, ['email', 'password']);
         if (!successFlag){
-            console.error('mandatory request headers missing');
-            res.set('success', false);
-            res.set('message', 'mandatory request headers missing');
-            res.redirect(400, '/login');
+            manipulate_response_and_send(res, false, 'mandatory request headers missing', 400);
             return;
         }
 
@@ -106,26 +121,49 @@ module.exports = function(app){
         });
 
         if (user === null) {
-            console.info(email + ' not registered');
-            res.set('success', false);
-            res.set('message', 'email not registered');
-            res.redirect(406, '/signup');
+            manipulate_response_and_send(res, false, email+' not registered', 406);
             return;
-        } 
-        else {
-            const isPasswordValid = await is_secret_valid(password, user.password);
-            if (!isPasswordValid) {
-                res.set('message', 'incorrect email password combo');
-                res.set('success', false);
-                res.redirect(401, '/login');                
-            } 
-            else {
-                const loginToken = await custom_hash(user.id.toString());
-                res.cookie('aip_fp', loginToken, {maxAge: 3600});
-                res.set('message', 'login token generated and cookie set');
-                res.set('success', true);
-                res.redirect(200, '/');
-            }
         }
+
+        const isPasswordValid = await is_secret_valid(password, user.password);
+        if (!isPasswordValid) {
+            manipulate_response_and_send(res, false, 'incorrect email password combo', 401);
+            return;
+        }
+
+        const loginToken = await custom_hash(user.id.toString());
+        res.cookie('aip_fp', JSON.stringify({
+            loginToken: loginToken,
+            email: email, }), 
+            {maxAge: 3600});
+        manipulate_response_and_send(res, true, 'login token generated and cookie set for '+email, 200);
+        return;
+    });
+
+    app.get('/favors', async function(req, res){
+        /*
+        Gets a user's favors (owed and owing)
+
+        request headers:
+            aip_fp (string): login token
+        response headers:
+            success (bool)
+            message (string)
+            output (json)
+        TODO:
+            add core functionality
+        */
+        let [successFlag, [email, loginToken]] = get_req_headers(req, ['email', 'loginToken']);
+        if (!successFlag){
+            manipulate_response_and_send(res, false, 'mandatory request headers missing', 400);
+            return;
+        }
+
+        let [validationSuccess, user] = validate_user(email, loginToken);
+        if (!validationSuccess){
+            manipulate_response_and_send(res, false, 'unAuthenticated user', 401);
+            return;
+        }
+    
     });
 }

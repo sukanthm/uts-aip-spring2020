@@ -6,10 +6,11 @@ const fpUser = sequelize.define('fp_user', {
     id: {
         type: DataTypes.UUID,
         defaultValue: Sequelize.UUIDV4,
+        primaryKey: true,
     },
     email: {
         type: Sequelize.TEXT,
-        primaryKey: true,
+        unique: true,
     },
     name: Sequelize.TEXT,
     password: Sequelize.TEXT,
@@ -22,4 +23,5 @@ const fpUser = sequelize.define('fp_user', {
         defaultValue: false
     },
 });
+
 export default fpUser;

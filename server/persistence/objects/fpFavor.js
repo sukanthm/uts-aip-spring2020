@@ -8,15 +8,14 @@ const fpFavor = sequelize.define('fp_favor', {
         autoIncrement: true,
         primaryKey: true
     },
-    creationTimestamp: { 
-        type: Sequelize.DATE, 
-        defaultValue: Sequelize.NOW 
-    },
-    usedTimestamp:  Sequelize.DATE,
     status: {
         type: Sequelize.ENUM,
         values: ['Pending','Paid'],
         defaultValue: 'Pending'
+    },
+    rewardCount: {
+        type: Sequelize.INTEGER,
+        defaultValue: 1,
     },
 });
 fpFavor.belongsTo(fpUser,{as: 'Payer'});
