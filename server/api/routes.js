@@ -209,7 +209,7 @@ module.exports = function(app){
             payerEmail (string)
             rewardID (int)
             rewardCount (int)
-            proofImage (form-data): optional, required iff email == payee. check https://github.com/expressjs/multer for frontend form
+            proofImage (form-data): optional. required iff email == payee. check https://github.com/expressjs/multer for frontend form
         response headers:
             success (bool)
             message (string)
@@ -255,10 +255,10 @@ module.exports = function(app){
 
         if (email === payeeEmail){
             if ([undefined, null, '', 'null'].includes(req.file)){
-                manipulate_response_and_send(res, false, 'favor creator is payee, img proof missing', 400);
+                manipulate_response_and_send(res, false, 'favor creator is payee, image proof missing', 400);
                 return;
             }
-            if (!file.mimetype.startsWith('image')){
+            if (!req.file.mimetype.startsWith('image')){
                 manipulate_response_and_send(res, false, 'Not an image. please upload only an image file', 400);
                 fs.unlink(req.file.path, (err) => {
                     if (err) throw err;
@@ -275,7 +275,7 @@ module.exports = function(app){
             manipulate_response_and_send(res, true, 'new favor (id: '+await newFavor.id+') created', 200);
             return;
         } catch (err){
-            manipulate_response_and_send(res, true, err, 200);
+            manipulate_response_and_send(res, false, err, 500);
             return;
         }
     });
@@ -331,6 +331,81 @@ module.exports = function(app){
         res.set('output', JSON.stringify(favor));
         manipulate_response_and_send(res, true, 'sent requested favor', 200);
         return;
+    })
+
+    app.put('/favor', upload.single('proofImage'), async function(req, res){
+        /*
+        Closes a user's favor (set to Paid)
+
+        request headers:
+            loginToken (string)
+            email (string)
+            favorID (int)
+            proofImage (form-data): optional. required iff email == payer. check https://github.com/expressjs/multer for frontend form
+        response headers:
+            success (bool)
+            message (string)
+        */
+        let [successFlag, [email, loginToken, favorID]] = 
+            get_req_headers(req, ['email', 'loginToken', 'favorID'], res);
+        if (!successFlag)
+            return;
+
+        let [validationSuccess, user] = await validate_user_loginToken(email, loginToken, res);
+        if (!validationSuccess)
+            return;
+        
+        let favor = await fpFavor.findOne({
+            where: {
+                id: favorID,
+            } 
+        });
+
+        if (favor === null){
+            manipulate_response_and_send(res, false, 'bad favor id requested', 404);
+            return;    
+        }
+        let payerID = await favor.payerID, payeeID = await favor.payeeID, userID = await user.id;
+        if (![payerID, payeeID].includes(userID)){
+            manipulate_response_and_send(res, false, 'unAuthorised user, favor updator is neither payee nor payer', 403);
+            return;
+        }
+        if (await favor.status === 'Paid'){
+            manipulate_response_and_send(res, false, 'favor already Paid. ignoring current request', 409);
+            return;
+        }
+
+        if (userID === payerID){
+            if ([undefined, null, '', 'null'].includes(req.file)){
+                manipulate_response_and_send(res, false, 'favor updator is payer, image proof missing', 400);
+                return;
+            }
+            if (!req.file.mimetype.startsWith('image')){
+                manipulate_response_and_send(res, false, 'Not an image. please upload only an image file', 400);
+                fs.unlink(req.file.path, (err) => {
+                    if (err) throw err;
+                    console.log('successfully deleted bad upload @ '+req.file.path);
+                });
+                return;
+            }
+            if (!await favor.proofPath === ''){
+                fs.unlink(req.file.path, (err) => {
+                    if (err) throw err;
+                    console.log('successfully deleted old image @ '+req.file.path);
+                });
+            }
+            favor.proofPath = req.file.path;
+        }
+
+        favor.status = 'Paid';
+        try{
+            await favor.save();
+            manipulate_response_and_send(res, true, 'favorID: '+favorID+' set to Paid', 200);
+            return;
+        } catch (err){
+            manipulate_response_and_send(res, false, err, 500);
+            return;
+        }
     })
 
 

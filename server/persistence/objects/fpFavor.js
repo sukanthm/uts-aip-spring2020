@@ -17,8 +17,8 @@ const fpFavor = sequelize.define('fp_favor', {
         type: Sequelize.INTEGER,
         defaultValue: 1,
     },
-    proofPath: {
-        type: Sequelize.STRING,
+    proofPath: { //below comment = if we want to store image history. nah for now.
+        type: Sequelize.STRING, //const DataTypes = require('sequelize'); DataTypes.ARRAY(DataTypes.STRING);
         defaultValue: ''
     },
 });
