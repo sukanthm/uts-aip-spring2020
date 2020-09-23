@@ -1,6 +1,7 @@
 const { Op } = require("sequelize");
 import fpFavor from '../persistence/objects/fpFavor';
 import fpUser from '../persistence/objects/fpUser';
+const helperModule = require('./helper.js');
 
 function get_array_index(array, target){
     for(let i=0; i<array.length; i++){
@@ -96,58 +97,85 @@ function run_dfs(favorList){
     return parties
 }
 
-module.exports = {
-    party_detector: async function(user){
-        /*
-        preps for DFS of favor trees to reveal parties for each reward type
+async function party_detector(user){
+    /*
+    preps for DFS of favor trees to reveal parties for each reward type
 
-        input:
-            user (object): sequelize model
-        output:
-            partyByReward (JSON): object made up of 2d array parties
-        */
-        let userID = await user.id;
-        let favorList = await fpFavor.findAll({
-            attributes: ['rewardID'],
-            where: {
-                [Op.and]: [{
-                    [Op.or]: [
-                        {payerID: userID},
-                        {payeeID: userID},
-                        ]
-                    }, {
-                        status: 'Pending',
-                    }]
+    input:
+        user (object): sequelize model
+    output:
+        partyByReward (JSON): object made up of 2d array parties
+    */
+    let userID = await user.id;
+    let favorList = await fpFavor.findAll({
+        attributes: ['rewardID'],
+        where: {
+            [Op.and]: [{
+                [Op.or]: [
+                    {payerID: userID},
+                    {payeeID: userID},
+                    ]
+                }, {
+                    status: 'Pending',
+                }]
+        },
+        include: [
+            {
+                model: fpUser,
+                as: 'payee_id',
+                attributes: [['email', 'payeeEmail']],
+            },{
+                model: fpUser,
+                as: 'payer_id',
+                attributes: [['email', 'payerEmail']],
             },
-            include: [
-                {
-                    model: fpUser,
-                    as: 'payee_id',
-                    attributes: [['email', 'payeeEmail']],
-                },{
-                    model: fpUser,
-                    as: 'payer_id',
-                    attributes: [['email', 'payerEmail']],
-                },
-            ]
-        });
-        
-        favorList = JSON.parse(JSON.stringify(favorList));
-        let favorsByReward = {};
+        ]
+    });
+    
+    favorList = JSON.parse(JSON.stringify(favorList));
+    let favorsByReward = {};
 
-        for (var i = 0; i < favorList.length; i++){
-            let favor = favorList[i];
-            if (!(favor['rewardID'] in favorsByReward)){
-                favorsByReward[favor['rewardID']] = [];
-            }
-            favorsByReward[favor['rewardID']].push([favor['payeeEmail'], favor['payerEmail']]);
+    for (var i = 0; i < favorList.length; i++){
+        let favor = favorList[i];
+        if (!(favor['rewardID'] in favorsByReward)){
+            favorsByReward[favor['rewardID']] = [];
         }
-        
-        let partyByReward = {};
-        for (var rewardID in favorsByReward){
-            partyByReward[rewardID] = run_dfs(favorsByReward[rewardID]);
-        }
-        return partyByReward;
+        favorsByReward[favor['rewardID']].push([favor['payee_id']['payeeEmail'], favor['payer_id']['payerEmail']]);
     }
+    
+    let partyByReward = {};
+    for (var rewardID in favorsByReward){
+        partyByReward[rewardID] = run_dfs(favorsByReward[rewardID]);
+    }
+    return partyByReward;
 }
 
+module.exports = function(app){
+
+    app.get('/party', async function(req, res){
+        /*
+        Detects a user's potential parties
+
+        request headers:
+            loginToken (string)
+            email (string)
+        response headers:
+            success (bool)
+            message (string)
+            output (string): json to string
+        */
+       let [successFlag, [email, loginToken]] = helperModule.get_req_headers(req, ['email', 'loginToken'], res);
+       if (!successFlag)
+           return;
+
+       let [validationSuccess, user] = await helperModule.validate_user_loginToken(email, loginToken, res);
+       if (!validationSuccess)
+           return;
+
+        let output = await party_detector(user);
+        res.set('output', JSON.stringify(output));
+        helperModule.manipulate_response_and_send(res, true, 'party data sent', 200);
+        return;
+    })
+    
+}

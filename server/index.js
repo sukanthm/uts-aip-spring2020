@@ -18,8 +18,10 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(morgan('combined'));
 
-//require('./api/initRoutes.js');
-require('./api/routes.js')(app);
+require('./api/signupLogin.js')(app);
+require('./api/favor.js')(app);
+require('./api/party.js')(app);
+
 
 // ------------------------------------------------
 // Initialize database and create sample data
@@ -40,4 +42,3 @@ initialize().then(() =>
     })
 
 );
-
