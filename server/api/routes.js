@@ -3,6 +3,7 @@ const { Op } = require("sequelize");
 import {sequelize, Sequelize} from '../persistence/initORM.js';
 import fpUser from '../persistence/objects/fpUser';
 import fpFavor from '../persistence/objects/fpFavor';
+var partyModule = require('./party.js');
 const bcrypt = require('bcrypt');
 var multer  = require('multer');
 const saltRounds = 10;
@@ -173,7 +174,7 @@ module.exports = function(app){
             return;
 
         let favors = await fpFavor.findAll({
-            attributes: ['id', 'status', 'rewardID', 'rewardCount' ,'createdAt'],
+            attributes: ['id', 'status', 'rewardID', 'createdAt'],
             where: {
                 [Op.or]:[
                     {payerID: user.id},
@@ -208,7 +209,6 @@ module.exports = function(app){
             payeeEmail (string)
             payerEmail (string)
             rewardID (int)
-            rewardCount (int)
             proofImage (form-data): optional. required iff email == payee. check https://github.com/expressjs/multer for frontend form
         response headers:
             success (bool)
@@ -217,8 +217,8 @@ module.exports = function(app){
         TODO:
             Test image upload
         */
-        let [successFlag, [email, loginToken, payeeEmail, payerEmail, rewardID, rewardCount]] = 
-            get_req_headers(req, ['email', 'loginToken', 'payeeEmail', 'payerEmail', 'rewardID', 'rewardCount'], res);
+        let [successFlag, [email, loginToken, payeeEmail, payerEmail, rewardID]] = 
+            get_req_headers(req, ['email', 'loginToken', 'payeeEmail', 'payerEmail', 'rewardID'], res);
         if (!successFlag)
             return;
         
@@ -248,7 +248,6 @@ module.exports = function(app){
 
         const newFavor = fpFavor.build({
             rewardID: rewardID,
-            rewardCount: rewardCount,
             payeeID: await payeeUser.id,
             payerID: await payerUser.id,
         });
@@ -302,7 +301,7 @@ module.exports = function(app){
             return;
         
         let favor = await fpFavor.findOne({
-            attributes: ['id', 'status', 'rewardID', 'rewardCount' ,'createdAt'],
+            attributes: ['id', 'status', 'rewardID', 'createdAt'],
             where: {
                 id: favorID,
             }, 
@@ -408,5 +407,32 @@ module.exports = function(app){
         }
     })
 
+    app.get('/party', async function(req, res){
+        /*
+        Detects a user's potential parties
+
+        request headers:
+            loginToken (string)
+            email (string)
+        response headers:
+            success (bool)
+            message (string)
+            output (string): json to string
+        */
+       let [successFlag, [email, loginToken]] = get_req_headers(req, ['email', 'loginToken'], res);
+       if (!successFlag)
+           return;
+
+       let [validationSuccess, user] = await validate_user_loginToken(email, loginToken, res);
+       if (!validationSuccess)
+           return;
+
+        let output = await partyModule.party_detector(user);
+        res.set('output', JSON.stringify(output));
+        manipulate_response_and_send(res, true, 'party data sent', 200);
+        return;
+    })
+
 
 }
+
