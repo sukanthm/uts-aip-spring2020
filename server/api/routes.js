@@ -30,12 +30,18 @@ function manipulate_response_and_send(res, successFlag, message, httpCode, redir
     return;
 }
 
-async function validate_user(email, loginToken){
+async function validate_user_loginToken(email, loginToken, res){
     const user = await fpUser.findOne({
         where: {email: email},
     });
-    if (user === null || ! await is_secret_valid(await user.id, loginToken))
-        return [false, undefined];    
+    if (user === null){
+        manipulate_response_and_send(res, false, 'unRegistered user', 404);
+        return [false, undefined];
+    }
+    if (! await is_secret_valid(await user.id, loginToken)){
+        manipulate_response_and_send(res, false, 'unAuthenticated user', 401);
+        return [false, undefined];
+    }
     return [true, user];
 }
 
@@ -57,11 +63,12 @@ async function is_secret_valid(plaintext, hashed){
     });
 }
 
-function get_req_headers(req, headers){
+function get_req_headers(req, headers, res){
     let header, output = [];
     for (let i = 0, len = headers.length; i < len; i++) {
         header = req.header(headers[i]);
         if ([undefined, null, '', 'null'].includes(header)){
+            manipulate_response_and_send(res, false, 'mandatory request headers missing', 400);
             return [false, headers];
         }
         output.push(header);
@@ -86,11 +93,9 @@ module.exports = function(app){
             success (bool)
             message (string)
         */
-        let [successFlag, [email, password, name]] = get_req_headers(req, ['email', 'password', 'name']);
-        if (!successFlag){
-            manipulate_response_and_send(res, false, 'mandatory request headers missing', 400);
+        let [successFlag, [email, password, name]] = get_req_headers(req, ['email', 'password', 'name'], res);
+        if (!successFlag)
             return;
-        }
 
         const [newUser, created] = await fpUser.findOrCreate({
             where: {email: email},
@@ -119,11 +124,9 @@ module.exports = function(app){
             message (string)
             cookie {aip_fp}: sets login token
         */
-        let [successFlag, [email, password]] = get_req_headers(req, ['email', 'password']);
-        if (!successFlag){
-            manipulate_response_and_send(res, false, 'mandatory request headers missing', 400);
+        let [successFlag, [email, password]] = get_req_headers(req, ['email', 'password'], res);
+        if (!successFlag)
             return;
-        }
 
         const user = await fpUser.findOne({
            where: {email: email},
@@ -154,24 +157,20 @@ module.exports = function(app){
         Gets all of a user's favors (owed and owing)
 
         request headers:
-            loginToken (string): login token
+            loginToken (string)
             email (string)
         response headers:
             success (bool)
             message (string)
-            output (json)
+            output (string): json to string
         */
-        let [successFlag, [email, loginToken]] = get_req_headers(req, ['email', 'loginToken']);
-        if (!successFlag){
-            manipulate_response_and_send(res, false, 'mandatory request headers missing', 400);
+        let [successFlag, [email, loginToken]] = get_req_headers(req, ['email', 'loginToken'], res);
+        if (!successFlag)
             return;
-        }
 
-        let [validationSuccess, user] = await validate_user(email, loginToken);
-        if (!validationSuccess){
-            manipulate_response_and_send(res, false, 'unAuthenticated user', 401);
+        let [validationSuccess, user] = await validate_user_loginToken(email, loginToken, res);
+        if (!validationSuccess)
             return;
-        }
 
         let favors = await fpFavor.findAll({
             attributes: ['id', 'status', 'rewardID', 'rewardCount' ,'createdAt'],
@@ -194,7 +193,8 @@ module.exports = function(app){
             ]
         });
 
-        manipulate_response_and_send(res, true, JSON.stringify(favors), 200);
+        res.set('output', JSON.stringify(favors));
+        manipulate_response_and_send(res, true, 'sent all requested favors', 200);
         return;
     });
 
@@ -203,7 +203,7 @@ module.exports = function(app){
         Adds a favor
 
         request headers:
-            loginToken (string): login token
+            loginToken (string)
             email (string)
             payeeEmail (string)
             payerEmail (string)
@@ -213,21 +213,19 @@ module.exports = function(app){
         response headers:
             success (bool)
             message (string)
+            newFavorID (int)
         TODO:
             Test image upload
         */
         let [successFlag, [email, loginToken, payeeEmail, payerEmail, rewardID, rewardCount]] = 
-            get_req_headers(req, ['email', 'loginToken', 'payeeEmail', 'payerEmail', 'rewardID', 'rewardCount']);
-        if (!successFlag){
-            manipulate_response_and_send(res, false, 'mandatory request headers missing', 400);
+            get_req_headers(req, ['email', 'loginToken', 'payeeEmail', 'payerEmail', 'rewardID', 'rewardCount'], res);
+        if (!successFlag)
             return;
-        }
         
-        let [validationSuccess, user] = await validate_user(email, loginToken);
-        if (!validationSuccess){
-            manipulate_response_and_send(res, false, 'unAuthenticated user', 401);
+        let [validationSuccess, user] = await validate_user_loginToken(email, loginToken, res);
+        if (!validationSuccess)
             return;
-        }
+
         if (![payeeEmail, payerEmail].includes(email)){
             manipulate_response_and_send(res, false, 'unAuthorised user, favor creator is neither payee nor payer', 403);
             return;
@@ -281,6 +279,59 @@ module.exports = function(app){
             return;
         }
     });
+
+    app.get('/favor', async function(req, res){
+        /*
+        Gets a user's favor
+
+        request headers:
+            loginToken (string)
+            email (string)
+            favorID (int)
+        response headers:
+            success (bool)
+            message (string)
+            output (string): json to string
+        */
+        let [successFlag, [email, loginToken, favorID]] = get_req_headers(req, ['email', 'loginToken', 'favorID'], res);
+        if (!successFlag)
+            return;
+
+        let [validationSuccess, user] = await validate_user_loginToken(email, loginToken, res);
+        if (!validationSuccess)
+            return;
+        
+        let favor = await fpFavor.findOne({
+            attributes: ['id', 'status', 'rewardID', 'rewardCount' ,'createdAt'],
+            where: {
+                id: favorID,
+            }, 
+            include: [
+                {
+                    model: fpUser,
+                    as: 'payee_id',
+                    attributes: [['email', 'payeeEmail']],
+                },{
+                    model: fpUser,
+                    as: 'payer_id',
+                    attributes: [['email', 'payerEmail']],
+                },
+            ]
+        });
+
+        if (favor === null){
+            manipulate_response_and_send(res, false, 'bad favor id requested', 404);
+            return;    
+        }
+        if (![favor.toJSON().payee_id.payeeEmail, favor.toJSON().payer_id.payerEmail].includes(email)){
+            manipulate_response_and_send(res, false, 'unAuthorised user', 403);
+            return;    
+        }
+
+        res.set('output', JSON.stringify(favor));
+        manipulate_response_and_send(res, true, 'sent requested favor', 200);
+        return;
+    })
 
 
 }
