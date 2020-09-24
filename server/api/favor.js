@@ -80,7 +80,8 @@ module.exports = function(app){
             message (string)
             newFavorID (int)
         TODO:
-            Test image upload
+            test image upload
+            build rollback on error
         */
         let [successFlag, [email, loginToken, payeeEmail, payerEmail, rewardID]] = 
             helperModule.get_req_headers(req, ['email', 'loginToken', 'payeeEmail', 'payerEmail', 'rewardID'], res);
@@ -136,7 +137,7 @@ module.exports = function(app){
         try{
             await newFavor.save();
             res.set('newFavorID', newFavor.id);
-            helperModule.manipulate_response_and_send(res, true, 'new favor (id: '+await newFavor.id+') created', 200);
+            helperModule.manipulate_response_and_send(res, true, 'new favor (id: '+newFavor.id+') created', 200);
             return;
         } catch (err){
             helperModule.manipulate_response_and_send(res, false, err, 500);
@@ -209,6 +210,8 @@ module.exports = function(app){
         response headers:
             success (bool)
             message (string)
+        TODO:
+            test image upload
         */
         let [successFlag, [email, loginToken, favorID]] = 
             helperModule.get_req_headers(req, ['email', 'loginToken', 'favorID'], res);
