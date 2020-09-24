@@ -1,3 +1,4 @@
+/* 
 import {sequelize, Sequelize} from './sequelize';
 import fpRequest from './fpRequest';
 import fpUser from './fpUser';
@@ -19,3 +20,4 @@ fpRequestCompletion.belongsTo(fpRequest,{as: 'Request'});
 fpRequestCompletion.belongsTo(fpUser,{as: 'Completer'});
 
 export default fpRequestCompletion;
+ */

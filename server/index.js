@@ -7,7 +7,7 @@ const cookieParser = require('cookie-parser');
 
 import {
     sequelize, Sequelize, fpUser, 
-    fpReward, fpRequest, fpRequestCompletion,
+    fpReward, fpRequest, //fpRequestCompletion,
     fpRequestReward, fpFavor
 } from './persistence/initORM.js';
 
@@ -18,8 +18,11 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(morgan('combined'));
 
-//require('./api/initRoutes.js');
-require('./api/routes.js')(app);
+require('./api/signupLogin.js')(app);
+require('./api/favor.js')(app);
+require('./api/party.js')(app);
+require('./api/request.js')(app);
+
 
 // ------------------------------------------------
 // Initialize database and create sample data
@@ -40,4 +43,3 @@ initialize().then(() =>
     })
 
 );
-
