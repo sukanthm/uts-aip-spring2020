@@ -24,6 +24,7 @@ const fpFavor = sequelize.define('fp_favor', {
         defaultValue: ''
     },
 });
+
 fpFavor.belongsTo(fpUser, {foreignKey: 'payerID', as: 'payer_id'});
 fpFavor.belongsTo(fpUser, {foreignKey: 'payeeID', as: 'payee_id'});
 

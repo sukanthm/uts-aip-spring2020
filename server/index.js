@@ -7,7 +7,7 @@ const cookieParser = require('cookie-parser');
 
 import {
     sequelize, Sequelize, fpUser, 
-    fpReward, fpRequest, fpRequestCompletion,
+    fpReward, fpRequest, //fpRequestCompletion,
     fpRequestReward, fpFavor
 } from './persistence/initORM.js';
 
@@ -21,6 +21,7 @@ app.use(morgan('combined'));
 require('./api/signupLogin.js')(app);
 require('./api/favor.js')(app);
 require('./api/party.js')(app);
+require('./api/request.js')(app);
 
 
 // ------------------------------------------------

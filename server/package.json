@@ -3,11 +3,13 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node -r esm index.js",
-    "builddb": "node -r esm ./persistence/buildDatabase.js",
+    "removedb": "rm -rf ../pgdb",
     "initdb": "initdb -D ../pgdb/",
-    "postgres": "postgres -D ../pgdb/ -k ''",
-    "createdb": "createdb -h localhost forward_pay"
+    "postgres": "postgres -D ../pgdb/ -k '' >db.log 2>&1 &",
+    "createdb": "createdb -h localhost forward_pay",
+    "builddb": "node -r esm ./persistence/buildDatabase.js",
+    "start": "node -r esm index.js",
+    "stoppostgres": "pkill postgres"
   },
   "dependencies": {
     "bcrypt": "^5.0.0",
