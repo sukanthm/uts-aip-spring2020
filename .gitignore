@@ -46,3 +46,8 @@ yarn-error.log*
 
 # vercel
 .vercel
+
+
+server/package-lock.json
+server/db.log
+frontend/package-lock.json

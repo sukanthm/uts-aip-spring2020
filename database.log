@@ -1,0 +1,8 @@
+2020-09-24 02:12:23.806 AEST [1864] LOG:  starting PostgreSQL 12.4 (Ubuntu 12.4-0ubuntu0.20.04.1) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 9.3.0-10ubuntu2) 9.3.0, 64-bit
+2020-09-24 02:12:23.807 AEST [1864] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2020-09-24 02:12:23.843 AEST [1880] LOG:  database system was shut down at 2020-09-24 02:12:23 AEST
+2020-09-24 02:12:23.855 AEST [1864] LOG:  database system is ready to accept connections
+2020-09-24 02:14:33.204 AEST [1864] LOG:  received smart shutdown request
+2020-09-24 02:14:33.215 AEST [1864] LOG:  background worker "logical replication launcher" (PID 1886) exited with exit code 1
+2020-09-24 02:14:33.215 AEST [1881] LOG:  shutting down
+2020-09-24 02:14:33.288 AEST [1864] LOG:  database system is shut down
