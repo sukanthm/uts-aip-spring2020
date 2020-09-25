@@ -78,3 +78,24 @@
 .individual-reward-card{
     margin: 5%;
 }
+
+.search-favour{
+    width: 100%;
+    margin-top: 50px;
+}
+
+.search-result{
+    width: 100%;
+    border: 3px solid $gray-300;
+    display: inline-block;
+    text-align: left;
+    margin-top: 5px;
+}
+
+.search-result > *{
+    margin-left: 15px;
+}
+
+.main{
+    padding: 0px 100px;
+}

@@ -3,11 +3,13 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node -r esm index.js",
-    "builddb": "node -r esm ./persistence/buildDatabase.js",
+    "removedb": "rm -rf ../pgdb",
     "initdb": "initdb -D ../pgdb/",
-    "postgres": "postgres -D ../pgdb/ -k ''",
-    "createdb": "createdb -h localhost forward_pay"
+    "postgres": "postgres -D ../pgdb/ -k '' >db.log 2>&1 &",
+    "createdb": "createdb -h localhost forward_pay",
+    "builddb": "node -r esm ./persistence/buildDatabase.js",
+    "start": "node -r esm index.js",
+    "stoppostgres": "pkill postgres"
   },
   "dependencies": {
     "bcrypt": "^5.0.0",
@@ -18,6 +20,7 @@
     "express": "^4.17.1",
     "helmet": "^4.1.1",
     "morgan": "^1.10.0",
+    "multer": "^1.4.2",
     "pg": "^8.3.3",
     "pg-hstore": "^2.3.3",
     "sequelize": "^6.3.5"

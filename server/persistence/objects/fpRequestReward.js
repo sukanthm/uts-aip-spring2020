@@ -9,22 +9,17 @@ const fpRequestReward = sequelize.define('fp_request_reward', {
         autoIncrement: true,
         primaryKey: true
     },
-    count: { 
+    rewardCount: { 
         type: Sequelize.INTEGER, 
         defaultValue: 1 
     },
-    status: {
-        type: Sequelize.ENUM,
-        values: ['Pending','Claimed'],
-        defaultValue: 'Pending'
-    },
-    creationTimestamp: { 
-        type: Sequelize.DATE, 
-        defaultValue: Sequelize.NOW 
-    },
 });
-fpRequestReward.belongsTo(fpUser,{as: 'Sponsor'});
-fpRequestReward.belongsTo(fpRequest,{as: 'Request'});
-fpRequestReward.belongsTo(fpReward,{as: 'Reward'});
+fpRequestReward.belongsToMany(fpUser, {through: 'fpRequest', foreignKey: 'sponsorID', as: 'sponsor_id'});
+fpRequestReward.belongsTo(fpRequest, {foreignKey: 'requestID', as: 'request_id'});
+fpRequestReward.belongsToMany(fpReward, {through: 'fpRequest', foreignKey: 'rewardID', as: 'reward_id'});
+
+fpUser.hasMany(fpRequestReward, {foreignKey: 'sponsorID', as: 'sponsor_id'});
+fpRequest.hasMany(fpRequestReward, {foreignKey: 'requestID', as: 'request_id'});
+fpReward.hasMany(fpRequestReward, {foreignKey: 'rewardID', as: 'reward_id'});
 
 export default fpRequestReward;

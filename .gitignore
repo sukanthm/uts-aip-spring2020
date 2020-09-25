@@ -1,29 +1,29 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 # dependencies
-/frontend/node_modules
-/frontend/.pnp
-/frontend/.pnp.js
+frontend/node_modules
+frontend/.pnp
+frontend/.pnp.js
+frontend/package-lock.json
 
+server/node_modules
+server/.pnp
+server/.pnp.js
+server/package-lock.json 
 
-/server/node_modules
-/server/.pnp
-/server/.pnp.js
-
-
-/api/node_modules
-/pgdb
+server/api/node_modules
+pgdb
 
 # next.js
-/frontend/.next/
-/frontend/out/
+frontend/.next/
+frontend/out/
 
 # testing
-/coverage
-/frontend/coverage
+coverage
+frontend/coverage
 
 # production
-/build
-/frontend/build
+build
+frontend/build
 
 # misc
 .DS_Store
@@ -46,3 +46,9 @@ yarn-error.log*
 
 # vercel
 .vercel
+
+
+server/package-lock.json
+server/db.log
+frontend/package-lock.json
+server/persistence/objects/sequelize.js
