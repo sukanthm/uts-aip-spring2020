@@ -1,4 +1,4 @@
-import Header from '../../template-parts/Header';
+import Header from '../../../template-parts/Header';
 import { useRouter } from 'next/router'
 const TaskIDReward = (props) => {
     const router = useRouter()
