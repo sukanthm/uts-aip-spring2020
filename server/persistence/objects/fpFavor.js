@@ -13,6 +13,9 @@ const fpFavor = sequelize.define('fp_favor', {
         values: ['Pending','Paid'],
         defaultValue: 'Pending'
     },
+    paidAt: {
+        type: Sequelize.DATE,
+    },
     /*  
     rewardCount: {
         type: Sequelize.INTEGER,

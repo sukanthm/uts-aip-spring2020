@@ -1,6 +1,6 @@
 import Header from '../template-parts/Header';
 import IconElement from '../elements/IconElement';
-const Login = (props) => {
+const Testing = (props) => {
     return(
         <>
             <Header />
@@ -9,4 +9,4 @@ const Login = (props) => {
     )
 }
 
-export default Login;
+export default Testing;
