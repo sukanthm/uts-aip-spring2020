@@ -113,6 +113,8 @@ module.exports = function(app){
             success (bool)
             message (string)
             output (string): json to string
+        TODO:
+            change output name of request_id
         */
         let [successFlag, [requestStatus]] = helperModule.get_req_headers(req, ['requestStatus'], res);
         if (!successFlag)
@@ -145,7 +147,7 @@ module.exports = function(app){
                 attributes: [['email', 'completorEmail']],
             },{
                 model: fpRequestReward,
-                as: 'request_id',
+                as: 'request_id', //change output name
                 attributes: ['rewardID', 'rewardCount'],
             },
         ]
@@ -169,6 +171,8 @@ module.exports = function(app){
             success (bool)
             message (string)
             output (string): json to string
+        TODO:
+            fix sponsorID to sponsorEmail
         */
         let [successFlag, [loginToken, email, requestID]] = helperModule.get_req_headers(req, ['loginToken', 'email', 'requestID'], res);
         if (!successFlag)
@@ -196,7 +200,7 @@ module.exports = function(app){
                 model: fpRequestReward,
                 as: 'request_id',
                 attributes: ['rewardID', 'rewardCount', 'sponsorID'], 
-/*                 include: [{ //fix
+/*                 include: [{ //fix sponsorID to sponsorEmail
                     model: fpUser,
                     as: 'sponsor_id',
                     attributes: [['email', 'sponsorEmail']],      
