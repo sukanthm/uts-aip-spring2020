@@ -30,14 +30,13 @@ module.exports = function(app){
             title (string)
             description (string)
             rewards (JSON): {rewardID: rewardCount, ...}
-            taskImage (form-data): optional. check https://github.com/expressjs/multer for frontend form
+        taskImage (form-data): optional. check https://github.com/expressjs/multer for frontend form
         response headers:
             success (bool)
             message (string)
             newRequestID (int)
         TODO:
             test image upload
-            build rollback trace on error
         */
         let [successFlag, [email, loginToken, title, description, rewards]] = 
             helperModule.get_req_headers(req, ['email', 'loginToken', 'title', 'description', 'rewards'], res);
@@ -102,4 +101,60 @@ module.exports = function(app){
         helperModule.manipulate_response_and_send(res, true, 'new Request (id: '+newRequest.id+') and corresponding rewards created', 200);
         return;
     })
+
+    app.get('/requests', async function(req, res){   
+        /*
+        gets all request (no auth)
+
+        request headers:
+            requestStatus (string): one of ['Open', 'Completed', 'All']
+
+        response headers:
+            success (bool)
+            message (string)
+            output (string): json to string
+        */
+        let [successFlag, [requestStatus]] = helperModule.get_req_headers(req, ['requestStatus'], res);
+        if (!successFlag)
+            return;
+        
+        if (!['Open', 'Completed', 'All'].includes(requestStatus)){
+            helperModule.manipulate_response_and_send(res, false, 'bad requestStatus header value sent', 406);
+            return;
+        }
+        if (requestStatus === 'All')
+            requestStatus = ['Open', 'Completed'];
+        else
+            requestStatus = [requestStatus];
+        
+        let allRequests = await fpRequest.findAll({
+            attributes: ['id', 'status', 'title', 'description', 'completedAt', 'createdAt', 'taskImagePath', 'proofImagePath'],
+            where: {
+                status: {
+                  [Op.or]: requestStatus,
+                },
+              },
+            include: [
+            {
+                model: fpUser,
+                as: 'creator_id',
+                attributes: [['email', 'creatorEmail']],
+            },{
+                model: fpUser,
+                as: 'completor_id',
+                attributes: [['email', 'completorEmail']],
+            },{
+                model: fpRequestReward,
+                as: 'request_id',
+                attributes: ['rewardID', 'rewardCount'],
+            },
+        ]
+        });
+
+        res.set('output', JSON.stringify(allRequests));
+        helperModule.manipulate_response_and_send(res, true, 'sent requests as queried.', 200);
+        return;
+    })
+
+
 }
