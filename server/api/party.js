@@ -97,27 +97,26 @@ function run_dfs(favorList){
     return parties
 }
 
-async function party_detector(user){
+async function party_detector(){
     /*
     preps for DFS of favor trees to reveal parties for each reward type
 
     input:
-        user (object): sequelize model
+
     output:
         partyByReward (JSON): object made up of 2d array parties
     */
-    let userID = await user.id;
     let favorList = await fpFavor.findAll({
         attributes: ['rewardID'],
         where: {
-            [Op.and]: [{
-                [Op.or]: [
-                    {payerID: userID},
-                    {payeeID: userID},
-                    ]
-                }, {
+            // [Op.and]: [{
+            //     [Op.or]: [
+            //         {payerID: userID},
+            //         {payeeID: userID},
+            //         ]
+            //     }, {
                     status: 'Pending',
-                }]
+                // }]
         },
         include: [
             {
@@ -172,8 +171,21 @@ module.exports = function(app){
        if (!validationSuccess)
            return;
 
-        let output = await party_detector(user);
-        res.set('output', JSON.stringify(output));
+        let output = await party_detector();
+        let outputForUser = {};
+
+        for (let rewardID in output){
+            outputForUser[rewardID] = [];
+            for (let i=0; i<output[rewardID].length; i++){
+                if (output[rewardID][i].includes(email)){
+                    outputForUser[rewardID].push(output[rewardID][i]);
+                }
+            }
+            if (outputForUser[rewardID].length === 0)
+                delete outputForUser[rewardID];
+        }
+
+        res.set('output', JSON.stringify(outputForUser));
         helperModule.manipulate_response_and_send(res, true, 'party data sent', 200);
         return;
     })

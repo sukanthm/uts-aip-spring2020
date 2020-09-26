@@ -63,13 +63,13 @@ const New = () => {
                 <h2>Rewards</h2>
                 <div className="container row">
                     <div className="col-md-2">
-                        <RewardCard img="../images/food.png" category="Food" amount={rewardData}></RewardCard>
+                        <RewardCard img="../images/coffee.png" category="Coffee" amount={rewardData}></RewardCard>
                     </div>
                     <div className="col-md-2">
                         <RewardCard img="../images/candy.png" category="Candy" amount={rewardData}></RewardCard>
                     </div>
                     <div className="col-md-2">
-                        <RewardCard img="../images/lunch.png" category="Lunch" amount={rewardData}></RewardCard>
+                        <RewardCard img="../images/lunch.png" category="Meal" amount={rewardData}></RewardCard>
                     </div>
                     <div className="col-md-2">
                         <RewardCard img="../images/snacks.png" category="Snacks" amount={rewardData}></RewardCard>

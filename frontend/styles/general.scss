@@ -1,3 +1,11 @@
+.navbar-forward{
+    background-color: $primary !important;
+}
+
+.logo-forward{
+    height: 50px;
+}
+
 
 .personal-nav{
     display: flex;
@@ -73,6 +81,10 @@
 
 .task-image-upload>input{
     display: none;
+}
+
+.individual-reward-card{
+    margin: 5%;
 }
 
 .search-favour{

@@ -81,7 +81,6 @@ module.exports = function(app){
             newFavorID (int)
         TODO:
             test image upload
-            build rollback on error
         */
         let [successFlag, [email, loginToken, payeeEmail, payerEmail, rewardID]] = 
             helperModule.get_req_headers(req, ['email', 'loginToken', 'payeeEmail', 'payerEmail', 'rewardID'], res);
@@ -140,6 +139,11 @@ module.exports = function(app){
             helperModule.manipulate_response_and_send(res, true, 'new favor (id: '+newFavor.id+') created', 200);
             return;
         } catch (err){
+            fs.unlink(req.file.path, (err) => {
+                if (err) throw err;
+                console.log('successfully deleted image associated with failed db save @ '+req.file.path);
+            });
+            await newFavor.destroy();
             helperModule.manipulate_response_and_send(res, false, err, 500);
             return;
         }

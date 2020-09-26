@@ -76,15 +76,25 @@ module.exports = function(app){
         }
 
         rewards = JSON.parse(rewards);
+        let rewardsInstances = [];
         for (let reward in rewards){
             try {
-                await fpRequestReward.create({
+                let newfpRequestReward = await fpRequestReward.create({
                     rewardID: Number(reward),
                     rewardCount: rewards[reward],
                     sponsorID: creatorID,
                     requestID: newRequest.id,
-                })
+                });
+                rewardsInstances.push(newfpRequestReward);
             } catch (err) {
+                fs.unlink(req.file.path, (err) => {
+                    if (err) throw err;
+                    console.log('successfully deleted image associated with failed db save @ '+req.file.path);
+                });
+                await newRequest.destroy();
+                for (let i=0; i<rewardsInstances.length; i++){
+                    await rewardsInstances[i].destroy();
+                }
                 helperModule.manipulate_response_and_send(res, false, err, 500);
                 return;
             }
