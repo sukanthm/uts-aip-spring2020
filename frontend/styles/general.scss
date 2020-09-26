@@ -1,5 +1,6 @@
 .navbar-forward{
     background-color: $primary !important;
+    margin-bottom: 40px;
 }
 
 .logo-forward{
@@ -106,4 +107,13 @@
 
 .main{
     padding: 0px 100px;
+}
+
+.task-container{
+    margin-top: 10px;
+    padding: 20px;
+    border: 1px solid #b5b5b5;
+    -webkit-box-shadow: 0px 3px 4px 0px rgba(181,181,181,1);
+    -moz-box-shadow: 0px 3px 4px 0px rgba(181,181,181,1);
+    box-shadow: 0px 3px 4px 0px rgba(181,181,181,1);
 }
