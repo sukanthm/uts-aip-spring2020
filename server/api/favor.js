@@ -39,7 +39,7 @@ module.exports = function(app){
             return;
 
         let favors = await fpFavor.findAll({
-            attributes: ['id', 'status', 'rewardID', 'createdAt'],
+            attributes: ['id', 'status', 'rewardID', 'createdAt', 'paidAt'],
             where: {
                 [Op.or]:[
                     {payerID: user.id},
@@ -171,7 +171,7 @@ module.exports = function(app){
             return;
         
         let favor = await fpFavor.findOne({
-            attributes: ['id', 'status', 'rewardID', 'createdAt'],
+            attributes: ['id', 'status', 'rewardID', 'createdAt', 'paidAt'],
             where: {
                 id: favorID,
             }, 
@@ -268,6 +268,7 @@ module.exports = function(app){
             favor.proofPath = req.file.path;
         }
 
+        favor.paidAt = Date.now();
         favor.status = 'Paid';
         try{
             await favor.save();

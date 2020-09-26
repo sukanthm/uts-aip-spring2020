@@ -13,6 +13,9 @@ const fpRequest = sequelize.define('fp_request', {
         type: Sequelize.STRING,
         defaultValue: ''
     },
+    completedAt: {
+        type: Sequelize.DATE,
+    },
     proofImagePath: {                  //if we want to store image history. nah for now.
         type: Sequelize.STRING,   //const DataTypes = require('sequelize'); DataTypes.ARRAY(DataTypes.STRING);
         defaultValue: ''
