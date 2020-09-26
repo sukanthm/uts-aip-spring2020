@@ -39,7 +39,7 @@ module.exports = function(app){
             return;
 
         let favors = await fpFavor.findAll({
-            attributes: ['id', 'status', 'rewardID', 'createdAt', 'paidAt'],
+            attributes: ['id', 'status', 'rewardID', 'createdAt', 'paidAt', 'creationProofPath', 'completionProofPath'],
             where: {
                 [Op.or]:[
                     {payerID: user.id},
@@ -130,7 +130,7 @@ module.exports = function(app){
                 });
                 return;
             }
-            newFavor.proofPath = req.file.path;
+            newFavor.creationProofPath = req.file.path;
         }
 
         try{
@@ -171,7 +171,7 @@ module.exports = function(app){
             return;
         
         let favor = await fpFavor.findOne({
-            attributes: ['id', 'status', 'rewardID', 'createdAt', 'paidAt'],
+            attributes: ['id', 'status', 'rewardID', 'createdAt', 'paidAt', 'creationProofPath', 'completionProofPath'],
             where: {
                 id: favorID,
             }, 
@@ -265,7 +265,7 @@ module.exports = function(app){
                     console.log('successfully deleted old image @ '+req.file.path);
                 });
             }
-            favor.proofPath = req.file.path;
+            favor.completionProofPath = req.file.path;
         }
 
         favor.paidAt = Date.now();

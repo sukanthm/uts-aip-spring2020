@@ -63,7 +63,7 @@ module.exports = function(app){
                 });
                 return;
             }
-            newFavor.proofPath = req.file.path;
+            newFavor.taskImagePath = req.file.path;
         }
 
         try {
@@ -128,7 +128,7 @@ module.exports = function(app){
             requestStatus = [requestStatus];
         
         let allRequests = await fpRequest.findAll({
-            attributes: ['id', 'status', 'title', 'description', 'completedAt', 'createdAt', 'taskImagePath', 'proofImagePath'],
+            attributes: ['id', 'status', 'title', 'description', 'completedAt', 'createdAt', 'taskImagePath', 'completionProofPath'],
             where: {
                 status: {
                   [Op.or]: requestStatus,
@@ -156,5 +156,57 @@ module.exports = function(app){
         return;
     })
 
+    app.get('/request', async function(req, res){   
+        /*
+        gets a request
 
+        request headers:
+            loginToken (string)
+            email (string)
+            requestID (int)
+
+        response headers:
+            success (bool)
+            message (string)
+            output (string): json to string
+        */
+        let [successFlag, [loginToken, email, requestID]] = helperModule.get_req_headers(req, ['loginToken', 'email', 'requestID'], res);
+        if (!successFlag)
+            return;
+
+        let [validationSuccess, user] = await helperModule.validate_user_loginToken(email, loginToken, res);
+        if (!validationSuccess)
+            return;
+        
+        let oneRequest = await fpRequest.findOne({
+            attributes: ['id', 'status', 'title', 'description', 'completedAt', 'createdAt', 'taskImagePath', 'completionProofPath'],
+            where: {
+                id: requestID
+              },
+            include: [
+            {
+                model: fpUser,
+                as: 'creator_id',
+                attributes: [['email', 'creatorEmail']],
+            },{
+                model: fpUser,
+                as: 'completor_id',
+                attributes: [['email', 'completorEmail']],
+            },{
+                model: fpRequestReward,
+                as: 'request_id',
+                attributes: ['rewardID', 'rewardCount', 'sponsorID'], 
+/*                 include: [{ //fix
+                    model: fpUser,
+                    as: 'sponsor_id',
+                    attributes: [['email', 'sponsorEmail']],      
+                }], */
+            },
+        ]
+        });
+
+        res.set('output', JSON.stringify(oneRequest));
+        helperModule.manipulate_response_and_send(res, true, 'sent request as queried.', 200);
+        return;
+    })
 }
