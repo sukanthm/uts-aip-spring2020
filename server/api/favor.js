@@ -59,6 +59,15 @@ module.exports = function(app){
             ]
         });
 
+        favors = JSON.parse(JSON.stringify(favors));
+
+        for (let i=0; i<favors.length; i++){
+            favors[i]['payeeEmail'] = favors[i]['payee_id']['payeeEmail'];
+            delete favors[i]['payee_id'];
+            favors[i]['payerEmail'] = favors[i]['payer_id']['payerEmail'];
+            delete favors[i]['payer_id'];
+        }
+
         res.set('output', JSON.stringify(favors));
         helperModule.manipulate_response_and_send(res, true, 'sent all requested favors', 200);
         return;
@@ -196,6 +205,12 @@ module.exports = function(app){
             helperModule.manipulate_response_and_send(res, false, 'unAuthorised user', 403);
             return;    
         }
+
+        favor = JSON.parse(JSON.stringify(favor));
+        favor['payeeEmail'] = favor['payee_id']['payeeEmail'];
+        delete favor['payee_id'];
+        favor['payerEmail'] = favor['payer_id']['payerEmail'];
+        delete favor['payer_id'];
 
         res.set('output', JSON.stringify(favor));
         helperModule.manipulate_response_and_send(res, true, 'sent requested favor', 200);
