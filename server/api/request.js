@@ -108,7 +108,7 @@ module.exports = function(app){
 
     app.get('/requests', async function(req, res){   
         /*
-        gets all requests (no auth) - use for landing page
+        gets all requests (no auth) - use for front/landing page
 
         request headers:
             requestStatus (string): one of ['Open', 'Completed', 'All']
