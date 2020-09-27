@@ -19,7 +19,7 @@ fpRequestReward.belongsTo(fpRequest, {foreignKey: 'requestID', as: 'request_id'}
 fpRequestReward.belongsToMany(fpReward, {through: 'fpRequest', foreignKey: 'rewardID', as: 'reward_id'});
 
 fpUser.hasMany(fpRequestReward, {foreignKey: 'sponsorID', as: 'sponsor_id'});
-fpRequest.hasMany(fpRequestReward, {foreignKey: 'requestID', as: 'request_id'});
+fpRequest.hasMany(fpRequestReward, {foreignKey: 'requestID', as: 'request_id', onDelete: 'cascade'});
 fpReward.hasMany(fpRequestReward, {foreignKey: 'rewardID', as: 'reward_id'});
 
 export default fpRequestReward;

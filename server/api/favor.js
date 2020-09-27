@@ -39,7 +39,7 @@ module.exports = function(app){
             return;
 
         let favors = await fpFavor.findAll({
-            attributes: ['id', 'status', 'rewardID', 'createdAt', 'paidAt'],
+            attributes: ['id', 'status', 'rewardID', 'createdAt', 'paidAt', 'creationProofPath', 'completionProofPath', 'comment'],
             where: {
                 [Op.or]:[
                     {payerID: user.id},
@@ -59,6 +59,15 @@ module.exports = function(app){
             ]
         });
 
+        favors = JSON.parse(JSON.stringify(favors));
+
+        for (let i=0; i<favors.length; i++){
+            favors[i]['payeeEmail'] = favors[i]['payee_id']['payeeEmail'];
+            delete favors[i]['payee_id'];
+            favors[i]['payerEmail'] = favors[i]['payer_id']['payerEmail'];
+            delete favors[i]['payer_id'];
+        }
+
         res.set('output', JSON.stringify(favors));
         helperModule.manipulate_response_and_send(res, true, 'sent all requested favors', 200);
         return;
@@ -74,7 +83,7 @@ module.exports = function(app){
             payeeEmail (string)
             payerEmail (string)
             rewardID (int)
-            proofImage (form-data): optional. required iff email == payee. check https://github.com/expressjs/multer for frontend form
+        proofImage (form-data): optional. required iff email == payee. check https://github.com/expressjs/multer for frontend form
         response headers:
             success (bool)
             message (string)
@@ -113,8 +122,9 @@ module.exports = function(app){
 
         const newFavor = fpFavor.build({
             rewardID: rewardID,
-            payeeID: await payeeUser.id,
-            payerID: await payerUser.id,
+            payeeID: payeeUser.id,
+            payerID: payerUser.id,
+            comment: 'manually created by: '+user.email,
         });
 
         if (email === payeeEmail){
@@ -130,7 +140,7 @@ module.exports = function(app){
                 });
                 return;
             }
-            newFavor.proofPath = req.file.path;
+            newFavor.creationProofPath = req.file.path;
         }
 
         try{
@@ -171,7 +181,7 @@ module.exports = function(app){
             return;
         
         let favor = await fpFavor.findOne({
-            attributes: ['id', 'status', 'rewardID', 'createdAt', 'paidAt'],
+            attributes: ['id', 'status', 'rewardID', 'createdAt', 'paidAt', 'creationProofPath', 'completionProofPath', 'comment'],
             where: {
                 id: favorID,
             }, 
@@ -197,6 +207,12 @@ module.exports = function(app){
             return;    
         }
 
+        favor = JSON.parse(JSON.stringify(favor));
+        favor['payeeEmail'] = favor['payee_id']['payeeEmail'];
+        delete favor['payee_id'];
+        favor['payerEmail'] = favor['payer_id']['payerEmail'];
+        delete favor['payer_id'];
+
         res.set('output', JSON.stringify(favor));
         helperModule.manipulate_response_and_send(res, true, 'sent requested favor', 200);
         return;
@@ -210,7 +226,7 @@ module.exports = function(app){
             loginToken (string)
             email (string)
             favorID (int)
-            proofImage (form-data): optional. required iff email == payer. check https://github.com/expressjs/multer for frontend form
+        proofImage (form-data): optional. required iff email == payer. check https://github.com/expressjs/multer for frontend form
         response headers:
             success (bool)
             message (string)
@@ -241,7 +257,7 @@ module.exports = function(app){
             helperModule.manipulate_response_and_send(res, false, 'unAuthorised user, favor updator is neither payee nor payer', 403);
             return;
         }
-        if (await favor.status === 'Paid'){
+        if (favor.status === 'Paid'){
             helperModule.manipulate_response_and_send(res, false, 'favor already Paid. ignoring current request', 409);
             return;
         }
@@ -265,7 +281,7 @@ module.exports = function(app){
                     console.log('successfully deleted old image @ '+req.file.path);
                 });
             }
-            favor.proofPath = req.file.path;
+            favor.completionProofPath = req.file.path;
         }
 
         favor.paidAt = Date.now();
