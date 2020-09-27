@@ -168,7 +168,7 @@ module.exports = function(app){
             message (string)
             output (string): json to string
         TODO:
-            fix sponsorID to sponsorEmail
+            improve sponsor_id -> sponsorEmail transaltion
         */
         let [successFlag, [loginToken, email, requestID]] = helperModule.get_req_headers(req, ['loginToken', 'email', 'requestID'], res);
         if (!successFlag)
@@ -195,18 +195,41 @@ module.exports = function(app){
             },{
                 model: fpRequestReward,
                 as: 'request_id',
-                attributes: ['rewardID', 'rewardCount', 'sponsorID'], 
-/*                 include: [{ //fix sponsorID to sponsorEmail
-                    model: fpUser,
-                    as: 'sponsor_id',
-                    attributes: [['email', 'sponsorEmail']],      
-                }], */
+                attributes: ['rewardID', 'rewardCount', 'sponsorID'],
             },
         ]
         });
+
+        oneRequest = JSON.parse(JSON.stringify(oneRequest));
+        oneRequest['rewards'] = oneRequest['request_id'];
+        delete oneRequest['request_id'];
+        oneRequest['creatorEmail'] = oneRequest['creator_id']['creatorEmail'];
+        delete oneRequest['creator_id'];
+        if (oneRequest['completorEmail'] != null){
+            oneRequest['completorEmail'] = oneRequest['completor_id']['completorEmail'];
+            delete oneRequest['completor_id'];
+        }
+        else {
+            oneRequest['completorEmail'] = null;
+            delete oneRequest['completor_id'];
+        }
+
+        let sponsorMap = {}; //improve sponsor_id -> sponsorEmail transaltion
+        for (let i=0; i<oneRequest['rewards'].length; i++){
+            if(!(oneRequest['rewards'][i]['sponsorID'] in sponsorMap)){
+                let sponsor = await fpUser.findOne({
+                    where: {id: oneRequest['rewards'][i]['sponsorID']},
+                });
+                sponsorMap[sponsor.id] = sponsor.email;
+            } 
+            oneRequest['rewards'][i]['sponsorEmail'] = sponsorMap[oneRequest['rewards'][i]['sponsorID']];
+            delete oneRequest['rewards'][i]['sponsorID'];
+        }
 
         res.set('output', JSON.stringify(oneRequest));
         helperModule.manipulate_response_and_send(res, true, 'sent request as queried.', 200);
         return;
     })
+
+
 }

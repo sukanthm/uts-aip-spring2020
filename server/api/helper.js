@@ -41,7 +41,7 @@ function get_req_headers(req, headers, res){
             manipulate_response_and_send(res, false, 'mandatory request headers missing', 400);
             return [false, headers];
         }
-        output.push(header);
+        output.push(header.trim());
     }
     return [true, output];
 }
