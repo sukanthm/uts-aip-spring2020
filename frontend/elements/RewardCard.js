@@ -17,6 +17,7 @@ const RewardCard = (props) => {
     }
 
     useEffect(() => {
+        // useEffect was used here as the count variable was being updated in the HTML, but value could not be used in the JS
         props.amount(props.category, count);
     }, [count])
 

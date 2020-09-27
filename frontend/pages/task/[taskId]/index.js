@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
-import Header from '../../template-parts/Header';
-import IndividualRewardCard from '../../elements/IndividualRewardCard';
+import Header from '../../../template-parts/Header';
+import IndividualRewardCard from '../../../elements/IndividualRewardCard';
 
 const TaskId = () => {
     const router = useRouter();

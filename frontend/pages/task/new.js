@@ -87,7 +87,7 @@ const New = () => {
                 </div>
             </div> */}
 
-            <button className="btn btn-primary right" onClick={() => submitTask()}>Create Task</button>
+            <button className="btn btn-primary right" onClick={() => submitTask()}>Post Task</button>
         </div>
         </>
     )
