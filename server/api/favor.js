@@ -39,7 +39,7 @@ module.exports = function(app){
             return;
 
         let favors = await fpFavor.findAll({
-            attributes: ['id', 'status', 'rewardID', 'createdAt', 'paidAt', 'creationProofPath', 'completionProofPath'],
+            attributes: ['id', 'status', 'rewardID', 'createdAt', 'paidAt', 'creationProofPath', 'completionProofPath', 'comment'],
             where: {
                 [Op.or]:[
                     {payerID: user.id},
@@ -122,8 +122,9 @@ module.exports = function(app){
 
         const newFavor = fpFavor.build({
             rewardID: rewardID,
-            payeeID: await payeeUser.id,
-            payerID: await payerUser.id,
+            payeeID: payeeUser.id,
+            payerID: payerUser.id,
+            comment: 'manually created by: '+user.email,
         });
 
         if (email === payeeEmail){
@@ -180,7 +181,7 @@ module.exports = function(app){
             return;
         
         let favor = await fpFavor.findOne({
-            attributes: ['id', 'status', 'rewardID', 'createdAt', 'paidAt', 'creationProofPath', 'completionProofPath'],
+            attributes: ['id', 'status', 'rewardID', 'createdAt', 'paidAt', 'creationProofPath', 'completionProofPath', 'comment'],
             where: {
                 id: favorID,
             }, 
@@ -256,7 +257,7 @@ module.exports = function(app){
             helperModule.manipulate_response_and_send(res, false, 'unAuthorised user, favor updator is neither payee nor payer', 403);
             return;
         }
-        if (await favor.status === 'Paid'){
+        if (favor.status === 'Paid'){
             helperModule.manipulate_response_and_send(res, false, 'favor already Paid. ignoring current request', 409);
             return;
         }

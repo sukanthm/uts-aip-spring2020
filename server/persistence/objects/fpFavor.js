@@ -30,6 +30,10 @@ const fpFavor = sequelize.define('fp_favor', {
         type: Sequelize.STRING,   
         defaultValue: ''
     },
+    comment: {
+        type: Sequelize.STRING,   
+        defaultValue: ''
+    }
 });
 
 fpFavor.belongsTo(fpUser, {foreignKey: 'payerID', as: 'payer_id'});

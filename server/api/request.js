@@ -47,7 +47,7 @@ module.exports = function(app){
         if (!validationSuccess)
             return;
 
-        let creatorID = await user.id;
+        let creatorID = user.id;
         const newRequest = fpRequest.build({
             title: title,
             description: description,
@@ -63,13 +63,17 @@ module.exports = function(app){
                 });
                 return;
             }
-            newFavor.taskImagePath = req.file.path;
+            newRequest.taskImagePath = req.file.path;
         }
 
         try {
             await newRequest.save();
             res.set('newRequestID', newRequest.id);
         } catch (err){
+            fs.unlink(req.file.path, (err) => {
+                if (err) throw err;
+                console.log('successfully deleted image associated with failed db save @ '+req.file.path);
+            });
             helperModule.manipulate_response_and_send(res, false, err, 500);
             return;
         }
@@ -200,6 +204,11 @@ module.exports = function(app){
         ]
         });
 
+        if (oneRequest === null){
+            helperModule.manipulate_response_and_send(res, false, 'bad request id requested', 404);
+            return;    
+        }
+
         oneRequest = JSON.parse(JSON.stringify(oneRequest));
         oneRequest['rewards'] = oneRequest['request_id'];
         delete oneRequest['request_id'];
@@ -231,5 +240,124 @@ module.exports = function(app){
         return;
     })
 
+    app.put('/request', upload.single('proofImage'), async function(req, res){
+        /*
+        completes a request
+
+        request headers:
+            loginToken (string)
+            email (string)
+            requestID (int)
+            completorComment (string)
+        taskImage (form-data): check https://github.com/expressjs/multer for frontend form
+        response headers:
+            success (bool)
+            message (string)
+        TODO:
+            test image upload
+        */
+        let [successFlag, [email, loginToken, requestID, completorComment]] = 
+            helperModule.get_req_headers(req, ['email', 'loginToken', 'requestID', 'completorComment'], res);
+        if (!successFlag)
+            return;
+        
+        let [validationSuccess, user] = await helperModule.validate_user_loginToken(email, loginToken, res);
+        if (!validationSuccess)
+            return;
+
+        let oneRequest = await fpRequest.findOne({
+            attributes: ['id', 'status', 'title', 'description', 'completedAt', 'createdAt', 'taskImagePath', 'completionProofPath'],
+            where: {
+                id: requestID
+                },
+            include: [
+                {
+                    model: fpRequestReward,
+                    as: 'request_id',
+                    attributes: ['rewardID', 'rewardCount', 'sponsorID'],
+                },
+            ]
+        });
+
+        if (oneRequest === null){
+            helperModule.manipulate_response_and_send(res, false, 'bad request id requested', 404);
+            return;    
+        }
+        if (oneRequest.status === 'Completed'){
+            helperModule.manipulate_response_and_send(res, false, 'request already Completed. ignoring current request', 409);
+            return;
+        }
+        if (oneRequest.creatorID === user.id){
+            helperModule.manipulate_response_and_send(res, false, 'request cannot be Completed by creator. ignoring current request', 409);
+            return;
+        }
+        
+        if (![undefined, null, '', 'null'].includes(req.file)){
+            helperModule.manipulate_response_and_send(res, false, 'image proof missing, need proof to Complete a request', 400);
+            return;
+        } 
+        else {
+            if (!req.file.mimetype.startsWith('image')){
+                helperModule.manipulate_response_and_send(res, false, 'Not an image. please upload only an image file', 400);
+                fs.unlink(req.file.path, (err) => {
+                    if (err) throw err;
+                    console.log('successfully deleted bad upload @ '+req.file.path);
+                });
+                return;
+            }
+            oneRequest.completionProofPath = req.file.path;
+            oneRequest.completorID = user.id;
+            oneRequest.status = 'Completed';
+            oneRequest.completorComment = completorComment;
+        }
+
+        try {
+            await oneRequest.save();
+        } catch (err) {
+            fs.unlink(req.file.path, (err) => {
+                if (err) throw err;
+                console.log('successfully deleted image associated with failed db save @ '+req.file.path);
+            });
+            helperModule.manipulate_response_and_send(res, false, err, 500);
+            return;
+        }
+
+        let favorTrace = [];
+        let favors = oneRequest['request_id'];
+        for (let i=0; i<favors.length; i++){
+            for (let j=0; j<Number(favors[i]['rewardCount']); j++){
+                let favor = fpFavor.build({
+                    payeeID: user.id,
+                    payerID: favors[i]['sponsor_id'],
+                    rewardID: favors[i]['rewardID'],
+                    comment: 'automagically created for requestID: '+oneRequest.id+' completion',
+                });
+                favorTrace.push(favor);
+            }
+        }
+
+        for (let i=0; i<favorTrace.length; i++){
+            try {
+                favorTrace[i].save();
+            } catch (err) {
+                for (let j=0; j<=i; j++){
+                    favorTrace[j].destroy();
+                }
+                fs.unlink(req.file.path, (err) => {
+                    if (err) throw err;
+                    console.log('successfully deleted image associated with failed db save @ '+req.file.path);
+                });
+                oneRequest.completionProofPath = '';
+                oneRequest.completorID = null;
+                oneRequest.status = 'Open';
+                oneRequest.completorComment = '';
+                oneRequest.save();
+                helperModule.manipulate_response_and_send(res, false, err, 500);
+                return;
+            }
+        }
+        helperModule.manipulate_response_and_send(res, true, 'requestID: '+requestID+' Completed, favors added.', 200);
+        return;
+    })
 
 }

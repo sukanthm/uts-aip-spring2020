@@ -11,14 +11,18 @@ const fpRequest = sequelize.define('fp_request', {
     description: Sequelize.TEXT,
     taskImagePath: {
         type: Sequelize.STRING,
-        defaultValue: ''
+        defaultValue: '',
     },
     completedAt: {
         type: Sequelize.DATE,
     },
     completionProofPath: {        
         type: Sequelize.STRING,   
-        defaultValue: ''
+        defaultValue: '',
+    },
+    completorComment:{
+        type: Sequelize.STRING,   
+        defaultValue: '',
     },
     status: {
         type: Sequelize.ENUM,
