@@ -104,7 +104,7 @@ module.exports = function(app){
 
     app.get('/requests', async function(req, res){   
         /*
-        gets all request (no auth)
+        gets all requests (no auth) - use for landing page
 
         request headers:
             requestStatus (string): one of ['Open', 'Completed', 'All']
@@ -113,8 +113,6 @@ module.exports = function(app){
             success (bool)
             message (string)
             output (string): json to string
-        TODO:
-            change output name of request_id
         */
         let [successFlag, [requestStatus]] = helperModule.get_req_headers(req, ['requestStatus'], res);
         if (!successFlag)
@@ -138,22 +136,20 @@ module.exports = function(app){
               },
             include: [
             {
-                model: fpUser,
-                as: 'creator_id',
-                attributes: [['email', 'creatorEmail']],
-            },{
-                model: fpUser,
-                as: 'completor_id',
-                attributes: [['email', 'completorEmail']],
-            },{
                 model: fpRequestReward,
-                as: 'request_id', //change output name
+                as: 'request_id',
                 attributes: ['rewardID', 'rewardCount'],
             },
         ]
         });
 
-        res.set('output', JSON.stringify(allRequests));
+        let outputAllRequests = JSON.parse(JSON.stringify(allRequests));
+        for (let i=0; i<allRequests.length; i++){
+            outputAllRequests[i]['rewards'] = outputAllRequests[i]['request_id'];
+            delete outputAllRequests[i]['request_id'];
+        }
+
+        res.set('output', JSON.stringify(outputAllRequests));
         helperModule.manipulate_response_and_send(res, true, 'sent requests as queried.', 200);
         return;
     })
