@@ -11,11 +11,18 @@ const fpRequest = sequelize.define('fp_request', {
     description: Sequelize.TEXT,
     taskImagePath: {
         type: Sequelize.STRING,
-        defaultValue: ''
+        defaultValue: '',
     },
-    proofImagePath: {                  //if we want to store image history. nah for now.
-        type: Sequelize.STRING,   //const DataTypes = require('sequelize'); DataTypes.ARRAY(DataTypes.STRING);
-        defaultValue: ''
+    completedAt: {
+        type: Sequelize.DATE,
+    },
+    completionProofPath: {        
+        type: Sequelize.STRING,   
+        defaultValue: '',
+    },
+    completorComment:{
+        type: Sequelize.STRING,   
+        defaultValue: '',
     },
     status: {
         type: Sequelize.ENUM,
