@@ -266,7 +266,6 @@ module.exports = function(app){
             return;
 
         let oneRequest = await fpRequest.findOne({
-            attributes: ['id', 'status', 'title', 'description', 'completedAt', 'createdAt', 'taskImagePath', 'completionProofPath'],
             where: {
                 id: requestID
                 },
@@ -358,6 +357,104 @@ module.exports = function(app){
         }
         helperModule.manipulate_response_and_send(res, true, 'requestID: '+requestID+' Completed, favors added.', 200);
         return;
+    })
+
+    app.put('/request/sponsor', upload.single('proofImage'), async function(req, res){
+        /*
+        changes a request's sponsor's rewards
+
+        request headers:
+            loginToken (string)
+            email (string)
+            requestID (int)
+            rewardChanges (JSON): {rewardID: rewardCountChange, ...}
+        response headers:
+            success (bool)
+            message (string)
+        */
+        let [successFlag, [email, loginToken, requestID, rewardChanges]] = 
+        helperModule.get_req_headers(req, ['email', 'loginToken', 'requestID', 'rewardChanges'], res);
+        if (!successFlag)
+            return;
+   
+        let [validationSuccess, user] = await helperModule.validate_user_loginToken(email, loginToken, res);
+            if (!validationSuccess)
+            return;
+
+        let oneRequest = await fpRequest.findOne({
+            where: {
+                id: requestID
+                },
+            include: [
+                {
+                    model: fpRequestReward,
+                    as: 'request_id',
+                    attributes: ['rewardID', 'rewardCount', 'sponsorID'],
+                },
+            ]
+        });
+
+        if (oneRequest === null){
+            helperModule.manipulate_response_and_send(res, false, 'bad request id requested', 404);
+            return;    
+        }
+        if (oneRequest.status === 'Completed'){
+            helperModule.manipulate_response_and_send(res, false, 'request already Completed. ignoring current request', 409);
+            return;
+        }
+
+        let requestRewards = JSON.parse(JSON.stringify(oneRequest))['request_id'];
+        rewardChanges = JSON.parse(rewardChanges);
+
+        for (let rewardChange in rewardChanges){
+            rewardChange = Number(rewardChange);
+            let foundFlag = false;
+            for (let i=0; i<requestRewards.length; i++){
+                if (user.id == requestRewards[i]['sponsorID'] && rewardChange == requestRewards[i]['rewardID']){
+                    requestRewards[i]['rewardCount'] += Number(rewardChanges[rewardChange]);
+                    let x = await fpRequestReward.findOne({
+                        where: {
+                            requestID: oneRequest.id,
+                            sponsorID: requestRewards[i]['sponsorID'],
+                            rewardID: rewardChange,
+                        }
+                    });
+                    x.rewardCount += Number(rewardChanges[rewardChange]);
+                    if (requestRewards[i]['rewardCount'] <= 0){
+                        requestRewards.splice(i,1);
+                        await x.destroy();
+                    } else await x.save();
+                    foundFlag = true;
+                    break;
+                }
+            }
+            if (!foundFlag){
+                if (rewardChanges[rewardChange] > 0){
+                    requestRewards.push(
+                        {
+                            rewardCount: rewardChanges[rewardChange],
+                            rewardID: rewardChange,
+                            sponsorID: user.id,
+                        }
+                    );
+                    await fpRequestReward.create({
+                            rewardCount: rewardChanges[rewardChange],
+                            rewardID: rewardChange,
+                            sponsorID: user.id,
+                            requestID: oneRequest.id,                         
+                    });
+                }
+            }
+        }
+
+        if (requestRewards.length === 0){
+            oneRequest.destroy();
+            helperModule.manipulate_response_and_send(res, true, 'requestID: '+oneRequest.id+' has no rewards left, deleting request.', 200);
+            return;
+        } else {
+            helperModule.manipulate_response_and_send(res, true, 'requestID: '+oneRequest.id+' rewards updated.', 200);
+            return;
+        }
     })
 
 }
