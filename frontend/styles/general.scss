@@ -3,10 +3,23 @@
     margin-bottom: 40px;
 }
 
+.forward-page-header{
+    color: $primary;
+}
+
+.btn-forward-main{
+    padding: 20px 30px;
+    margin: 50px 0px;
+}
+
 .logo-forward{
     height: 50px;
 }
 
+.forward-cust-title{
+    color: $primary;
+    font-weight: bold;
+}
 
 .personal-nav{
     display: flex;
@@ -82,6 +95,23 @@
 
 .reward-num-btn{
     font-weight: bold;
+}
+
+.task-image-upload{
+    background: $green;
+    color: white;   
+    cursor: pointer;
+    padding: 8px;
+    width: 70%;
+    margin-top: 10px;
+}
+
+.task-image-upload label{
+    margin-bottom: 0px;
+}
+
+.task-image-upload:hover{
+    background: $teal;
 }
 
 .task-image-upload>input{
