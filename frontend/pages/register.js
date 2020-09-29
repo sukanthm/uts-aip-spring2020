@@ -76,10 +76,22 @@ const Register = () => {
         }
     }
 
-    function submitForm(){
+    const submitForm = async () => {
         console.log(fullName);
         console.log(email);
         console.log(password);
+
+        let userData = {
+            email: email,
+            password: password,
+            name: fullName
+        }
+        let result = await fetch("http://35.213.254.162:80/signup", {method: "POST", headers: userData});
+        // let json = await result.json();
+        // this.use_response(responseJson, response.headers);
+        console.log(result.headers);
+        let headers = result.headers.entries();
+        console.log("kya?", headers["message"]);
     }
 
     return(
