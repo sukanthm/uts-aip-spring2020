@@ -3,15 +3,12 @@ const bcrypt = require('bcrypt');
 
 const saltRounds = 10;
 
-function manipulate_response_and_send(res, successFlag, message, httpCode, redirectUrl=false){
-    console.log(message);
-    res.set('success', successFlag);
-    res.set('message', message);
+function manipulate_response_and_send(res, resBodyObject, httpCode){
+    console.log(resBodyObject);
+    res.set('success', resBodyObject['success']);
+    res.set('message', resBodyObject['message']);
     res.status(httpCode);
-    if (redirectUrl != false)
-        res.redirect(redirectUrl);
-    else
-        res.send();
+    res.send(resBodyObject);
     return;
 }
 
@@ -38,7 +35,10 @@ function get_req_headers(req, headers, res){
     for (let i = 0, len = headers.length; i < len; i++) {
         header = req.header(headers[i]);
         if ([undefined, null, '', 'null'].includes(header)){
-            manipulate_response_and_send(res, false, 'mandatory request headers missing', 400);
+            manipulate_response_and_send(res, {
+                'success': false, 
+                'message': 'mandatory request headers missing',
+                }, 400);
             return [false, headers];
         }
         output.push(header.trim());
@@ -51,11 +51,17 @@ async function validate_user_loginToken(email, loginToken, res){
         where: {email: email},
     });
     if (user === null){
-        manipulate_response_and_send(res, false, 'unRegistered user', 404);
+        manipulate_response_and_send(res, {
+            'success': false, 
+            'message': 'unRegistered user',
+            }, 404);
         return [false, undefined];
     }
     if (! await is_secret_valid(await user.id, loginToken)){
-        manipulate_response_and_send(res, false, 'unAuthenticated user', 401);
+        manipulate_response_and_send(res, {
+            'success': false, 
+            'message': 'unAuthenticated user',
+            }, 401);
         return [false, undefined];
     }
     return [true, user];

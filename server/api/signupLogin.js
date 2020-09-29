@@ -17,6 +17,9 @@ module.exports = function(app){
         response headers:
             success (bool)
             message (string)
+        response body:
+            success (bool)
+            message (string)
         */
         let [successFlag, [email, password, name]] = helperModule.get_req_headers(req, ['email', 'password', 'name'], res);
         if (!successFlag)
@@ -31,11 +34,17 @@ module.exports = function(app){
             newUser.name = name;
             await newUser.save();
 
-            helperModule.manipulate_response_and_send(res, true, 'user '+email+' created', 200);
+            helperModule.manipulate_response_and_send(res, {
+                'success': true, 
+                'message': 'user '+email+' created',
+                }, 200);
             return;
         }
 
-        helperModule.manipulate_response_and_send(res, false, email+' already exists', 409);
+        helperModule.manipulate_response_and_send(res, {
+            'success': false, 
+            'message': email+' already exists',
+            }, 409);
         return;
     });
 
@@ -47,7 +56,12 @@ module.exports = function(app){
         response headers:
             success (bool)
             message (string)
-            cookie {aip_fp}: sets login token
+        cookie {aip_fp}: sets login token
+        response body:
+            success (bool)
+            message (string)
+            email (string): user email
+            loginToken (string): login token for above email
         */
         let [successFlag, [email, password]] = helperModule.get_req_headers(req, ['email', 'password'], res);
         if (!successFlag)
@@ -58,13 +72,19 @@ module.exports = function(app){
         });
 
         if (user === null) {
-            helperModule.manipulate_response_and_send(res, false, email+' not registered', 406);
+            helperModule.manipulate_response_and_send(res, {
+                'success': false, 
+                'message': email+' not registered',
+                }, 404);
             return;
         }
 
         const isPasswordValid = await helperModule.is_secret_valid(password, user.password);
         if (!isPasswordValid) {
-            helperModule.manipulate_response_and_send(res, false, 'incorrect email password combo', 401);
+            helperModule.manipulate_response_and_send(res, {
+                'success': false, 
+                'message': 'incorrect email password combo',
+                }, 401);
             return;
         }
 
@@ -73,7 +93,12 @@ module.exports = function(app){
             loginToken: loginToken,
             email: email }), 
           {maxAge: 3600});
-        helperModule.manipulate_response_and_send(res, true, 'login token generated and cookie set for '+email, 200);
+        helperModule.manipulate_response_and_send(res, {
+            'success': true, 
+            'message': 'login token generated and cookie set for '+email,
+            'email': email,
+            'loginToken': loginToken,
+            }, 200);
         return;
     });
  
