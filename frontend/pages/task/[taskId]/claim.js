@@ -1,4 +1,5 @@
 import {useState} from 'react';
+import { useRouter } from 'next/router'
 import Header from "../../../template-parts/Header"
 
 const Claim = () => {
@@ -14,7 +15,8 @@ const Claim = () => {
         console.log(imgFile);
         console.log(taskComment);
     }
-    
+    const router = useRouter();
+    const { taskId } = router.query;
 
     return(
         <>

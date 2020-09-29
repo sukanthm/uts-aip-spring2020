@@ -4,7 +4,7 @@ import RewardCard from '../../elements/RewardCard';
 
 const New = () => {
 
-    const [imgFile, setImgFile] = useState("../../images/outbox.png");
+    const [imgFile, setImgFile] = useState("../../images/upload-img.png");
     const [taskTitle, setTaskTitle] = useState();
     const [taskDesc, setTaskDesc] = useState();
 
@@ -30,38 +30,40 @@ const New = () => {
         <>
         <Header></Header>
         <div className="task-new-class">
-            <div className="container-fluid">
+            <div className="container">
+                <h3 className="forward-page-header">Create New Task</h3>
+                <hr/>
                 <div className="row">
-                    <div className="col-md-2 task-image-holder">
+                    <div className="col-md-3 task-image-holder">
                         
                         
                         <img src={imgFile} alt="Upload Image" className="task-image container"></img>
                         
                         
 
-                        <div className="task-image-upload container-fluid center">
+                        <div className="task-image-upload container center">
                             <label htmlFor="task-image-edit">
-                                <h6>Edit Image</h6>
+                                Add / Edit Image
                             </label>
                             <input type="file" onChange={(e) => uploadImage(e.target.files[0])} id="task-image-edit"></input>
                         </div>
 
                     </div>
-                    <div className="col-md-10">
-                        <div className="form-group">
+                    <div className="col-md-9">
+                        <div className="form-group forward-cust-title">
                             <label htmlFor="task-title">Task Title</label>
                             <input type="text" className="form-control" id="task-title" placeholder="Task Title" value={taskTitle} onChange={(e) => setTaskTitle(e.target.value)}/>
                         </div>
-                        <div className="form-group">
+                        <div className="form-group forward-cust-title">
                             <label htmlFor="task-desc">Task Description</label>
-                            <textarea className="form-control" id="task-desc" placeholder="Task Description" value={taskDesc} onChange={(e) => setTaskDesc(e.target.value)}/>
+                            <textarea className="form-control" id="task-desc" placeholder="Task Description" rows="5" value={taskDesc} onChange={(e) => setTaskDesc(e.target.value)}/>
                         </div>
                     </div>
                 </div>
             </div>
-            <div className="container-fluid">
+            <div className="container">
                 <h2>Rewards</h2>
-                <div className="container row">
+                <div className="row">
                     <div className="col-md-2">
                         <RewardCard img="../images/coffee.png" category="Coffee" amount={rewardData}></RewardCard>
                     </div>
@@ -79,6 +81,14 @@ const New = () => {
                     </div>
                     
                 </div>
+
+                <hr/>
+
+                <div className="row">
+                    <div className="col-md-12">
+                        <button className="btn btn-primary btn-lg btn-forward-main right" onClick={() => submitTask()}>Create Task</button>
+                    </div>
+                </div>
             </div>
             {/* <div className="container-fluid">
                 <div className="col-md-6 offset-md-3">
@@ -87,7 +97,6 @@ const New = () => {
                 </div>
             </div> */}
 
-            <button className="btn btn-primary right" onClick={() => submitTask()}>Post Task</button>
         </div>
         </>
     )

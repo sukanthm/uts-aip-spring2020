@@ -3,10 +3,23 @@
     margin-bottom: 40px;
 }
 
+.forward-page-header{
+    color: $primary;
+}
+
+.btn-forward-main{
+    padding: 20px 30px;
+    margin: 50px 0px;
+}
+
 .logo-forward{
     height: 50px;
 }
 
+.forward-cust-title{
+    color: $primary;
+    font-weight: bold;
+}
 
 .personal-nav{
     display: flex;
@@ -34,6 +47,10 @@
 
 .task-des{
     flex-grow: 2;
+}
+
+.task-des b{
+    color: $primary;
 }
 
 .task-rew{
@@ -80,6 +97,23 @@
     font-weight: bold;
 }
 
+.task-image-upload{
+    background: $green;
+    color: white;   
+    cursor: pointer;
+    padding: 8px;
+    width: 70%;
+    margin-top: 10px;
+}
+
+.task-image-upload label{
+    margin-bottom: 0px;
+}
+
+.task-image-upload:hover{
+    background: $teal;
+}
+
 .task-image-upload>input{
     display: none;
 }
@@ -116,4 +150,10 @@
     -webkit-box-shadow: 0px 3px 4px 0px rgba(181,181,181,1);
     -moz-box-shadow: 0px 3px 4px 0px rgba(181,181,181,1);
     box-shadow: 0px 3px 4px 0px rgba(181,181,181,1);
+    cursor: pointer;
+    transition: transform 0.2s;
 }
+
+.task-container:hover {
+    transform: scale(1.03); /* animation effect on hover */
+  }
