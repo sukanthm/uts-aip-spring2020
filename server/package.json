@@ -9,7 +9,8 @@
     "createdb": "createdb -h localhost forward_pay",
     "builddb": "node -r esm ./persistence/buildDatabase.js",
     "start": "nodemon -r esm index.js",
-    "stoppostgres": "pkill postgres"
+    "stoppostgres": "pkill postgres",
+    "prod": "pm2 start index.js --node-args='-r esm'"
   },
   "dependencies": {
     "bcrypt": "^5.0.0",
