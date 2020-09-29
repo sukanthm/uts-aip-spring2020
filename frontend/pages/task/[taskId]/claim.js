@@ -14,7 +14,7 @@ const Claim = () => {
         console.log(imgFile);
         console.log(taskComment);
     }
-    
+    const { taskId } = router.query
 
     return(
         <>
