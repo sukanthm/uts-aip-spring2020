@@ -161,7 +161,10 @@ module.exports = function(app){
         response headers:
             success (bool)
             message (string)
-            output (string): json to string
+        response body:
+            success (bool)
+            message (string)
+            output (json)
         */
        let [successFlag, [email, loginToken]] = helperModule.get_req_headers(req, ['email', 'loginToken'], res);
        if (!successFlag)
@@ -185,8 +188,11 @@ module.exports = function(app){
                 delete outputForUser[rewardID];
         }
 
-        res.set('output', JSON.stringify(outputForUser));
-        helperModule.manipulate_response_and_send(res, true, 'party data sent', 200);
+        helperModule.manipulate_response_and_send(res, {
+            'success': true, 
+            'message': 'party data sent', 
+            'output': outputForUser,
+            }, 200);
         return;
     })
     

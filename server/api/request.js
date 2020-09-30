@@ -34,6 +34,9 @@ module.exports = function(app){
         response headers:
             success (bool)
             message (string)
+        response body:
+            success (bool)
+            message (string)
             newRequestID (int)
         TODO:
             test image upload
@@ -56,7 +59,10 @@ module.exports = function(app){
         
         if (![undefined, null, '', 'null'].includes(req.file)){
             if (!req.file.mimetype.startsWith('image')){
-                helperModule.manipulate_response_and_send(res, false, 'Not an image. please upload only an image file', 400);
+                helperModule.manipulate_response_and_send(res, {
+                    'success': false, 
+                    'message': 'Not an image. please upload only an image file', 
+                    }, 400);
                 fs.unlink(req.file.path, (err) => {
                     if (err) throw err;
                     console.log('successfully deleted bad upload @ '+req.file.path);
@@ -74,7 +80,10 @@ module.exports = function(app){
                 if (err) throw err;
                 console.log('successfully deleted image associated with failed db save @ '+req.file.path);
             });
-            helperModule.manipulate_response_and_send(res, false, err, 500);
+            helperModule.manipulate_response_and_send(res, {
+                'success': false, 
+                'message': err,
+                }, 500);
             return;
         }
 
@@ -98,11 +107,18 @@ module.exports = function(app){
                 for (let i=0; i<rewardsInstances.length; i++){
                     await rewardsInstances[i].destroy();
                 }
-                helperModule.manipulate_response_and_send(res, false, err, 500);
+                helperModule.manipulate_response_and_send(res, {
+                    'success': false, 
+                    'message': err,
+                    }, 500);
                 return;
             }
         }
-        helperModule.manipulate_response_and_send(res, true, 'new Request (id: '+newRequest.id+') and corresponding rewards created', 200);
+        helperModule.manipulate_response_and_send(res, {
+            'success': true, 
+            'message': 'new Request (id: '+newRequest.id+') and corresponding rewards created',
+            'newRequestID': newRequest.id,
+            }, 200);
         return;
     })
 
@@ -112,18 +128,25 @@ module.exports = function(app){
 
         request headers:
             requestStatus (string): one of ['Open', 'Completed', 'All']
-
         response headers:
             success (bool)
             message (string)
-            output (string): json to string
+        response body:
+            success (bool)
+            message (string)
+            output (array of json)
+        TODO:
+            pagination
         */
         let [successFlag, [requestStatus]] = helperModule.get_req_headers(req, ['requestStatus'], res);
         if (!successFlag)
             return;
         
         if (!['Open', 'Completed', 'All'].includes(requestStatus)){
-            helperModule.manipulate_response_and_send(res, false, 'bad requestStatus header value sent', 406);
+            helperModule.manipulate_response_and_send(res, {
+                'success': false, 
+                'message': 'bad requestStatus header value sent', 
+                }, 406);
             return;
         }
         if (requestStatus === 'All')
@@ -153,12 +176,15 @@ module.exports = function(app){
             delete outputAllRequests[i]['request_id'];
         }
 
-        res.set('output', JSON.stringify(outputAllRequests));
-        helperModule.manipulate_response_and_send(res, true, 'sent requests as queried.', 200);
+        helperModule.manipulate_response_and_send(res, {
+            'success': true, 
+            'message': 'sent requests as queried',
+            'output': outputAllRequests,
+            }, 200);
         return;
     })
 
-    app.get('/request', async function(req, res){   
+    app.get('/request', async function(req, res){
         /*
         gets a request
 
@@ -166,11 +192,13 @@ module.exports = function(app){
             loginToken (string)
             email (string)
             requestID (int)
-
         response headers:
             success (bool)
             message (string)
-            output (string): json to string
+        response body:
+            success (bool)
+            message (string)
+            output (json)
         TODO:
             improve sponsor_id -> sponsorEmail transaltion
         */
@@ -205,7 +233,10 @@ module.exports = function(app){
         });
 
         if (oneRequest === null){
-            helperModule.manipulate_response_and_send(res, false, 'bad request id requested', 404);
+            helperModule.manipulate_response_and_send(res, {
+                'success': false, 
+                'message': 'bad request id requested', 
+                }, 404);
             return;    
         }
 
@@ -235,8 +266,11 @@ module.exports = function(app){
             delete oneRequest['rewards'][i]['sponsorID'];
         }
 
-        res.set('output', JSON.stringify(oneRequest));
-        helperModule.manipulate_response_and_send(res, true, 'sent request as queried.', 200);
+        helperModule.manipulate_response_and_send(res, {
+            'success': true, 
+            'message': 'sent request as queried', 
+            'output': oneRequest,
+            }, 200);
         return;
     })
 
@@ -253,6 +287,10 @@ module.exports = function(app){
         response headers:
             success (bool)
             message (string)
+        response body:
+            success (bool)
+            message (string)
+            completedrequestID (int)
         TODO:
             test image upload
         */
@@ -279,25 +317,40 @@ module.exports = function(app){
         });
 
         if (oneRequest === null){
-            helperModule.manipulate_response_and_send(res, false, 'bad request id requested', 404);
+            helperModule.manipulate_response_and_send(res, {
+                'success': false, 
+                'message': 'bad request id requested', 
+                }, 404);
             return;    
         }
         if (oneRequest.status === 'Completed'){
-            helperModule.manipulate_response_and_send(res, false, 'request already Completed. ignoring current request', 409);
+            helperModule.manipulate_response_and_send(res, {
+                'success': false, 
+                'message': 'request already Completed. ignoring current request',
+                }, 409);
             return;
         }
         if (oneRequest.creatorID === user.id){
-            helperModule.manipulate_response_and_send(res, false, 'request cannot be Completed by creator. ignoring current request', 409);
+            helperModule.manipulate_response_and_send(res, {
+                'success': false, 
+                'message': 'request cannot be Completed by creator. ignoring current request',
+                }, 409);
             return;
         }
         
         if (![undefined, null, '', 'null'].includes(req.file)){
-            helperModule.manipulate_response_and_send(res, false, 'image proof missing, need proof to Complete a request', 400);
+            helperModule.manipulate_response_and_send(res, {
+                'success': false, 
+                'message': 'image proof missing, need proof to Complete a request',
+                }, 400);
             return;
         } 
         else {
             if (!req.file.mimetype.startsWith('image')){
-                helperModule.manipulate_response_and_send(res, false, 'Not an image. please upload only an image file', 400);
+                helperModule.manipulate_response_and_send(res, {
+                    'success': false, 
+                    'message': 'Not an image. please upload only an image file',
+                    }, 400);
                 fs.unlink(req.file.path, (err) => {
                     if (err) throw err;
                     console.log('successfully deleted bad upload @ '+req.file.path);
@@ -317,7 +370,10 @@ module.exports = function(app){
                 if (err) throw err;
                 console.log('successfully deleted image associated with failed db save @ '+req.file.path);
             });
-            helperModule.manipulate_response_and_send(res, false, err, 500);
+            helperModule.manipulate_response_and_send(res, {
+                'success': false, 
+                'message': err,
+                }, 500);
             return;
         }
 
@@ -351,11 +407,18 @@ module.exports = function(app){
                 oneRequest.status = 'Open';
                 oneRequest.completorComment = '';
                 oneRequest.save();
-                helperModule.manipulate_response_and_send(res, false, err, 500);
+                helperModule.manipulate_response_and_send(res, {
+                    'success': false, 
+                    'message': err,
+                    }, 500);
                 return;
             }
         }
-        helperModule.manipulate_response_and_send(res, true, 'requestID: '+requestID+' Completed, favors added.', 200);
+        helperModule.manipulate_response_and_send(res, {
+            'success': true, 
+            'message': 'requestID: '+requestID+' Completed, favors added to you',
+            'completedrequestID': requestID,
+            }, 200);
         return;
     })
 
@@ -371,6 +434,10 @@ module.exports = function(app){
         response headers:
             success (bool)
             message (string)
+        response body:
+            success (bool)
+            message (string)
+            updatedRequestID/deletedRequestID (int)
         */
         let [successFlag, [email, loginToken, requestID, rewardChanges]] = 
         helperModule.get_req_headers(req, ['email', 'loginToken', 'requestID', 'rewardChanges'], res);
@@ -395,11 +462,17 @@ module.exports = function(app){
         });
 
         if (oneRequest === null){
-            helperModule.manipulate_response_and_send(res, false, 'bad request id requested', 404);
+            helperModule.manipulate_response_and_send(res, {
+                'success': false, 
+                'message': 'bad request id requested', 
+                }, 404);
             return;    
         }
         if (oneRequest.status === 'Completed'){
-            helperModule.manipulate_response_and_send(res, false, 'request already Completed. ignoring current request', 409);
+            helperModule.manipulate_response_and_send(res, {
+                'success': false, 
+                'message': 'request already Completed. ignoring current request', 
+                }, 409);
             return;
         }
 
@@ -449,10 +522,18 @@ module.exports = function(app){
 
         if (requestRewards.length === 0){
             oneRequest.destroy();
-            helperModule.manipulate_response_and_send(res, true, 'requestID: '+oneRequest.id+' has no rewards left, deleting request.', 200);
+            helperModule.manipulate_response_and_send(res, {
+                'success': true, 
+                'message': 'requestID: '+oneRequest.id+' has no rewards left, deleting request',
+                'deletedRequestID': oneRequest.id,
+                }, 200);
             return;
         } else {
-            helperModule.manipulate_response_and_send(res, true, 'requestID: '+oneRequest.id+' rewards updated.', 200);
+            helperModule.manipulate_response_and_send(res, {
+                'success': true, 
+                'message': 'requestID: '+oneRequest.id+' rewards updated',
+                'updatedRequestID': oneRequest.id,
+                }, 200);
             return;
         }
     })
