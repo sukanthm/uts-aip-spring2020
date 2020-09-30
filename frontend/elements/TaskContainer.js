@@ -1,3 +1,5 @@
+import RewardsContainer from './RewardsContainer';
+
 const TaskContainer = (props) => {
     console.log(props.taskVals);
     console.log(props.taskVals.rewardsData);
@@ -26,9 +28,8 @@ const TaskContainer = (props) => {
                 </div>
                 <div className="col-sm-2">
                     <p>Rewards</p>
-                    <div className="rewards-container">
-                        {rewardCaller}
-                    </div>
+                    <RewardsContainer rewardNames={rewardNames} rewardsData={props.taskVals.rewardsData} />
+                    
                 </div>
             </div>
 
