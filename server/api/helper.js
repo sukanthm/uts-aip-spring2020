@@ -30,18 +30,21 @@ async function is_secret_valid(plaintext, hashed){
     });
 }
 
-function get_req_headers(req, headers, res){
+function get_req_headers(req, headers, res, allOptional=false){
     let header, output = [];
     for (let i = 0, len = headers.length; i < len; i++) {
         header = req.header(headers[i]);
-        if ([undefined, null, '', 'null'].includes(header)){
-            manipulate_response_and_send(res, {
-                'success': false, 
-                'message': 'mandatory request headers missing',
-                }, 400);
-            return [false, headers];
+        if (!allOptional){
+            if ([undefined, null, '', 'null'].includes(header)){
+                manipulate_response_and_send(res, {
+                    'success': false, 
+                    'message': 'mandatory request headers missing',
+                    }, 400);
+                return [false, headers];
+            }
         }
-        output.push(header.trim());
+        if (header === undefined) output.push(header);
+        else output.push(header.trim());
     }
     return [true, output];
 }
