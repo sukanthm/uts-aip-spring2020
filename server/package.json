@@ -8,9 +8,9 @@
     "postgres": "postgres -D ../pgdb/ -k '' >db.log 2>&1 &",
     "createdb": "createdb -h localhost forward_pay",
     "builddb": "node -r esm ./persistence/buildDatabase.js",
-    "start": "nodemon -r esm index.js",
+    "start": "nodemon -r esm index.js 4000",
     "stoppostgres": "pkill postgres",
-    "prod": "pm2 start index.js --node-args='-r esm'"
+    "prod": "pm2 start index.js --node-args='80 -r esm'"
   },
   "dependencies": {
     "bcrypt": "^5.0.0",
