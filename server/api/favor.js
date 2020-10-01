@@ -25,6 +25,8 @@ module.exports = function(app){
         request headers:
             loginToken (string)
             email (string)
+            currentPage (int): optional. pagination page, default = 0
+            itemsPerPage (int): optional. pagination items per page, default = 5
         response headers:
             success (bool)
             message (string)
@@ -32,19 +34,24 @@ module.exports = function(app){
             success (bool)
             message (string)
             output (array of json)
-        TODO:
-            pagination
         */
-        let [successFlag, [email, loginToken]] = helperModule.get_req_headers(req, ['email', 'loginToken'], res);
-        if (!successFlag)
+        let [successFlag1, [email, loginToken]] = helperModule.get_req_headers(req, ['email', 'loginToken'], res);
+        if (!successFlag1)
             return;
 
         let [validationSuccess, user] = await helperModule.validate_user_loginToken(email, loginToken, res);
         if (!validationSuccess)
             return;
+        
+        let [successFlag2, [currentPage, itemsPerPage]] = helperModule.get_req_headers(req, ['page', 'itemsPerPage'], res, true);
+        currentPage = currentPage ? currentPage : 0;
+        itemsPerPage = itemsPerPage ? itemsPerPage : 2;
 
-        let favors = await fpFavor.findAll({
+
+        let favors = await fpFavor.findAndCountAll({
             attributes: ['id', 'status', 'rewardID', 'createdAt', 'paidAt', 'creationProofPath', 'completionProofPath', 'comment'],
+            limit: itemsPerPage,
+            offset: currentPage * itemsPerPage,
             where: {
                 [Op.or]:[
                     {payerID: user.id},
@@ -65,6 +72,11 @@ module.exports = function(app){
         });
 
         favors = JSON.parse(JSON.stringify(favors));
+        favors['totalItems'] = favors['count'];
+        delete favors['count'];
+        favors['totalPages'] = Math.ceil(favors['totalItems']/itemsPerPage);
+        favors['itemsPerPage'] = itemsPerPage;
+        favors['currentPage'] = currentPage;
 
         for (let i=0; i<favors.length; i++){
             favors[i]['payeeEmail'] = favors[i]['payee_id']['payeeEmail'];

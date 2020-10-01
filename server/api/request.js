@@ -128,6 +128,8 @@ module.exports = function(app){
 
         request headers:
             requestStatus (string): one of ['Open', 'Completed', 'All']
+            currentPage (int): optional. pagination page, default = 0
+            itemsPerPage (int): optional. pagination items per page, default = 5
         response headers:
             success (bool)
             message (string)
@@ -135,12 +137,14 @@ module.exports = function(app){
             success (bool)
             message (string)
             output (array of json)
-        TODO:
-            pagination
         */
-        let [successFlag, [requestStatus]] = helperModule.get_req_headers(req, ['requestStatus'], res);
-        if (!successFlag)
+        let [successFlag1, [requestStatus]] = helperModule.get_req_headers(req, ['requestStatus'], res);
+        if (!successFlag1)
             return;
+
+        let [successFlag2, [currentPage, itemsPerPage]] = helperModule.get_req_headers(req, ['page', 'itemsPerPage'], res, true);
+        currentPage = currentPage ? currentPage : 0;
+        itemsPerPage = itemsPerPage ? itemsPerPage : 2;
         
         if (!['Open', 'Completed', 'All'].includes(requestStatus)){
             helperModule.manipulate_response_and_send(res, {
@@ -149,13 +153,12 @@ module.exports = function(app){
                 }, 406);
             return;
         }
-        if (requestStatus === 'All')
-            requestStatus = ['Open', 'Completed'];
-        else
-            requestStatus = [requestStatus];
+        requestStatus = requestStatus === 'All' ? requestStatus = ['Open', 'Completed'] : [requestStatus];
         
-        let allRequests = await fpRequest.findAll({
+        let allRequests = await fpRequest.findAndCountAll({
             attributes: ['id', 'status', 'title', 'description', 'completedAt', 'createdAt', 'taskImagePath', 'completionProofPath'],
+            limit: itemsPerPage,
+            offset: currentPage * itemsPerPage,
             where: {
                 status: {
                   [Op.or]: requestStatus,
@@ -171,6 +174,11 @@ module.exports = function(app){
         });
 
         let outputAllRequests = JSON.parse(JSON.stringify(allRequests));
+        outputAllRequests['totalItems'] = outputAllRequests['count'];
+        delete outputAllRequests['count'];
+        outputAllRequests['totalPages'] = Math.ceil(outputAllRequests['totalItems']/itemsPerPage);
+        outputAllRequests['itemsPerPage'] = itemsPerPage;
+        outputAllRequests['currentPage'] = currentPage;
         for (let i=0; i<allRequests.length; i++){
             outputAllRequests[i]['rewards'] = outputAllRequests[i]['request_id'];
             delete outputAllRequests[i]['request_id'];
