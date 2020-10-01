@@ -35,3 +35,24 @@ $border-radius:               0 !default;
 $border-radius-lg:            0 !default;
 $border-radius-sm:            0 !default;
 
+$images-directory: '/images/' !default;
+
+
+$reward-images: ($images-directory + 'reward/') !default;
+
+$rewards: () !default;
+
+$rewards: map-merge(
+    (
+        "candy":"008-chocolate-bar.png",
+        "cheers":"003-cocktail.png",
+        "coffee":"001-coffee.png",
+        "drink":"002-soda.png",
+        "meal":"005-burger.png",
+        "snacks":"007-snack.png"
+    ),
+    $rewards
+);
+
+
+$icon-font-directory: '/fonts/' !default;

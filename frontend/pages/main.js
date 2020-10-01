@@ -23,19 +23,19 @@ const Login = (props) => {
                             <div className="personal-nav">
                                 <div className="nav-elements nav-selected">
                                     <img src="../images/default-user-selected.png" alt="Default User" width="30"/>
-                                    <p>Personal</p>
+                                    <div>Personal</div>
                                 </div>
                                 <div className="nav-elements">
                                     <img src="../images/people.png" alt="Default User" width="30"/>
-                                    <p>Office</p>
+                                    <div>Office</div>
                                 </div>
                                 <div className="nav-elements">
                                     <img src="../images/hotel.png" alt="Default User" width="30"/>
-                                    <p>Global</p>
+                                    <div>Global</div>
                                 </div>
                                 <div className="nav-elements">
                                     <img src="../images/cheers.png" alt="Default User" width="30"/>
-                                    <p>Party</p>
+                                    <div>Party</div>
                                 </div>
                             </div>
                             <div className="requests">

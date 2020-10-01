@@ -1,4 +1,8 @@
-@import './fpay-variables.scss';
+@import 'fpay-variables';
 @import '~bootstrap/scss/bootstrap';
+@import 'flaticon';
+@import 'flaticon-rewards';
 
-@import './general.scss';
+@import 'general';
+@import 'reward-set';
+@import 'user';

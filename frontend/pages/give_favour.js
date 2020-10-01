@@ -1,7 +1,7 @@
 import Header from '../template-parts/Header';
 import { useState } from 'react';
 import RewardCard from '../elements/RewardCard';
-
+import UserCard from '../elements/UserCard';
 const Login = (props) => {
     const [username, setUsername] = useState('John Smith');
 
@@ -51,12 +51,16 @@ const Login = (props) => {
 
                             </div>
                             <div className="search-result">
-                                <img src="../images/photo.png" alt="Task image" width="100px"/>
-                                <b>Username</b>
+                                <UserCard user={{
+                                    id:1,
+                                    name: 'Username'
+                                }}>Test</UserCard>
                             </div>
                             <div className="search-result">
-                                <img src="../images/photo.png" alt="Task image" width="100px"/>
-                                <b>Username</b>
+                                <UserCard user={{
+                                    id:2,
+                                    name: 'Username'
+                                }} />
                             </div>
                             <button className="btn btn-primary right">Give</button>
                             <button className="btn btn-outline-primary right">Cancel</button>
