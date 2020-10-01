@@ -61,9 +61,12 @@ const New = () => {
                     </div>
                 </div>
             </div>
-            <div className="container">
-                <h2>Rewards</h2>
-                <div className="row">
+
+            <hr/>
+
+            <div className="container text-center">
+                <h4 className="mb-5">Choose rewards you want to offer along with this task</h4>
+                <div className="row reward-cont">
                     <div className="col-md-2">
                         <RewardCard img="../images/coffee.png" category="Coffee" amount={rewardData}></RewardCard>
                     </div>
@@ -71,13 +74,13 @@ const New = () => {
                         <RewardCard img="../images/candy.png" category="Candy" amount={rewardData}></RewardCard>
                     </div>
                     <div className="col-md-2">
-                        <RewardCard img="../images/lunch.png" category="Meal" amount={rewardData}></RewardCard>
+                        <RewardCard img="../images/meal.png" category="Meal" amount={rewardData}></RewardCard>
                     </div>
                     <div className="col-md-2">
                         <RewardCard img="../images/snacks.png" category="Snacks" amount={rewardData}></RewardCard>
                     </div>
                     <div className="col-md-2">
-                        <RewardCard img="../images/soda.png" category="Drink" amount={rewardData}></RewardCard>
+                        <RewardCard img="../images/drink.png" category="Drink" amount={rewardData}></RewardCard>
                     </div>
                     
                 </div>

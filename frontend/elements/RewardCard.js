@@ -23,19 +23,20 @@ const RewardCard = (props) => {
 
     return(
         <div className="reward-card">
-            <div className="container center">
+            <div className="container center reward-title">
                 <h5>{props.category}</h5>
             </div>
             <div className="container reward-icon">
                 <img src={props.img} alt={props.category} className="col-lg-12"></img>
             </div>
+            <hr/>
             <div className="container">
                 <div className="row reward-update">
-                    <div className="col-lg-3 reward-num-btn" onClick={() => updateCount("-")}>
+                    <div className="reward-num-btn" onClick={() => updateCount("-")}>
                         -
                     </div>
                         <input type="number" placeholder="0" value={count} className="col-lg-6 reward-num"></input>
-                    <div className="col-lg-3 reward-num-btn" onClick={() => updateCount("+")}>
+                    <div className="reward-num-btn" onClick={() => updateCount("+")}>
                         +
                     </div>
                 </div>

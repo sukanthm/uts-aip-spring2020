@@ -70,7 +70,6 @@
 
 .right{
     float: right;
-    margin: 2%
 }
 
 .center{
@@ -89,12 +88,32 @@
     margin: 0; 
 }
 
+.reward-cont{
+    justify-content: space-between;
+}
+
 .reward-update{
     font-size: 1.25em;
 }
 
-.reward-num-btn{
+.reward-title{
+    color: $primary;
+    margin-bottom: 20px;
+}
+
+.reward-num-btn {
     font-weight: bold;
+    border: 3px solid $primary;
+    border-radius: 5px;
+    cursor: pointer;
+    // padding: 3px 10px;
+    width: 40px;
+    user-select: none;
+}
+
+.reward-num-btn:hover{
+    background: $primary;
+    color: white;
 }
 
 .task-image-upload{
