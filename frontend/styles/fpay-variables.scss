@@ -37,6 +37,7 @@ $border-radius-sm:            0 !default;
 
 $images-directory: '/images/' !default;
 
+
 $reward-images: ($images-directory + 'reward/') !default;
 
 $rewards: () !default;
@@ -53,3 +54,5 @@ $rewards: map-merge(
     $rewards
 );
 
+
+$icon-font-directory: '/fonts/' !default;

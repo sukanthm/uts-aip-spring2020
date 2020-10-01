@@ -1,0 +1,68 @@
+    /*
+    Flaticon icon font: Flaticon
+    Creation date: 30/09/2020 19:56
+    */
+
+    @font-face {
+  font-family: "Flaticon";
+  src: url("#{$icon-font-directory}Flaticon.eot");
+  src: url("#{$icon-font-directory}Flaticon.eot?#iefix") format("embedded-opentype"),
+       url("#{$icon-font-directory}Flaticon.woff2") format("woff2"),
+       url("#{$icon-font-directory}Flaticon.woff") format("woff"),
+       url("#{$icon-font-directory}Flaticon.ttf") format("truetype"),
+       url("#{$icon-font-directory}Flaticon.svg#Flaticon") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: "Flaticon";
+    src: url("#{$icon-font-directory}Flaticon.svg#Flaticon") format("svg");
+  }
+}
+
+    .fi:before{
+        display: inline-block;
+  font-family: "Flaticon";
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  line-height: 1;
+  text-decoration: inherit;
+  text-rendering: optimizeLegibility;
+  text-transform: none;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-smoothing: antialiased;
+    }
+
+    .flaticon-coffee:before { content: "\f100"; }
+.flaticon-soda:before { content: "\f101"; }
+.flaticon-cocktail:before { content: "\f102"; }
+.flaticon-beer-mug:before { content: "\f103"; }
+.flaticon-burger:before { content: "\f104"; }
+.flaticon-lollipop:before { content: "\f105"; }
+.flaticon-snack:before { content: "\f106"; }
+.flaticon-chocolate-bar:before { content: "\f107"; }
+.flaticon-snack-1:before { content: "\f108"; }
+.flaticon-user:before { content: "\f109"; }
+.flaticon-multiple-users-silhouette:before { content: "\f10a"; }
+.flaticon-man-user:before { content: "\f10b"; }
+.flaticon-black-male-user-symbol:before { content: "\f10c"; }
+.flaticon-pencil:before { content: "\f10d"; }
+    
+    $font-Flaticon-coffee: "\f100";
+    $font-Flaticon-soda: "\f101";
+    $font-Flaticon-cocktail: "\f102";
+    $font-Flaticon-beer-mug: "\f103";
+    $font-Flaticon-burger: "\f104";
+    $font-Flaticon-lollipop: "\f105";
+    $font-Flaticon-snack: "\f106";
+    $font-Flaticon-chocolate-bar: "\f107";
+    $font-Flaticon-snack-1: "\f108";
+    $font-Flaticon-user: "\f109";
+    $font-Flaticon-multiple-users-silhouette: "\f10a";
+    $font-Flaticon-man-user: "\f10b";
+    $font-Flaticon-black-male-user-symbol: "\f10c";
+    $font-Flaticon-pencil: "\f10d";

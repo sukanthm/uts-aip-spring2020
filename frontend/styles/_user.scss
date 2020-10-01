@@ -1,0 +1,42 @@
+.user-card{
+    display: flex;
+    align-items: center;
+    $i: 0;
+    position: relative;
+    @each $key,$color in $colors {
+        $i: $i+1;
+        &.user-set-#{$i}{
+            color: $color;
+            &.user-bordered{
+                border:2px solid $color
+            }
+            svg{
+                path{
+                fill: $color;
+                }
+            }
+            .user-bg{
+                background-color: desaturate(lighten($color,40%),50%);
+            }
+        }
+        
+    }
+    .user-icon-wrap {
+        width: 128px;
+        border-radius: 64px;
+        overflow: hidden;
+        box-sizing: border-box;
+        height: 128px;
+        padding: 14px 0 0;
+        margin: 5px 10px 5px 0;
+    }
+    .user-name{
+        font-size: 1.2em;
+        font-weight: 600;
+        padding: 5px;
+    }
+    .user-content {
+        align-self: flex-start;
+        padding: 5px;
+    }
+}
