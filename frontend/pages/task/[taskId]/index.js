@@ -1,10 +1,16 @@
-import { useRouter } from 'next/router';
+import { useRouter, useState } from 'next/router';
 import Header from '../../../template-parts/Header';
 import IndividualRewardCard from '../../../elements/IndividualRewardCard';
+import RewardCard from '../../../elements/RewardCard';
+import Modal from 'react-bootstrap/Modal';
+import {Button, ButtonToolbar} from 'react-bootstrap';
 
 const TaskId = () => {
     const router = useRouter();
+    // const [show, setShow] = useState(false);
 
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
 
     let claimTask = () => {
         console.log(router.query);
@@ -12,6 +18,16 @@ const TaskId = () => {
 
     let upTaskReward = () => {
         console.log("Upping it!");
+    }
+
+    let rewardJson = {};
+    
+    let rewardData = (category, count) => {
+        rewardJson[category] = count;
+    }
+
+    let addReward = () => {
+        console.log(rewardJson);
     }
 
     //Sample JSON data
@@ -81,7 +97,45 @@ const TaskId = () => {
                 </div>
                 </div>
 
-                
+                <Button variant="primary" onClick={handleShow}>
+        Launch demo modal
+      </Button>
+
+      <Modal show={true} onHide={handleClose} dialogClassName="modal-90w" centered>
+        <Modal.Header>
+          <Modal.Title>Choose rewards you want to add to this task</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+        <div className="container text-center">
+                <div className="row reward-cont">
+                    <div className="col-md-2">
+                        <RewardCard img="../../images/coffee.png" category="Coffee" amount={rewardData}></RewardCard>
+                    </div>
+                    <div className="col-md-2">
+                        <RewardCard img="../../images/candy.png" category="Candy" amount={rewardData}></RewardCard>
+                    </div>
+                    <div className="col-md-2">
+                        <RewardCard img="../../images/meal.png" category="Meal" amount={rewardData}></RewardCard>
+                    </div>
+                    <div className="col-md-2">
+                        <RewardCard img="../../images/snacks.png" category="Snacks" amount={rewardData}></RewardCard>
+                    </div>
+                    <div className="col-md-2">
+                        <RewardCard img="../../images/drink.png" category="Drink" amount={rewardData}></RewardCard>
+                    </div>
+                    
+                </div>
+            </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Cancel
+          </Button>
+          <Button variant="primary" onClick={() => addReward()}>
+            Add Reward
+          </Button>
+        </Modal.Footer>
+      </Modal>
 
 
 

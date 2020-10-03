@@ -49,6 +49,7 @@ const TaskDashboard = (props) => {
         <>
             <Header />
             <div className="container">
+                {/* Using Tabs from Bootstrap */}
                 <Tabs
                     id="controlled-tab-example"
                     activeKey={key}
