@@ -45,8 +45,8 @@ module.exports = function(app){
             return;
         
         let [successFlag2, [currentPage, itemsPerPage]] = helperModule.get_req_headers(req, ['page', 'itemsPerPage'], res, true);
-        currentPage = currentPage ? currentPage : 0;
-        itemsPerPage = itemsPerPage ? itemsPerPage : 2;
+        currentPage = currentPage ? Number(currentPage) : 0;
+        itemsPerPage = itemsPerPage ? Number(itemsPerPage) : 2;
 
 
         let favors = await fpFavor.findAndCountAll({
