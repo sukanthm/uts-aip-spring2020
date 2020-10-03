@@ -15,7 +15,11 @@ const app = express();
 app.use(cookieParser());
 app.use(helmet());
 app.use(bodyParser.json());
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:3000',
+    methods: ['POST', 'PUT', 'GET', 'OPTIONS', 'HEAD'],
+    credentials: true
+  }));
 app.use(morgan('combined'));
 
 require('./api/signupLogin.js')(app);
@@ -23,6 +27,7 @@ require('./api/favor.js')(app);
 require('./api/party.js')(app);
 require('./api/request.js')(app);
 
+const port = process.argv[2] ? process.argv[2] : 4000;
 
 // ------------------------------------------------
 // Initialize database and create sample data
@@ -37,9 +42,7 @@ async function initialize() {
 }
 
 initialize().then(() =>
-    app.listen(4000, () => {
-        console.log('\n Running on http://localhost:4000/ \n');
-        
+    app.listen(port, () => {
+        console.log('\n Running on port: '+port+' \n');
     })
-
 );

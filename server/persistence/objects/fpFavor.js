@@ -9,8 +9,8 @@ const fpFavor = sequelize.define('fp_favor', {
         primaryKey: true
     },
     status: {
-        type: Sequelize.ENUM,
-        values: ['Pending','Paid'],
+        type: Sequelize.STRING,
+        isIn: [['Pending', 'Paid']],
         defaultValue: 'Pending'
     },
     paidAt: {

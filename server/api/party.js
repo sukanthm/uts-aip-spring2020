@@ -151,7 +151,7 @@ async function party_detector(){
 
 module.exports = function(app){
 
-    app.get('/party', async function(req, res){
+    app.get('/api/party', async function(req, res){
         /*
         Detects a user's potential parties
 

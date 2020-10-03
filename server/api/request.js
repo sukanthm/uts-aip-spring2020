@@ -1,5 +1,7 @@
+import {sequelize, Sequelize} from '../persistence/objects/sequelize';
+var path = require('path');
 const fs = require('fs');
-const { Op } = require("sequelize");
+const { Op, QueryTypes } = require("sequelize");
 import fpUser from '../persistence/objects/fpUser';
 import fpFavor from '../persistence/objects/fpFavor';
 import fpRequest from '../persistence/objects/fpRequest';
@@ -9,7 +11,7 @@ var multer  = require('multer');
 
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, '../public_images/')
+        cb(null, path.join(__dirname + '/../public_images/'));
     },
     filename: function (req, file, cb) {
       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
@@ -20,7 +22,7 @@ var upload = multer({ storage: storage })
 
 module.exports = function(app){
 
-    app.post('/request', upload.single('proofImage'), async function(req, res){
+    app.post('/api/request', upload.single('proofImage'), async function(req, res){
         /*
         Adds a request
 
@@ -56,6 +58,14 @@ module.exports = function(app){
             description: description,
             creatorID: creatorID,
         })
+
+        if (Object.keys(rewards).length === 0){
+            helperModule.manipulate_response_and_send(res, {
+                'success': false, 
+                'message': 'creator must sponsor some rewards', 
+                }, 400);
+            return;
+        }
         
         if (![undefined, null, '', 'null'].includes(req.file)){
             if (!req.file.mimetype.startsWith('image')){
@@ -122,12 +132,15 @@ module.exports = function(app){
         return;
     })
 
-    app.get('/requests', async function(req, res){   
+    app.get('/api/requests', async function(req, res){   
         /*
         gets all requests (no auth) - use for front/landing page
 
         request headers:
             requestStatus (string): one of ['Open', 'Completed', 'All']
+            currentPage (int): optional. pagination page, default = 0
+            itemsPerPage (int): optional. pagination items per page, default = 5
+            searchData (string): optional.
         response headers:
             success (bool)
             message (string)
@@ -135,12 +148,15 @@ module.exports = function(app){
             success (bool)
             message (string)
             output (array of json)
-        TODO:
-            pagination
         */
-        let [successFlag, [requestStatus]] = helperModule.get_req_headers(req, ['requestStatus'], res);
-        if (!successFlag)
+        let [successFlag1, [requestStatus]] = helperModule.get_req_headers(req, ['requestStatus'], res);
+        if (!successFlag1)
             return;
+
+        let [successFlag2, [currentPage, itemsPerPage, searchData]] = helperModule.get_req_headers(req, ['page', 'itemsPerPage', 'searchData'], res, true);
+        currentPage = currentPage ? Number(currentPage) : 0;
+        itemsPerPage = itemsPerPage ? Number(itemsPerPage) : 5;
+        searchData = searchData ? searchData.split(' ') : [''];
         
         if (!['Open', 'Completed', 'All'].includes(requestStatus)){
             helperModule.manipulate_response_and_send(res, {
@@ -149,32 +165,78 @@ module.exports = function(app){
                 }, 406);
             return;
         }
-        if (requestStatus === 'All')
-            requestStatus = ['Open', 'Completed'];
-        else
-            requestStatus = [requestStatus];
-        
-        let allRequests = await fpRequest.findAll({
-            attributes: ['id', 'status', 'title', 'description', 'completedAt', 'createdAt', 'taskImagePath', 'completionProofPath'],
-            where: {
-                status: {
-                  [Op.or]: requestStatus,
-                },
-              },
-            include: [
-            {
-                model: fpRequestReward,
-                as: 'request_id',
-                attributes: ['rewardID', 'rewardCount'],
-            },
-        ]
-        });
-
-        let outputAllRequests = JSON.parse(JSON.stringify(allRequests));
-        for (let i=0; i<allRequests.length; i++){
-            outputAllRequests[i]['rewards'] = outputAllRequests[i]['request_id'];
-            delete outputAllRequests[i]['request_id'];
+        requestStatus = requestStatus === 'All' ? '%' : requestStatus;
+        for (let i=0; i<searchData.length; i++){
+            searchData[i] = '%' + searchData[i] + '%';
         }
+        
+        let allRequests = await sequelize.query(
+            `select a.*, "fp_request_rewards"."rewardID", sum("fp_request_rewards"."rewardCount") as "rewardCount", "fp_rewards"."title" as "rewardTitle" from (
+                select DISTINCT "fp_requests"."id", "fp_requests"."title", "fp_requests"."description", "fp_requests"."taskImagePath", "fp_requests"."completedAt", 
+                    "fp_requests"."completionProofPath", "fp_requests"."completorComment", "fp_requests"."status", "fp_requests"."createdAt"
+                from "fp_requests"
+                LEFT OUTER JOIN "fp_request_rewards" on "fp_requests"."id" = "fp_request_rewards"."requestID"
+                LEFT OUTER JOIN "fp_rewards" on "fp_request_rewards"."rewardID" = "fp_rewards"."id"
+                where
+                    "fp_requests"."status" ilike :requestStatus AND (
+                        "fp_requests"."title" ilike ANY (ARRAY[:searchData]) OR
+                        "fp_requests"."description" ilike ANY (ARRAY[:searchData]) OR
+                        "fp_rewards"."title" ilike ANY (ARRAY[:searchData])
+                    )
+                ORDER BY "fp_requests"."createdAt" DESC
+                LIMIT :itemsPerPage OFFSET :offset
+            ) a 
+            LEFT OUTER JOIN "fp_request_rewards" on a."id" = "fp_request_rewards"."requestID"
+            LEFT OUTER JOIN "fp_rewards" on "fp_request_rewards"."rewardID" = "fp_rewards"."id"
+            group by a."id", a."title", a."description", a."taskImagePath", a."completedAt", a."completionProofPath", 
+                a."completorComment", a."status", a."createdAt", "fp_request_rewards"."rewardID", "fp_rewards"."title"
+            ;`,
+            {
+              replacements: { 
+                  requestStatus: requestStatus,
+                  searchData: searchData,
+                  itemsPerPage: itemsPerPage,
+                  offset: currentPage * itemsPerPage,
+                },
+              type: QueryTypes.SELECT
+            }
+          );
+
+        let outputAllRequests = {'data': {}};
+        for (let i=0; i<allRequests.length; i++){
+            if (allRequests[i]['id'] in outputAllRequests['data']){
+                outputAllRequests['data'][allRequests[i]['id']]['rewards'].push({
+                    rewardID: allRequests[i]['rewardID'],
+                    rewardCount: allRequests[i]['rewardCount'],
+                    rewardName: allRequests[i]['rewardName'],
+                    rewardTitle: allRequests[i]['rewardTitle'],
+                })
+            } else {
+                outputAllRequests['data'][allRequests[i]['id']] = {
+                    'id': allRequests[i]['id'],
+                    'title': allRequests[i]['title'],
+                    'description': allRequests[i]['description'],
+                    'taskImagePath': allRequests[i]['taskImagePath'],
+                    'completedAt': allRequests[i]['taskImagePath'],
+                    'completionProofPath': allRequests[i]['taskImagePath'],
+                    'completorComment': allRequests[i]['taskImagePath'],
+                    'status': allRequests[i]['taskImagePath'],
+                    'createdAt': allRequests[i]['createdAt'],
+                    'rewards': [{
+                        rewardID: allRequests[i]['rewardID'],
+                        rewardCount: allRequests[i]['rewardCount'],
+                        rewardName: allRequests[i]['rewardName'],
+                        rewardTitle: allRequests[i]['rewardTitle'],
+                    }]
+                }
+            }
+        }
+        outputAllRequests['rows'] = Object.values(outputAllRequests['data']);
+        delete outputAllRequests['data'];
+        outputAllRequests['totalItems'] = outputAllRequests['rows'].length;
+        outputAllRequests['totalPages'] = Math.ceil(outputAllRequests['totalItems']/itemsPerPage);
+        outputAllRequests['itemsPerPage'] = itemsPerPage;
+        outputAllRequests['currentPage'] = currentPage;
 
         helperModule.manipulate_response_and_send(res, {
             'success': true, 
@@ -184,7 +246,7 @@ module.exports = function(app){
         return;
     })
 
-    app.get('/request', async function(req, res){
+    app.get('/api/request', async function(req, res){
         /*
         gets a request
 
@@ -274,7 +336,7 @@ module.exports = function(app){
         return;
     })
 
-    app.put('/request', upload.single('proofImage'), async function(req, res){
+    app.put('/api/request', upload.single('proofImage'), async function(req, res){
         /*
         completes a request
 
@@ -336,6 +398,23 @@ module.exports = function(app){
                 'message': 'request cannot be Completed by creator. ignoring current request',
                 }, 409);
             return;
+        }
+
+        let sponsors = await fpRequestReward.findAll({
+            attributes: [[Sequelize.fn('DISTINCT', Sequelize.col('sponsorID')), 'sponsorID']],
+            where: {
+                requestID: oneRequest.id,
+            }
+        });
+        sponsors = JSON.parse(JSON.stringify(sponsors));
+        for (let i=0; i<sponsors.length; i++){
+            if (user.id === sponsors[i]['sponsorID']){
+                helperModule.manipulate_response_and_send(res, {
+                    'success': false, 
+                    'message': 'request cannot be Completed by a sponsor. ignoring current request',
+                    }, 409);
+                return;
+            }
         }
         
         if (![undefined, null, '', 'null'].includes(req.file)){
@@ -422,7 +501,7 @@ module.exports = function(app){
         return;
     })
 
-    app.put('/request/sponsor', upload.single('proofImage'), async function(req, res){
+    app.put('/api/request/sponsor', upload.single('proofImage'), async function(req, res){
         /*
         changes a request's sponsor's rewards
 

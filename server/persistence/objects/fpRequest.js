@@ -25,8 +25,8 @@ const fpRequest = sequelize.define('fp_request', {
         defaultValue: '',
     },
     status: {
-        type: Sequelize.ENUM,
-        values: ['Open','Completed'],
+        type: Sequelize.STRING,
+        isIn: [['Open', 'Completed']],
         defaultValue: 'Open',
     },
 });

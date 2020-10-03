@@ -3,12 +3,12 @@ const helperModule = require('./helper.js');
 
 module.exports = function(app){
 
-    app.get('/signup', function(req, res){
+    app.get('/api/signup', function(req, res){
         //show signup HTML here
         res.send('HI, use the post API to login');
     });
 
-    app.post('/signup', async function(req, res){
+    app.post('/api/signup', async function(req, res){
         /*
         request headers:
             email (string): regex checked in react
@@ -48,7 +48,7 @@ module.exports = function(app){
         return;
     });
 
-    app.get('/login', async function(req, res){
+    app.get('/api/login', async function(req, res){
         /*
         request headers:
             email (string): regex checked in react
