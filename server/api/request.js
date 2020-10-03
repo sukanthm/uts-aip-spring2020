@@ -1,3 +1,4 @@
+var path = require('path');
 const fs = require('fs');
 const { Op } = require("sequelize");
 import fpUser from '../persistence/objects/fpUser';
@@ -9,7 +10,7 @@ var multer  = require('multer');
 
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, '../public_images/')
+        cb(null, path.join(__dirname + '/../public_images/'));
     },
     filename: function (req, file, cb) {
       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
