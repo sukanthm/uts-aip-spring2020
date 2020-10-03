@@ -165,6 +165,9 @@ module.exports = function(app){
                   [Op.or]: requestStatus,
                 },
               },
+            order: [
+                ['createdAt', 'DESC'],
+            ],
             include: [
             {
                 model: fpRequestReward,

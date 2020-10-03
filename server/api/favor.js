@@ -59,6 +59,9 @@ module.exports = function(app){
                     {payeeID: user.id},
                 ],
             }, 
+            order: [
+                ['createdAt', 'DESC'],
+            ],
             include: [
                 {
                     model: fpUser,
