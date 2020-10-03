@@ -10,7 +10,7 @@
     "builddb": "node -r esm ./persistence/buildDatabase.js",
     "start": "nodemon -r esm index.js 4000",
     "stoppostgres": "pkill postgres",
-    "prod": "pm2 start index.js --node-args='80 -r esm'"
+    "prod": "pm2 start index.js --node-args='-r esm' -- 80"
   },
   "dependencies": {
     "bcrypt": "^5.0.0",
