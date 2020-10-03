@@ -1,3 +1,4 @@
+const Sequelize = require('sequelize');
 var path = require('path');
 const fs = require('fs');
 const { Op } = require("sequelize");
@@ -348,6 +349,23 @@ module.exports = function(app){
                 'message': 'request cannot be Completed by creator. ignoring current request',
                 }, 409);
             return;
+        }
+
+        let sponsors = await fpRequestReward.findAll({
+            attributes: [[Sequelize.fn('DISTINCT', Sequelize.col('sponsorID')), 'sponsorID']],
+            where: {
+                requestID: oneRequest.id,
+            }
+        });
+        sponsors = JSON.parse(JSON.stringify(sponsors));
+        for (let i=0; i<sponsors.length; i++){
+            if (user.id === sponsors[i]['sponsorID']){
+                helperModule.manipulate_response_and_send(res, {
+                    'success': false, 
+                    'message': 'request cannot be Completed by a sponsor. ignoring current request',
+                    }, 409);
+                return;
+            }
         }
         
         if (![undefined, null, '', 'null'].includes(req.file)){
