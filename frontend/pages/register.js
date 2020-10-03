@@ -1,8 +1,10 @@
 import {useState, useEffect, useRef} from 'react';
 import Header from '../template-parts/Header';
+import { useRouter } from 'next/router'
+
 const Register = () => {
     
-
+    const router = useRouter();
     const [fullName, setFullName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPass] = useState("");
@@ -77,6 +79,7 @@ const Register = () => {
     }
 
     const submitForm = async () => {
+        try{
         console.log(fullName);
         console.log(email);
         console.log(password);
@@ -86,12 +89,15 @@ const Register = () => {
             password: password,
             name: fullName
         }
-        let result = await fetch("http://35.213.254.162:80/signup", {method: "POST", headers: userData});
-        // let json = await result.json();
-        // this.use_response(responseJson, response.headers);
-        console.log(result.headers);
-        let headers = result.headers.entries();
-        console.log("kya?", headers["message"]);
+        let result = await fetch("http://35.213.254.162:80/signup", {method: "POST", headers: userData, credentials: "include"});
+        let json = await result.json();
+        console.log("kya?", json);
+        router.push('/login')
+    }
+    catch(err){
+        console.log(err);
+        setValidated(false);
+    }
     }
 
     return(

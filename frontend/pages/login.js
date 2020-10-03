@@ -10,13 +10,19 @@ const Login = (props) => {
     const [validated, setValidated] = useState(false);
 
     const submitForm = async() => {
+        try{
             let userData = {
                 email: email,
                 password: password
             }
-            let result = await fetch("http://35.213.254.162:80/login", {method: "GET", headers: userData});
+            let result = await fetch("http://35.213.254.162:80/login", {method: "GET", headers: userData, credentials: "include"});
             let json = await result.json();
             console.log("kya?", json);
+        }
+        catch(err){
+            console.log(err);
+            setValidated(false);
+        }
         }
 
     useEffect(() => {  // watcher on validated hook variable
