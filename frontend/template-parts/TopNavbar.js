@@ -3,7 +3,7 @@
 const TopNavbar = (props) => {
     return(
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark navbar-forward">
-      <a className="navbar-brand" href="#"><img src="../images/logo.png" alt="Default User" className="img-responsive logo-forward"/> Forward Pay</a>
+      <a className="navbar-brand" href="#"><img src="../images/logo.png" alt="IOU Logo" className="img-responsive logo-forward"/> Forward Pay</a>
       <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span className="navbar-toggler-icon"></span>
       </button>
