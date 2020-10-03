@@ -1,4 +1,4 @@
-
+import Link from 'next/link';
 
 const TopNavbar = (props) => {
     return(
@@ -24,8 +24,16 @@ const TopNavbar = (props) => {
           </li>
         </ul>
         <form className="form-inline my-2 my-lg-0">
-          <button className="btn btn-outline-light mr-sm-2" type="submit">Sign Up</button>
-          <button className="btn btn-light my-2 my-sm-0" type="submit">Sign In</button>
+          <Link as="/register" href="/register">
+            <a>
+              <button className="btn btn-outline-light mr-sm-2" type="submit">Sign Up</button>
+            </a>
+          </Link>
+          <Link as="/login" href="/login">
+            <a>
+              <button className="btn btn-light my-2 my-sm-0" type="submit">Sign In</button>
+            </a>
+          </Link>
         </form>
       </div>
     </nav>
