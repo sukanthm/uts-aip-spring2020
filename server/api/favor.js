@@ -19,7 +19,7 @@ var upload = multer({ storage: storage })
 
 module.exports = function(app){
 
-    app.get('/favors', async function(req, res){
+    app.get('/api/favors', async function(req, res){
         /*
         Gets all of a user's favors (owed and owing)
 
@@ -97,7 +97,7 @@ module.exports = function(app){
         return;
     });
 
-    app.post('/favor', upload.single('proofImage'), async function(req, res){
+    app.post('/api/favor', upload.single('proofImage'), async function(req, res){
         /*
         Adds a favor
 
@@ -208,7 +208,7 @@ module.exports = function(app){
         }
     });
 
-    app.get('/favor', async function(req, res){
+    app.get('/api/favor', async function(req, res){
         /*
         Gets a user's favor
 
@@ -280,7 +280,7 @@ module.exports = function(app){
         return;
     })
 
-    app.put('/favor', upload.single('proofImage'), async function(req, res){
+    app.put('/api/favor', upload.single('proofImage'), async function(req, res){
         /*
         Closes a user's favor (set to Paid)
 

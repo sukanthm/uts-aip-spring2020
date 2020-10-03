@@ -22,7 +22,7 @@ var upload = multer({ storage: storage })
 
 module.exports = function(app){
 
-    app.post('/request', upload.single('proofImage'), async function(req, res){
+    app.post('/api/request', upload.single('proofImage'), async function(req, res){
         /*
         Adds a request
 
@@ -124,7 +124,7 @@ module.exports = function(app){
         return;
     })
 
-    app.get('/requests', async function(req, res){   
+    app.get('/api/requests', async function(req, res){   
         /*
         gets all requests (no auth) - use for front/landing page
 
@@ -197,7 +197,7 @@ module.exports = function(app){
         return;
     })
 
-    app.get('/request', async function(req, res){
+    app.get('/api/request', async function(req, res){
         /*
         gets a request
 
@@ -287,7 +287,7 @@ module.exports = function(app){
         return;
     })
 
-    app.put('/request', upload.single('proofImage'), async function(req, res){
+    app.put('/api/request', upload.single('proofImage'), async function(req, res){
         /*
         completes a request
 
@@ -452,7 +452,7 @@ module.exports = function(app){
         return;
     })
 
-    app.put('/request/sponsor', upload.single('proofImage'), async function(req, res){
+    app.put('/api/request/sponsor', upload.single('proofImage'), async function(req, res){
         /*
         changes a request's sponsor's rewards
 
