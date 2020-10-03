@@ -7,18 +7,44 @@ const New = () => {
     const [imgFile, setImgFile] = useState("../../images/upload-img.png");
     const [taskTitle, setTaskTitle] = useState();
     const [taskDesc, setTaskDesc] = useState();
+    const [formImg, setFormImg] = useState();
 
     let rewardJson = {};
+    
 
     function uploadImage(file){
         setImgFile(URL.createObjectURL(file));
+        setFormImg(file);
+       
+        // console.log("yoyo",image);
     }
 
-    function submitTask(){
+    const submitTask = async() => {
         console.log(taskTitle);
         console.log(taskDesc);
         console.log(imgFile);
         console.log(rewardJson);
+        console.log("mama",formImg);
+        const formData = new FormData();
+        formData.append('proofImage', formImg);
+
+        try{
+            let taskData = {
+                title: taskTitle,
+                description: taskDesc,
+                rewards: JSON.stringify({"1": 3, "3": 2}),
+                email: "s@a.com",
+                loginToken: "$2b$10$9/Fczs5UC37spq5PNCrVJuzNkEzr5CTE6ugcmShjsL86y.UCTfMx2"
+            }
+
+            let result = await fetch("http://35.213.254.162:80/api/request", {method: "POST", headers: taskData, body: formData});
+            let json = await result.json();
+            console.log("kya?", json);
+        }
+        catch(err){
+            console.log(err);
+            
+        }
         
     }
 
