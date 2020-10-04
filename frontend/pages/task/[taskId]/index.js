@@ -1,4 +1,5 @@
-import { useRouter, useState } from 'next/router';
+import { useRouter } from 'next/router';
+import {useState} from 'react';
 import Header from '../../../template-parts/Header';
 import IndividualRewardCard from '../../../elements/IndividualRewardCard';
 import RewardCard from '../../../elements/RewardCard';
@@ -7,7 +8,7 @@ import {Button, ButtonToolbar} from 'react-bootstrap';
 
 const TaskId = () => {
     const router = useRouter();
-    // const [show, setShow] = useState(false);
+    const [show, setShow] = useState(false);
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
@@ -101,7 +102,7 @@ const TaskId = () => {
         Launch demo modal
       </Button>
 
-      <Modal show={true} onHide={handleClose} dialogClassName="modal-90w" centered>
+      <Modal show={show} onHide={handleClose} dialogClassName="modal-90w" centered>
         <Modal.Header>
           <Modal.Title>Choose rewards you want to add to this task</Modal.Title>
         </Modal.Header>
