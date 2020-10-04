@@ -15,7 +15,7 @@ const Login = (props) => {
                 email: email,
                 password: password
             }
-            let result = await fetch("http://35.213.254.162:80/login", {method: "GET", headers: userData, credentials: "include"});
+            let result = await fetch("/api/login", {method: "GET", headers: userData});
             let json = await result.json();
             console.log("kya?", json);
         }
