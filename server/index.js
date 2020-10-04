@@ -15,11 +15,7 @@ const app = express();
 app.use(cookieParser());
 app.use(helmet());
 app.use(bodyParser.json());
-app.use(cors({
-    origin: 'http://localhost:3000',
-    methods: ['POST', 'PUT', 'GET', 'OPTIONS', 'HEAD'],
-    credentials: true
-  }));
+app.use(cors());
 app.use(morgan('combined'));
 
 require('./api/signupLogin.js')(app);

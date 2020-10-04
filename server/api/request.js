@@ -501,7 +501,7 @@ module.exports = function(app){
         return;
     })
 
-    app.put('/api/request/sponsor', upload.single('proofImage'), async function(req, res){
+    app.put('/api/request/sponsor', async function(req, res){
         /*
         changes a request's sponsor's rewards
 

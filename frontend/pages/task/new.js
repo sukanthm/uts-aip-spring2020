@@ -34,10 +34,10 @@ const New = () => {
                 description: taskDesc,
                 rewards: JSON.stringify({"1": 3, "3": 2}),
                 email: "s@a.com",
-                loginToken: "$2b$10$9/Fczs5UC37spq5PNCrVJuzNkEzr5CTE6ugcmShjsL86y.UCTfMx2"
+                loginToken: "$2b$10$WQkTJaS6njqYuG90imp1eeoP7Pz7Qqu9QZIStkyRktF6Z9F2ubUb2"
             }
 
-            let result = await fetch("http://35.213.254.162:80/api/request", {method: "POST", headers: taskData, body: formData});
+            let result = await fetch("/api/request", {credentials: 'include', method: "POST", headers: taskData, body: formData});
             let json = await result.json();
             console.log("kya?", json);
         }
