@@ -59,6 +59,7 @@ module.exports = function(app){
             creatorID: creatorID,
         })
 
+        rewards = JSON.parse(rewards);
         if (Object.keys(rewards).length === 0){
             helperModule.manipulate_response_and_send(res, {
                 'success': false, 
@@ -205,12 +206,8 @@ module.exports = function(app){
         let outputAllRequests = {'data': {}};
         for (let i=0; i<allRequests.length; i++){
             if (allRequests[i]['id'] in outputAllRequests['data']){
-                outputAllRequests['data'][allRequests[i]['id']]['rewards'].push({
-                    rewardID: allRequests[i]['rewardID'],
-                    rewardCount: allRequests[i]['rewardCount'],
-                    rewardName: allRequests[i]['rewardName'],
-                    rewardTitle: allRequests[i]['rewardTitle'],
-                })
+                outputAllRequests['data'][allRequests[i]['id']]['rewards']
+                    [allRequests[i]['rewardID']] = allRequests[i]['rewardCount'];
             } else {
                 outputAllRequests['data'][allRequests[i]['id']] = {
                     'id': allRequests[i]['id'],
@@ -222,12 +219,9 @@ module.exports = function(app){
                     'completorComment': allRequests[i]['taskImagePath'],
                     'status': allRequests[i]['taskImagePath'],
                     'createdAt': allRequests[i]['createdAt'],
-                    'rewards': [{
-                        rewardID: allRequests[i]['rewardID'],
-                        rewardCount: allRequests[i]['rewardCount'],
-                        rewardName: allRequests[i]['rewardName'],
-                        rewardTitle: allRequests[i]['rewardTitle'],
-                    }]
+                    'rewards': {
+                        [allRequests[i]['rewardID']]: allRequests[i]['rewardCount'],
+                    }
                 }
             }
         }
