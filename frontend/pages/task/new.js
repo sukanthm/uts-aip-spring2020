@@ -1,6 +1,7 @@
 import {useState} from 'react';
 import Header from '../../template-parts/Header';
 import RewardCard from '../../elements/RewardCard';
+import helpers from '../../functions/helpers.js';
 
 const New = () => {
 
@@ -32,9 +33,9 @@ const New = () => {
             let taskData = {
                 title: taskTitle,
                 description: taskDesc,
-                rewards: JSON.stringify({"1": 3, "3": 2}),
+                rewards: JSON.stringify(rewardJson),
                 email: "s@a.com",
-                loginToken: "$2b$10$WQkTJaS6njqYuG90imp1eeoP7Pz7Qqu9QZIStkyRktF6Z9F2ubUb2"
+                loginToken: "$2b$10$QYVP.E7ikEJqhc8GwbsYauq9E7PPkgR39iyFVriFqlytZjJVQnE/e"
             }
 
             let result = await fetch("/api/request", {credentials: 'include', method: "POST", headers: taskData, body: formData});
@@ -49,7 +50,10 @@ const New = () => {
     }
 
     function rewardData(category, count){
-        rewardJson[category] = count;
+        let id = helpers.rewardID(category); // fetch id for the selected reward
+        console.log("Aidy", id);
+        rewardJson[id] = count;
+        console.log("jshun", rewardJson);
     }
 
     return(
