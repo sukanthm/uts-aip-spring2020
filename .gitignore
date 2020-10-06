@@ -53,3 +53,4 @@ server/db.log
 frontend/package-lock.json
 server/persistence/objects/sequelize.js
 server/public_images/*
+frontend/public/proof_images/*
