@@ -1,13 +1,24 @@
+var path = require('path');
+var multer  = require('multer');
+const fs = require('fs');
 import fpUser from '../persistence/objects/fpUser';
 const bcrypt = require('bcrypt');
 
 const saltRounds = 10;
 
-function manipulate_response_and_send(res, resBodyObject, httpCode){
+function manipulate_response_and_send(req, res, resBodyObject, httpCode){
     console.log(resBodyObject);
     res.set('success', resBodyObject['success']);
     res.set('message', resBodyObject['message']);
     res.status(httpCode);
+
+    if (httpCode != 200 && req.file !== undefined){
+        fs.unlink(req.file.path, (err) => {
+            if (err) throw err;
+            console.log('successfully deleted bad upload @ '+req.file.path);
+        });
+    }
+
     res.send(resBodyObject);
     return;
 }
@@ -36,7 +47,7 @@ function get_req_headers(req, headers, res, allOptional=false){
         header = req.header(headers[i]);
         if (!allOptional){
             if ([undefined, null, '', 'null'].includes(header)){
-                manipulate_response_and_send(res, {
+                manipulate_response_and_send(req, res, {
                     'success': false, 
                     'message': 'mandatory request headers missing',
                     }, 400);
@@ -49,19 +60,19 @@ function get_req_headers(req, headers, res, allOptional=false){
     return [true, output];
 }
 
-async function validate_user_loginToken(email, loginToken, res){
+async function validate_user_loginToken(req, email, loginToken, res){
     const user = await fpUser.findOne({
         where: {email: email},
     });
     if (user === null){
-        manipulate_response_and_send(res, {
+        manipulate_response_and_send(req, res, {
             'success': false, 
             'message': 'unRegistered user',
             }, 404);
         return [false, undefined];
     }
     if (! await is_secret_valid(await user.id, loginToken)){
-        manipulate_response_and_send(res, {
+        manipulate_response_and_send(req, res, {
             'success': false, 
             'message': 'unAuthenticated user',
             }, 401);
@@ -70,10 +81,21 @@ async function validate_user_loginToken(email, loginToken, res){
     return [true, user];
 }
 
+var multerStorage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, path.join(__dirname + '/../../frontend/public/proof_images/'));
+    },
+    filename: function (req, file, cb) {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+      cb(null, uniqueSuffix + '-' + file.originalname)
+    }
+})
+
 module.exports = {
     manipulate_response_and_send: manipulate_response_and_send,
     is_secret_valid: is_secret_valid,
     get_req_headers: get_req_headers,
     custom_hash: custom_hash,
     validate_user_loginToken: validate_user_loginToken,
+    multerStorage: multerStorage,
 }

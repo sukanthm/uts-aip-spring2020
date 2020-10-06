@@ -1,4 +1,3 @@
-const { Op } = require("sequelize");
 import fpFavor from '../persistence/objects/fpFavor';
 import fpUser from '../persistence/objects/fpUser';
 const helperModule = require('./helper.js');
@@ -170,7 +169,7 @@ module.exports = function(app){
        if (!successFlag)
            return;
 
-       let [validationSuccess, user] = await helperModule.validate_user_loginToken(email, loginToken, res);
+       let [validationSuccess, user] = await helperModule.validate_user_loginToken(req, email, loginToken, res);
        if (!validationSuccess)
            return;
 
@@ -188,7 +187,7 @@ module.exports = function(app){
                 delete outputForUser[rewardID];
         }
 
-        helperModule.manipulate_response_and_send(res, {
+        helperModule.manipulate_response_and_send(req, res, {
             'success': true, 
             'message': 'party data sent', 
             'output': outputForUser,

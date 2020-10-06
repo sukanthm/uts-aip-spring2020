@@ -1,21 +1,11 @@
-var path = require('path');
-const fs = require('fs');
 const { Op } = require("sequelize");
 import fpUser from '../persistence/objects/fpUser';
 import fpFavor from '../persistence/objects/fpFavor';
 const helperModule = require('./helper.js');
 var multer  = require('multer');
 
-var storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, path.join(__dirname + '/../../frontend/public/proof_images/'));
-    },
-    filename: function (req, file, cb) {
-      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-      cb(null, uniqueSuffix + '-' + file.originalname)
-    }
-  })
-var upload = multer({ storage: storage })
+var multerStorage = helperModule.multerStorage;
+var upload = multer({ storage: multerStorage });
 
 module.exports = function(app){
 
@@ -40,13 +30,13 @@ module.exports = function(app){
         if (!successFlag1)
             return;
 
-        let [validationSuccess, user] = await helperModule.validate_user_loginToken(email, loginToken, res);
+        let [validationSuccess, user] = await helperModule.validate_user_loginToken(req, email, loginToken, res);
         if (!validationSuccess)
             return;
         
         let [successFlag2, [currentPage, itemsPerPage]] = helperModule.get_req_headers(req, ['page', 'itemsPerPage'], res, true);
         currentPage = currentPage ? Number(currentPage) : 0;
-        itemsPerPage = itemsPerPage ? Number(itemsPerPage) : 2;
+        itemsPerPage = itemsPerPage ? Number(itemsPerPage) : 5;
 
 
         let favors = await fpFavor.findAndCountAll({
@@ -89,7 +79,7 @@ module.exports = function(app){
             delete favors[i]['payer_id'];
         }
 
-        helperModule.manipulate_response_and_send(res, {
+        helperModule.manipulate_response_and_send(req, res, {
             'success': true, 
             'message': 'sent all requested favors', 
             'output': favors,
@@ -115,27 +105,25 @@ module.exports = function(app){
             success (bool)
             message (string)
             newFavorID (int)
-        TODO:
-            test image upload
         */
         let [successFlag, [email, loginToken, payeeEmail, payerEmail, rewardID]] = 
             helperModule.get_req_headers(req, ['email', 'loginToken', 'payeeEmail', 'payerEmail', 'rewardID'], res);
         if (!successFlag)
             return;
         
-        let [validationSuccess, user] = await helperModule.validate_user_loginToken(email, loginToken, res);
+        let [validationSuccess, user] = await helperModule.validate_user_loginToken(req, email, loginToken, res);
         if (!validationSuccess)
             return;
 
         if (![payeeEmail, payerEmail].includes(email)){
-            helperModule.manipulate_response_and_send(res, {
+            helperModule.manipulate_response_and_send(req, res, {
                 'success': false, 
                 'message': 'unAuthorised user, favor creator is neither payee nor payer', 
                 }, 403);
             return;
         }
         if (payerEmail === payeeEmail){
-            helperModule.manipulate_response_and_send(res, {
+            helperModule.manipulate_response_and_send(req, res, {
                 'success': false, 
                 'message': 'payer == payee, illegal', 
                 }, 418);
@@ -149,7 +137,7 @@ module.exports = function(app){
             where: {email: payerEmail},
         })
         if (payeeUser === null || payerUser === null){
-            helperModule.manipulate_response_and_send(res, {
+            helperModule.manipulate_response_and_send(req, res, {
                 'success': false, 
                 'message': 'payee email or payer email not found in DB', 
                 }, 409);
@@ -164,43 +152,35 @@ module.exports = function(app){
         });
 
         if (email === payeeEmail){
-            if ([undefined, null, '', 'null'].includes(req.file)){
-                helperModule.manipulate_response_and_send(res, {
+            if (req.file === undefined){
+                helperModule.manipulate_response_and_send(req, res, {
                     'success': false, 
                     'message': 'favor creator is payee, image proof missing', 
                     }, 400);
                 return;
             }
             if (!req.file.mimetype.startsWith('image')){
-                helperModule.manipulate_response_and_send(res, {
+                helperModule.manipulate_response_and_send(req, res, {
                     'success': false, 
                     'message': 'Not an image. please upload only an image file', 
                     }, 400);
-                fs.unlink(req.file.path, (err) => {
-                    if (err) throw err;
-                    console.log('successfully deleted bad upload @ '+req.file.path);
-                });
                 return;
             }
-            newFavor.creationProofPath = req.file.path;
+            newFavor.creationProofPath = req.file.filename;
         }
 
         try{
             await newFavor.save();
             res.set('newFavorID', newFavor.id);
-            helperModule.manipulate_response_and_send(res, {
+            helperModule.manipulate_response_and_send(req, res, {
                 'success': true, 
                 'message': 'new favor (id: '+newFavor.id+') created',
                 'newFavorID': newFavor.id,
                 }, 200);
             return;
         } catch (err){
-            fs.unlink(req.file.path, (err) => {
-                if (err) throw err;
-                console.log('successfully deleted image associated with failed db save @ '+req.file.path);
-            });
             await newFavor.destroy();
-            helperModule.manipulate_response_and_send(res, {
+            helperModule.manipulate_response_and_send(req, res, {
                 'success': false, 
                 'message': err,
                 }, 500);
@@ -228,7 +208,7 @@ module.exports = function(app){
         if (!successFlag)
             return;
 
-        let [validationSuccess, user] = await helperModule.validate_user_loginToken(email, loginToken, res);
+        let [validationSuccess, user] = await helperModule.validate_user_loginToken(req, email, loginToken, res);
         if (!validationSuccess)
             return;
         
@@ -252,14 +232,14 @@ module.exports = function(app){
         });
 
         if (favor === null){
-            helperModule.manipulate_response_and_send(res, {
+            helperModule.manipulate_response_and_send(req, res, {
                 'success': false, 
                 'message': 'bad favor id requested', 
                 }, 404);
             return;    
         }
         if (![favor.toJSON().payee_id.payeeEmail, favor.toJSON().payer_id.payerEmail].includes(email)){
-            helperModule.manipulate_response_and_send(res, {
+            helperModule.manipulate_response_and_send(req, res, {
                 'success': false, 
                 'message': 'unAuthorised user', 
                 }, 403);
@@ -272,7 +252,7 @@ module.exports = function(app){
         favor['payerEmail'] = favor['payer_id']['payerEmail'];
         delete favor['payer_id'];
 
-        helperModule.manipulate_response_and_send(res, {
+        helperModule.manipulate_response_and_send(req, res, {
             'success': true, 
             'message': 'sent requested favor',
             'output': favor,
@@ -296,15 +276,13 @@ module.exports = function(app){
             success (bool)
             message (string)
             closedFavorID (int)
-        TODO:
-            test image upload
         */
         let [successFlag, [email, loginToken, favorID]] = 
             helperModule.get_req_headers(req, ['email', 'loginToken', 'favorID'], res);
         if (!successFlag)
             return;
 
-        let [validationSuccess, user] = await helperModule.validate_user_loginToken(email, loginToken, res);
+        let [validationSuccess, user] = await helperModule.validate_user_loginToken(req, email, loginToken, res);
         if (!validationSuccess)
             return;
         
@@ -316,7 +294,7 @@ module.exports = function(app){
         });
 
         if (favor === null){
-            helperModule.manipulate_response_and_send(res, {
+            helperModule.manipulate_response_and_send(req, res, {
                 'success': false, 
                 'message': 'bad favor id requested', 
                 }, 404);
@@ -324,14 +302,14 @@ module.exports = function(app){
         }
         let payerID = await favor.payerID, payeeID = await favor.payeeID, userID = await user.id;
         if (![payerID, payeeID].includes(userID)){
-            helperModule.manipulate_response_and_send(res, {
+            helperModule.manipulate_response_and_send(req, res, {
                 'success': false, 
                 'message': 'unAuthorised user, favor updator is neither payee nor payer', 
                 }, 403);
             return;
         }
         if (favor.status === 'Paid'){
-            helperModule.manipulate_response_and_send(res, {
+            helperModule.manipulate_response_and_send(req, res, {
                 'success': false, 
                 'message': 'favor already Paid. ignoring current request', 
                 }, 409);
@@ -339,45 +317,35 @@ module.exports = function(app){
         }
 
         if (userID === payerID){
-            if ([undefined, null, '', 'null'].includes(req.file)){
-                helperModule.manipulate_response_and_send(res, {
+            if (req.file === undefined){
+                helperModule.manipulate_response_and_send(req, res, {
                     'success': false, 
                     'message': 'favor updator is payer, image proof missing', 
                     }, 400);
                 return;
             }
             if (!req.file.mimetype.startsWith('image')){
-                helperModule.manipulate_response_and_send(res, {
+                helperModule.manipulate_response_and_send(req, res, {
                     'success': false, 
                     'message': 'Not an image. please upload only an image file', 
                     }, 400);
-                fs.unlink(req.file.path, (err) => {
-                    if (err) throw err;
-                    console.log('successfully deleted bad upload @ '+req.file.path);
-                });
                 return;
             }
-            if (!await favor.proofPath === ''){
-                fs.unlink(req.file.path, (err) => {
-                    if (err) throw err;
-                    console.log('successfully deleted old image @ '+req.file.path);
-                });
-            }
-            favor.completionProofPath = req.file.path;
+            favor.completionProofPath = req.file.filename;
         }
 
         favor.paidAt = Date.now();
         favor.status = 'Paid';
         try{
             await favor.save();
-            helperModule.manipulate_response_and_send(res, {
+            helperModule.manipulate_response_and_send(req, res, {
                 'success': true, 
                 'message': 'favorID: '+favorID+' set to Paid', 
                 'closedFavorID': favorID,
                 }, 200);
             return;
         } catch (err){
-            helperModule.manipulate_response_and_send(res, {
+            helperModule.manipulate_response_and_send(req, res, {
                 'success': false, 
                 'message': err,
                 }, 500);

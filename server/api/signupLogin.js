@@ -5,7 +5,7 @@ module.exports = function(app){
 
     app.get('/api/signup', function(req, res){
         //show signup HTML here
-        res.send('HI, use the post API to login');
+        res.send('HI, use the post API to signup');
     });
 
     app.post('/api/signup', async function(req, res){
@@ -34,14 +34,14 @@ module.exports = function(app){
             newUser.name = name;
             await newUser.save();
 
-            helperModule.manipulate_response_and_send(res, {
+            helperModule.manipulate_response_and_send(req, res, {
                 'success': true, 
                 'message': 'user '+email+' created',
                 }, 200);
             return;
         }
 
-        helperModule.manipulate_response_and_send(res, {
+        helperModule.manipulate_response_and_send(req, res, {
             'success': false, 
             'message': email+' already exists',
             }, 409);
@@ -72,7 +72,7 @@ module.exports = function(app){
         });
 
         if (user === null) {
-            helperModule.manipulate_response_and_send(res, {
+            helperModule.manipulate_response_and_send(req, res, {
                 'success': false, 
                 'message': email+' not registered',
                 }, 404);
@@ -81,7 +81,7 @@ module.exports = function(app){
 
         const isPasswordValid = await helperModule.is_secret_valid(password, user.password);
         if (!isPasswordValid) {
-            helperModule.manipulate_response_and_send(res, {
+            helperModule.manipulate_response_and_send(req, res, {
                 'success': false, 
                 'message': 'incorrect email password combo',
                 }, 401);
@@ -93,7 +93,7 @@ module.exports = function(app){
             loginToken: loginToken,
             email: email }), 
           {maxAge: 3600});
-        helperModule.manipulate_response_and_send(res, {
+        helperModule.manipulate_response_and_send(req, res, {
             'success': true, 
             'message': 'login token generated and cookie set for '+email,
             'email': email,
