@@ -97,8 +97,10 @@ module.exports = function(app){
                 }, 500);
             return;
         }
+       
+        if (typeof rewards === "string")
+            rewards = JSON.parse(rewards);
 
-        rewards = JSON.parse(rewards);
         let rewardsInstances = [];
         for (let reward in rewards){
             try {
