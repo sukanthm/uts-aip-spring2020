@@ -133,7 +133,8 @@ module.exports = function(app){
             helperModule.get_req_headers(req, ['requestStatus', 'page', 'itemsPerPage', 'searchData'], res, true);
         currentPage = currentPage ? Number(currentPage) : 0;
         itemsPerPage = itemsPerPage ? Number(itemsPerPage) : 5;
-        searchData = searchData ? searchData.split(' ') : [''];
+        searchData = searchData ? searchData.split(/[\n\r\t\v\f\s,=({["'-;#]+/) : [''];
+        searchData = helperModule.clean_and_shuffle(searchData);
         requestStatus = requestStatus ? requestStatus : 'All';
         
         if (!['Open', 'Completed', 'All'].includes(requestStatus)){
