@@ -20,7 +20,7 @@ module.exports = function(app){
             loginToken (string)
             email (string)
             title (string)
-            description (string)
+            description (string): optional.
             rewards (JSON): {rewardID: rewardCount, ...}
         taskImage (form-data): optional. check https://github.com/expressjs/multer for frontend form
         response headers:
@@ -31,10 +31,12 @@ module.exports = function(app){
             message (string)
             newRequestID (int)
         */
-        let [successFlag, [email, loginToken, title, description, rewards]] = 
-            helperModule.get_req_headers(req, ['email', 'loginToken', 'title', 'description', 'rewards'], res);
-        if (!successFlag)
+        let [successFlag1, [email, loginToken, title, rewards]] = 
+            helperModule.get_req_headers(req, ['email', 'loginToken', 'title', 'rewards'], res);
+        if (!successFlag1)
             return;
+
+        let [successFlag2, [description]] = helperModule.get_req_headers(req, ['description'], res, true);
         
         let [validationSuccess, user] = await helperModule.validate_user_loginToken(req, email, loginToken, res);
         if (!validationSuccess)

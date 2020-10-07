@@ -8,7 +8,10 @@ const fpRequest = sequelize.define('fp_request', {
         primaryKey: true
     },
     title: Sequelize.TEXT,
-    description: Sequelize.TEXT,
+    description: {
+        type: Sequelize.STRING,
+        defaultValue: '',
+    },
     taskImagePath: {
         type: Sequelize.STRING,
         defaultValue: '',
@@ -20,8 +23,8 @@ const fpRequest = sequelize.define('fp_request', {
         type: Sequelize.STRING,   
         defaultValue: '',
     },
-    completorComment:{
-        type: Sequelize.STRING,   
+    completorComment: {
+        type: Sequelize.STRING,
         defaultValue: '',
     },
     status: {
