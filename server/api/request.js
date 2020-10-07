@@ -288,16 +288,19 @@ module.exports = function(app){
         }
 
         let sponsorMap = {}; //improve sponsor_id -> sponsorEmail transaltion
+        let sponsorRewardMap = {};
         for (let i=0; i<oneRequest['rewards'].length; i++){
             if(!(oneRequest['rewards'][i]['sponsorID'] in sponsorMap)){
                 let sponsor = await fpUser.findOne({
                     where: {id: oneRequest['rewards'][i]['sponsorID']},
                 });
                 sponsorMap[sponsor.id] = sponsor.email;
+                sponsorRewardMap[sponsor.email] = {};
             } 
-            oneRequest['rewards'][i]['sponsorEmail'] = sponsorMap[oneRequest['rewards'][i]['sponsorID']];
-            delete oneRequest['rewards'][i]['sponsorID'];
+            sponsorRewardMap[sponsorMap[oneRequest['rewards'][i]['sponsorID']]]
+                [oneRequest['rewards'][i]['rewardID']] = oneRequest['rewards'][i]['rewardCount'];
         }
+        oneRequest['rewards'] = JSON.parse(JSON.stringify(sponsorRewardMap));
 
         helperModule.manipulate_response_and_send(req, res, {
             'success': true, 
