@@ -1,11 +1,11 @@
 import { useRouter } from 'next/router';
-import {useState, useEffect} from 'react';
+import { useState, useEffect } from 'react';
 import Header from '../../../template-parts/Header';
 import IndividualRewardCard from '../../../elements/IndividualRewardCard';
 import RewardCard from '../../../elements/RewardCard';
 import helpers from '../../../functions/helpers.js';
 import Modal from 'react-bootstrap/Modal';
-import {Button, ButtonToolbar} from 'react-bootstrap';
+import { Button, ButtonToolbar } from 'react-bootstrap';
 import Alert from 'react-bootstrap/Alert';
 
 const TaskId = () => {
@@ -19,19 +19,30 @@ const TaskId = () => {
     const [taskData, setTaskData] = useState({});
     const [users, setUsers] = useState([]);
 
-    const [show, setShow] = useState(false);
     const [claimDisable, setClaimDisable] = useState(false);
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
 
-    // let users = [];
+    //Variables for Reward Modal
+    const [showRew, setShowRew] = useState(false);
+    const handleCloseRew = () => setShowRew(false);
+    const handleShowRew = () => setShowRew(true);
+
+    //Variables for Claim Modal
+    const [showCla, setShowCla] = useState(false);
+    const handleCloseCla = () => setShowCla(false);
+    const handleShowCla = () => setShowCla(true);
+
+    //Variables for CLaiming Function
+    const [imgFile, setImgFile] = useState("../../../images/upload-img.png");
+    const [taskComment, setTaskComment] = useState();
+    const [formImg, setFormImg] = useState();
 
     let claimTask = () => {
-        if(claimDisable == false){
-            console.log(router.query);
-            router.push(`/task/${taskId}/claim`);
+        if (claimDisable == false) {
+            //console.log(router.query);
+            //router.push(`/task/${taskId}/claim`);
+            handleShowCla();
         }
-        else{
+        else {
             setErrMsg("Sponsors of a task couldn't claim it");
             setShowAlert(true);
         }
@@ -39,36 +50,36 @@ const TaskId = () => {
 
     let upTaskReward = () => {
         console.log("Upping it!");
-        handleShow();
+        handleShowRew();
     }
 
     let rewardJson = {};
-    
+
     let rewardData = (category, count) => {
         let id = helpers.rewardID(category); // fetch id for the selected reward
         rewardJson[id] = count;
     }
 
-    const addReward = async() => {
+    const addReward = async () => {
         console.log(rewardJson);
 
         let rewardFlag = 0;
         let keys = Object.keys(rewardJson);
         // Check if rewards have not been left empty
-        keys.map((key) => { 
-            if(rewardJson[key] > 0){
+        keys.map((key) => {
+            if (rewardJson[key] > 0) {
                 rewardFlag = 1;
             }
         })
 
-        if(rewardFlag == 0){
+        if (rewardFlag == 0) {
             setErrMsg("No rewards added!");
-            handleClose();
+            handleCloseRew();
             setShowAlert(true);
             return;
         }
 
-        try{
+        try {
             let taskData = {
                 rewardChanges: JSON.stringify(rewardJson),
                 requestID: taskId,
@@ -76,28 +87,57 @@ const TaskId = () => {
                 loginToken: "$2b$10$QYVP.E7ikEJqhc8GwbsYauq9E7PPkgR39iyFVriFqlytZjJVQnE/e"
             }
 
-            let result = await fetch("/api/request/sponsor", { method: "PUT", headers: taskData});
+            let result = await fetch("/api/request/sponsor", { method: "PUT", headers: taskData });
             let json = await result.json();
             console.log("kya?", json);
-            if(json.success == true){
+            if (json.success == true) {
                 handleClose();
                 fetchTaskDetails();
             }
         }
-        catch(err){
+        catch (err) {
             console.log(err);
         }
-            
+
     }
 
-    const fetchTaskDetails = async() => {
-        try{
+    function uploadImage(file) {
+        setImgFile(URL.createObjectURL(file));
+        setFormImg(file);
+    }
+
+    const completeTask = async () => {
+        console.log(imgFile);
+        console.log(taskComment);
+        const formData = new FormData();
+        formData.append('proofImage', formImg);
+
+        try {
+            let claimData = {
+                completorComment: taskComment,
+                email: "s@a.com",
+                loginToken: "$2b$10$QYVP.E7ikEJqhc8GwbsYauq9E7PPkgR39iyFVriFqlytZjJVQnE/e",
+                requestID: taskId
+            }
+
+            let result = await fetch("/api/request", { credentials: 'include', method: "PUT", headers: claimData, body: formData });
+            let json = await result.json();
+            console.log("kya?", json);
+        }
+        catch (err) {
+            console.log(err);
+
+        }
+    }
+
+    const fetchTaskDetails = async () => {
+        try {
             let fetchJson = {
                 email: "s@a.com",
                 loginToken: "$2b$10$QYVP.E7ikEJqhc8GwbsYauq9E7PPkgR39iyFVriFqlytZjJVQnE/e",
                 requestId: taskId
             }
-            let result = await fetch("/api/request", {method: "GET", headers: fetchJson});
+            let result = await fetch("/api/request", { method: "GET", headers: fetchJson });
             let json = await result.json();
             json.output.createdAt = helpers.readableDate(json.output.createdAt);
             console.log("kya?", json);
@@ -107,17 +147,17 @@ const TaskId = () => {
             sponsors.map((user) => {
                 console.log("ujer", user);
 
-                if(user == "s@a.com")
+                if (user == "s@a.com")
                     setClaimDisable(true);
             })
-            
+
         }
-        catch(err){
+        catch (err) {
             console.log(err);
         }
-        }
+    }
 
-    useEffect(() => {fetchTaskDetails()}, [])
+    useEffect(() => { fetchTaskDetails() }, [])
 
 
 
@@ -140,7 +180,7 @@ const TaskId = () => {
                             <p>Created by <strong>{taskData.creatorEmail}</strong> at <i>{(taskData.createdAt)}</i></p>
                         </div>
                     </div>
-                    <hr/>
+                    <hr />
 
                     <div className="row">
                         <div className="col-md-12 contributors">
@@ -154,62 +194,95 @@ const TaskId = () => {
                                 console.log("albela", key);
                                 return <IndividualRewardCard user={key} rewards={taskData.rewards[key]}></IndividualRewardCard>
                             })
-                            
+
                         }
 
                     </div>
-                    <hr/>
+                    <hr />
                     <Alert show={showAlert} variant="danger" onClose={() => setShowAlert(false)} dismissible>
-                    <Alert.Heading>Oh snap! Error processing the request!</Alert.Heading>
+                        <Alert.Heading>Oh snap! Error processing the request!</Alert.Heading>
                         <p>
-                        {errMsg}
+                            {errMsg}
                         </p>
                     </Alert>
 
                     <div className="row">
-                    <div className="col-md-12">
-                        <button className="btn btn-primary right  btn-forward-main" aria-disabled={claimDisable} onClick={() => claimTask()}>Claim Task</button>
-                        <button className="btn btn-outline-primary mr-3 right btn-forward-main" onClick={() => upTaskReward()}>Add Reward Task</button>
+                        <div className="col-md-12">
+                            <button className="btn btn-primary right  btn-forward-main" aria-disabled={claimDisable} onClick={() => claimTask()}>Claim Task</button>
+                            <button className="btn btn-outline-primary mr-3 right btn-forward-main" onClick={() => upTaskReward()}>Add Reward Task</button>
+                        </div>
                     </div>
-                </div>
                 </div>
 
+                {/* Modal for Reward */}
+                <Modal show={showRew} onHide={handleCloseRew} dialogClassName="modal-90w" centered>
+                    <Modal.Header>
+                        <Modal.Title>Choose rewards you want to add to this task</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <div className="container text-center">
+                            <div className="row reward-cont">
+                                <div className="col-md-2">
+                                    <RewardCard img="../../../images/coffee.png" category="Coffee" amount={rewardData}></RewardCard>
+                                </div>
+                                <div className="col-md-2">
+                                    <RewardCard img="../../../images/candy.png" category="Candy" amount={rewardData}></RewardCard>
+                                </div>
+                                <div className="col-md-2">
+                                    <RewardCard img="../../../images/meal.png" category="Meal" amount={rewardData}></RewardCard>
+                                </div>
+                                <div className="col-md-2">
+                                    <RewardCard img="../../../images/snacks.png" category="Snacks" amount={rewardData}></RewardCard>
+                                </div>
+                                <div className="col-md-2">
+                                    <RewardCard img="../../../images/drink.png" category="Drink" amount={rewardData}></RewardCard>
+                                </div>
 
-      <Modal show={show} onHide={handleClose} dialogClassName="modal-90w" centered>
-        <Modal.Header>
-          <Modal.Title>Choose rewards you want to add to this task</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-        <div className="container text-center">
-                <div className="row reward-cont">
-                    <div className="col-md-2">
-                        <RewardCard img="../../../images/coffee.png" category="Coffee" amount={rewardData}></RewardCard>
-                    </div>
-                    <div className="col-md-2">
-                        <RewardCard img="../../../images/candy.png" category="Candy" amount={rewardData}></RewardCard>
-                    </div>
-                    <div className="col-md-2">
-                        <RewardCard img="../../../images/meal.png" category="Meal" amount={rewardData}></RewardCard>
-                    </div>
-                    <div className="col-md-2">
-                        <RewardCard img="../../../images/snacks.png" category="Snacks" amount={rewardData}></RewardCard>
-                    </div>
-                    <div className="col-md-2">
-                        <RewardCard img="../../../images/drink.png" category="Drink" amount={rewardData}></RewardCard>
-                    </div>
-                    
-                </div>
-            </div>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Cancel
-          </Button>
-          <Button variant="primary" onClick={() => addReward()}>
-            Add Reward
-          </Button>
-        </Modal.Footer>
-      </Modal>
+                            </div>
+                        </div>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={handleCloseRew}>Cancel</Button>
+                        <Button variant="primary" onClick={() => addReward()}>Add Reward</Button>
+                    </Modal.Footer>
+                </Modal>
+
+                {/* Modal for Claim */}
+                <Modal show={showCla} onHide={handleCloseCla} dialogClassName="modal-90w" centered>
+                    <Modal.Header>
+                        <Modal.Title>Claim this task</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <div className="container">
+                            <div className="container-fluid">
+                                <div className="row">
+                                    <div className="col-md-3 task-image-holder">
+                                        <img src={imgFile} alt="Upload Image" className="task-image container"></img>
+                                        <div className="task-image-upload container-fluid center">
+                                            <label htmlFor="task-image-edit">
+                                                <h6>Edit Image</h6>
+                                            </label>
+                                            <input type="file" onChange={(e) => uploadImage(e.target.files[0])} id="task-image-edit"></input>
+                                        </div>
+
+                                    </div>
+                                    <div className="col-md-9">
+
+                                        <div className="form-group forward-cust-title">
+                                            <label htmlFor="task-comment">Task Comment</label>
+                                            <textarea className="form-control" id="task-comment" placeholder="Task Comment" rows="5" value={taskComment} onChange={(e) => setTaskComment(e.target.value)} />
+                                        </div>
+                                    </div>
+                                </div>
+                                {/* <button className="btn btn-primary right" onClick={() => completeTask()}>Task Completed</button> */}
+                            </div>
+                        </div>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={handleCloseCla}>Cancel</Button>
+                        <Button variant="primary" onClick={() => completeTask()}>Claim</Button>
+                    </Modal.Footer>
+                </Modal>
 
 
 
