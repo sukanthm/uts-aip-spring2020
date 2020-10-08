@@ -6,19 +6,29 @@ const bcrypt = require('bcrypt');
 
 const saltRounds = 10;
 
-function clean_and_shuffle(array){
+function clean_and_shuffle(input){
+    input = input ? input.split(/[\n\r\t\v\f\s,=({["'-;#]+/) : [''];
+
     var j, x, i;
-    for (i=0; i<array.length; i++){
-        if (array[i] === '')
-            array.splice(i,1);
+    for (i=0; i<input.length; i++){
+        if (input[i] === '')
+            input.splice(i,1);
     }
-    for (i = array.length - 1; i > 0; i--) {
+    
+    if (input.length === 0)
+        return ['%'];
+
+    for (i = input.length - 1; i > 0; i--) {
         j = Math.floor(Math.random() * (i + 1));
-        x = array[i];
-        array[i] = array[j];
-        array[j] = x;
+        x = input[i];
+        input[i] = input[j];
+        input[j] = x;
     }
-    return array;
+
+    for (let i=0; i<input.length; i++){
+        input[i] = '%' + input[i] + '%';
+    }
+    return input;
 }
 
 function manipulate_response_and_send(req, res, resBodyObject, httpCode){

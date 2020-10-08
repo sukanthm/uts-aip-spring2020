@@ -92,7 +92,7 @@ module.exports = function(app){
         res.cookie('aip_fp', JSON.stringify({
             loginToken: loginToken,
             email: email }), 
-          {maxAge: 3600});
+          {maxAge: 3600 * 1000});
         helperModule.manipulate_response_and_send(req, res, {
             'success': true, 
             'message': 'login token generated and cookie set for '+email,

@@ -135,7 +135,6 @@ module.exports = function(app){
             helperModule.get_req_headers(req, ['requestStatus', 'page', 'itemsPerPage', 'searchData'], res, true);
         currentPage = currentPage ? Number(currentPage) : 0;
         itemsPerPage = itemsPerPage ? Number(itemsPerPage) : 5;
-        searchData = searchData ? searchData.split(/[\n\r\t\v\f\s,=({["'-;#]+/) : [''];
         searchData = helperModule.clean_and_shuffle(searchData);
         requestStatus = requestStatus ? requestStatus : 'All';
         
@@ -147,9 +146,6 @@ module.exports = function(app){
             return;
         }
         requestStatus = requestStatus === 'All' ? '%' : requestStatus;
-        for (let i=0; i<searchData.length; i++){
-            searchData[i] = '%' + searchData[i] + '%';
-        }
         
         let allRequests = await sequelize.query(
             `select a.*, "fp_request_rewards"."rewardID", sum("fp_request_rewards"."rewardCount") as "rewardCount", "fp_rewards"."title" as "rewardTitle" from (
