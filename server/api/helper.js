@@ -6,6 +6,21 @@ const bcrypt = require('bcrypt');
 
 const saltRounds = 10;
 
+function clean_and_shuffle(array){
+    var j, x, i;
+    for (i=0; i<array.length; i++){
+        if (array[i] === '')
+            array.splice(i,1);
+    }
+    for (i = array.length - 1; i > 0; i--) {
+        j = Math.floor(Math.random() * (i + 1));
+        x = array[i];
+        array[i] = array[j];
+        array[j] = x;
+    }
+    return array;
+}
+
 function manipulate_response_and_send(req, res, resBodyObject, httpCode){
     console.log(resBodyObject);
     res.set('success', resBodyObject['success']);
@@ -98,4 +113,5 @@ module.exports = {
     custom_hash: custom_hash,
     validate_user_loginToken: validate_user_loginToken,
     multerStorage: multerStorage,
+    clean_and_shuffle: clean_and_shuffle,
 }
