@@ -2,13 +2,20 @@ import {useState} from 'react';
 import Header from '../../template-parts/Header';
 import RewardCard from '../../elements/RewardCard';
 import helpers from '../../functions/helpers.js';
+import Alert from 'react-bootstrap/Alert';
+import { useRouter } from 'next/router';
 
 const New = () => {
 
+    const router = useRouter();
+
     const [imgFile, setImgFile] = useState("../../images/upload-img.png");
-    const [taskTitle, setTaskTitle] = useState();
-    const [taskDesc, setTaskDesc] = useState();
-    const [formImg, setFormImg] = useState();
+    const [taskTitle, setTaskTitle] = useState("");
+    const [taskDesc, setTaskDesc] = useState("");
+    const [formImg, setFormImg] = useState("");
+
+    const [showAlert, setShowAlert] = useState(false);
+    const [errMsg, setErrMsg] = useState("");
 
     let rewardJson = {};
     
@@ -21,6 +28,7 @@ const New = () => {
     }
 
     const submitTask = async() => {
+        
         console.log(taskTitle);
         console.log(taskDesc);
         console.log(imgFile);
@@ -28,6 +36,28 @@ const New = () => {
         console.log("mama",formImg);
         const formData = new FormData();
         formData.append('proofImage', formImg);
+         
+        let rewardFlag = 0;
+        let keys = Object.keys(rewardJson);
+        // Check if rewards have not been left empty
+        keys.map((key) => { 
+            if(rewardJson[key] > 0){
+                rewardFlag = 1;
+            }
+        })
+
+        // Title and Rewards are compulsory
+
+        if(taskTitle.trim() == ""){
+            setErrMsg("Title cannot be left blank");
+            setShowAlert(true);
+            return;
+        }
+        else if(rewardFlag == 0){
+            setErrMsg("Nothing in this world is free. Please add rewards to the task");
+            setShowAlert(true);
+            return;
+        }
 
         try{
             let taskData = {
@@ -38,12 +68,21 @@ const New = () => {
                 loginToken: "$2b$10$QYVP.E7ikEJqhc8GwbsYauq9E7PPkgR39iyFVriFqlytZjJVQnE/e"
             }
 
+            console.log("dekho dekho", taskData);
             let result = await fetch("/api/request", {credentials: 'include', method: "POST", headers: taskData, body: formData});
             let json = await result.json();
             console.log("kya?", json);
+            if(json.success == true)
+                router.push(`/task/${json.newRequestID}`);
+            else{
+            setErrMsg("Server Error. Please try again later");
+            setShowAlert(true);
+            }
         }
         catch(err){
             console.log(err);
+            setErrMsg("Server Error. Please try again later");
+            setShowAlert(true);
             
         }
         
@@ -51,9 +90,7 @@ const New = () => {
 
     function rewardData(category, count){
         let id = helpers.rewardID(category); // fetch id for the selected reward
-        console.log("Aidy", id);
         rewardJson[id] = count;
-        console.log("jshun", rewardJson);
     }
 
     return(
@@ -116,21 +153,20 @@ const New = () => {
                 </div>
 
                 <hr/>
-
+                <Alert show={showAlert} variant="danger" onClose={() => setShowAlert(false)} dismissible>
+                    <Alert.Heading>Oh snap! Error in creating task!</Alert.Heading>
+                        <p>
+                        {errMsg}
+                        </p>
+                </Alert>
                 <div className="row">
                     <div className="col-md-12">
                         <button className="btn btn-primary btn-lg btn-forward-main right" onClick={() => submitTask()}>Create Task</button>
                     </div>
                 </div>
             </div>
-            {/* <div className="container-fluid">
-                <div className="col-md-6 offset-md-3">
-                <label htmlFor="reward-comment">Comment for Reward</label>
-                <textarea className="form-control" id="reward-comment" placeholder="Additional comments related to reward"/>
-                </div>
-            </div> */}
-
         </div>
+        
         </>
     )
 }
