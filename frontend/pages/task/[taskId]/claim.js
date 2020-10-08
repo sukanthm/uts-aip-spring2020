@@ -4,19 +4,43 @@ import Header from "../../../template-parts/Header"
 
 const Claim = () => {
 
+    const router = useRouter();
+    const taskId = router.query.taskId;
+
     const [imgFile, setImgFile] = useState("../../../images/outbox.png");
     const [taskComment, setTaskComment] = useState();
+    const [formImg, setFormImg] = useState();
+
 
     function uploadImage(file){
         setImgFile(URL.createObjectURL(file));
+        setFormImg(file);
     }
 
-    let completeTask = () => {
+    const completeTask = async() => {
         console.log(imgFile);
         console.log(taskComment);
+        const formData = new FormData();
+        formData.append('proofImage', formImg);
+
+        try{
+            let claimData = {
+                completorComment: taskComment,
+                email: "s@a.com",
+                loginToken: "$2b$10$QYVP.E7ikEJqhc8GwbsYauq9E7PPkgR39iyFVriFqlytZjJVQnE/e",
+                requestID: taskId
+            }
+
+            let result = await fetch("/api/request", {credentials: 'include', method: "PUT", headers: claimData, body: formData});
+            let json = await result.json();
+            console.log("kya?", json);
+        }
+        catch(err){
+            console.log(err);
+            
+        }
     }
-    const router = useRouter();
-    const { taskId } = router.query;
+    
 
     return(
         <>

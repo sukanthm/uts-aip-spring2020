@@ -2,6 +2,7 @@ import {useState, useEffect} from 'react';
 import RewardsContainer from './RewardsContainer';
 
 const IndividualRewardCard = (props) => {
+    console.log("ghusu", props);
  
     let rewards = Object.keys(props.rewards);
     console.log(rewards);
