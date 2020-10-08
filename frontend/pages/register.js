@@ -89,7 +89,7 @@ const Register = () => {
             password: password,
             name: fullName
         }
-        let result = await fetch("http://35.213.254.162:80/signup", {method: "POST", headers: userData, credentials: "include"});
+        let result = await fetch("/api/signup", {method: "POST", headers: userData, credentials: "include"});
         let json = await result.json();
         console.log("kya?", json);
         router.push('/login')

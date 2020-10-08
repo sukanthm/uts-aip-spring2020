@@ -1,10 +1,10 @@
-import Header from '../../../template-parts/Header';
-import TaskContainer from '../../../elements/TaskContainer';
+import Header from '../../template-parts/Header';
+import TaskContainer from '../../elements/TaskContainer';
 import { useState } from 'react';
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
 
-const TaskDashboard = (props) => {
+const dashboard = (props) => {
     //Sample JSON data
     let taskData = 
         [
@@ -42,7 +42,7 @@ const TaskDashboard = (props) => {
 
     let indivTask = taskData.map((key) => {
         // Iterate through each task from JSON
-        return <TaskContainer taskVals={key}></TaskContainer>
+        // return <TaskContainer taskVals={key}></TaskContainer>
     })
 
     return (
@@ -79,4 +79,4 @@ const TaskDashboard = (props) => {
     )
 }
 
-export default TaskDashboard;
+export default dashboard;
