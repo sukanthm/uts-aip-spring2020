@@ -1,44 +1,35 @@
+
+import {useEffect, useState} from 'react';
 import Header from '../template-parts/Header';
 import TaskContainer from '../elements/TaskContainer';
+
+const itemsPerPage = 5;
+let currentPage = 0;
+
+
 const Dashboard = (props) => {
-    //Sample JSON data
-    let taskData = 
-        [
-        {
-            id: "task1",
-            title: "Clean the Fridge",
-            desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum eget nulla sed purus sodales auctor ultrices convallis metus. Integer tincidunt eros eu metus sollicitudin sodales. Vestibulum vel tellus hendrerit, dignissim risus nec, tincidunt mauris. Ut nunc turpis, fermentum venenatis sodales facilisis, interdum vel risus.",
-            img: "../images/fridge.jpg",
-            rewardsData: 
-                {
-                    coffee: 2,
-                    snacks: 1
-                },
-            
-            createdBy: "User 2",
-            createdAt: "08/06/2020"
-        },
-        {
-            id: "task2",
-            title: "Clean the Office",
-            desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum eget nulla sed purus sodales auctor ultrices convallis metus. Integer tincidunt eros eu metus sollicitudin sodales. Vestibulum vel tellus hendrerit, dignissim risus nec, tincidunt mauris. Ut nunc turpis, fermentum venenatis sodales facilisis, interdum vel risus.",
-            img: "../images/office.jpg",
-            rewardsData:
-                {
-                    cheers: 3,
-                    drink: 1
-                },
-            
-            createdBy: "User 2",
-            createdAt: "08/06/2020"
+
+    const [taskRows, setTaskRows] = useState([]);
+
+    const fetchTasks = async(status, currentPage, itemsPerPage, search) => {
+        try{
+            let fetchJson = {
+                requestStatus: status,
+                currentPage: currentPage,
+                itemsPerPage: itemsPerPage,
+                searchData: search
+            }
+            let result = await fetch("/api/requests", {method: "GET", headers: fetchJson});
+            let json = await result.json();
+            console.log("kya?", json);
+            setTaskRows(json.output.rows);
         }
-    ];
+        catch(err){
+            console.log(err);
+        }
+        }
 
-    let indivTask = taskData.map((key) => {
-        // Iterate through each task from JSON
-        return <TaskContainer taskVals={key}></TaskContainer>
-    })
-
+        useEffect(() => {fetchTasks("All", currentPage, itemsPerPage, "")}, [])
 
     return (
         <>
@@ -54,7 +45,11 @@ const Dashboard = (props) => {
                         </div>
                     </div>
                     <hr />
-                    {indivTask}                
+                    {
+                    
+                    taskRows.map((key) => {
+                        return <TaskContainer taskVals={key}></TaskContainer>
+                    })}
                 </div>
             </div>
         </>
