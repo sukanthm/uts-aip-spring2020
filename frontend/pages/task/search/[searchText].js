@@ -1,23 +1,23 @@
 
 import {useEffect, useState, useRef} from 'react';
 import { useRouter } from 'next/router';
-import Header from '../template-parts/Header';
-import TaskContainer from '../elements/TaskContainer';
+import Header from '../../../template-parts/Header';
+import TaskContainer from '../../../elements/TaskContainer';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 
 
 
-const Dashboard = (props) => {
+const SearchText = (props) => {
 
     const itemsPerPage = 5;
     const currentPage = useRef(0);
     // const searchToggle = useRef(false);
     const router = useRouter();
+    console.log(router.query);
 
+    const searchText = router.query.searchText;
     const [taskRows, setTaskRows] = useState([]);
-    const [searchText, setSearchText] = useState("");
-    const [searchToggle, setSearchToggle] = useState(false);
     const [moreScroll, setMoreScroll] = useState(true);
 
     const fetchTasks = async(status, currentPage, itemsPerPage, search) => {
@@ -58,35 +58,11 @@ const Dashboard = (props) => {
             fetchTasks("All", currentPage.current, itemsPerPage, searchText);
         }
 
-        const sendSearch = () => {
-            console.log("search text", searchText);
-            if(searchText.trim()!=""){
-                router.push("/task/search/" + searchText);
-                // setSearchToggle(true);
-                // setTaskRows([]);
-                // currentPage.current = 0;
-            }
-            else{
-                // setSearchToggle(false);
-            }
-            // fetchTasks("All", currentPage.current, itemsPerPage, searchText);
-        }
+    
 
         useEffect(() => {fetchTasks("All", currentPage.current, itemsPerPage, searchText)}, []);
 
-        // useEffect(() => {
-            
-        //     setTaskRows([]);
-        //     currentPage.current = 0;
-        //     console.log("uzeAffect", taskRows);
-        //     fetchTasks("All", currentPage.current, itemsPerPage, searchText)
-        // }, [searchToggle]);
-
-        // useEffect(() => {
-            
-        //    console.log("hoying?");
-        // }, [taskRows]);
-
+       
     return (
         <>
             <Header />
@@ -94,10 +70,7 @@ const Dashboard = (props) => {
                 <div className="container">
                     <div className="row">
                         <div className="col-md-12">
-                            <div className="input-group">
-                                <input type="text" className="form-control" placeholder="Search for tasks" value={searchText} onChange={(e) => setSearchText(e.target.value)}/>
-                                <button type="submit" className="btn btn-primary" onClick={() => sendSearch()}>Search</button>
-                            </div>
+                            <h2>Search results for "{searchText}"</h2>
                         </div>
                     </div>
                     <hr />
@@ -130,4 +103,4 @@ const Dashboard = (props) => {
     );
 }
 
-export default Dashboard;
+export default SearchText;

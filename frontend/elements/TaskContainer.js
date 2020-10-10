@@ -24,7 +24,7 @@ const TaskContainer = (props) => {
         <div className="task-container container-fluid" onClick={() => detailedTask(props.taskVals.id)}>
             <div className="row">
                 <div className="col-sm-2">
-                    <img className="task-img" src={`proof_images/${props.taskVals.taskImagePath}`} alt="Task image" width="100%" />
+                    <img className="task-img" src={`/proof_images/${props.taskVals.taskImagePath}`} alt="Task image" width="100%" />
                 </div>
                 <div className="col-sm-8 task-des">
                     <b>{props.taskVals.title}</b>
