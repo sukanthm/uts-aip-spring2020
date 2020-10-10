@@ -11,11 +11,12 @@ module.exports = function(app){
 
     app.get('/api/favors', async function(req, res){
         /*
-        Gets all of a user's favors (owed and owing)
+        Gets all of a user's favors with another user (owed and owing)
 
         request cookie:
             aip_fp
         request headers:
+            targetEmail (string)
             currentPage (int): optional. pagination page, default = 0
             itemsPerPage (int): optional. pagination items per page, default = 5
         response headers:
@@ -26,6 +27,10 @@ module.exports = function(app){
             message (string)
             output (array of json)
         */
+        let [successFlag, [targetEmail]] = helperModule.get_req_headers(req, ['targetEmail'], res);
+        if (!successFlag)
+            return;
+
         let [validationSuccess, user] = await helperModule.validate_user_loginToken(req, res);
         if (!validationSuccess)
             return;
@@ -34,15 +39,31 @@ module.exports = function(app){
         currentPage = currentPage ? Number(currentPage) : 0;
         itemsPerPage = itemsPerPage ? Number(itemsPerPage) : 5;
 
+        const targetUser = await fpUser.findOne({
+            where: {email: targetEmail},
+        })
+        if (targetUser === null){
+            helperModule.manipulate_response_and_send(req, res, {
+                'success': false, 
+                'message': 'target email not found in DB', 
+                }, 409);
+            return;
+        }
 
         let favors = await fpFavor.findAndCountAll({
             attributes: ['id', 'status', 'rewardID', 'createdAt', 'paidAt', 'creationProofPath', 'completionProofPath', 'comment'],
             limit: itemsPerPage,
             offset: currentPage * itemsPerPage,
             where: {
-                [Op.or]:[
-                    {payerID: user.id},
-                    {payeeID: user.id},
+                [Op.and]: [
+                    {[Op.or]: [
+                        {payerID: user.id},
+                        {payerID: targetUser.id},
+                    ]},
+                    {[Op.or]: [
+                        {payeeID: targetUser.id},
+                        {payeeID: user.id},
+                    ]},
                 ],
             }, 
             order: [
@@ -68,11 +89,13 @@ module.exports = function(app){
         favors['itemsPerPage'] = itemsPerPage;
         favors['currentPage'] = currentPage;
 
-        for (let i=0; i<favors.length; i++){
-            favors[i]['payeeEmail'] = favors[i]['payee_id']['payeeEmail'];
-            delete favors[i]['payee_id'];
-            favors[i]['payerEmail'] = favors[i]['payer_id']['payerEmail'];
-            delete favors[i]['payer_id'];
+
+
+        for (let i=0; i<favors.rows.length; i++){
+            favors.rows[i]['payeeEmail'] = favors.rows[i]['payee_id']['payeeEmail'];
+            delete favors.rows[i]['payee_id'];
+            favors.rows[i]['payerEmail'] = favors.rows[i]['payer_id']['payerEmail'];
+            delete favors.rows[i]['payer_id'];
         }
 
         helperModule.manipulate_response_and_send(req, res, {
