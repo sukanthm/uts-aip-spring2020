@@ -1,6 +1,10 @@
 import {useState, useEffect} from 'react';
+import { useRouter } from 'next/router';
 import Header from '../template-parts/Header';
+
 const Login = (props) => {
+    const router = useRouter();
+    
     const [email, setEmail] = useState("");
     const [password, setPass] = useState("");
 
@@ -18,6 +22,7 @@ const Login = (props) => {
             let result = await fetch("/api/login", {method: "GET", headers: userData});
             let json = await result.json();
             console.log("kya?", json);
+            router.push('/');
         }
         catch(err){
             console.log(err);

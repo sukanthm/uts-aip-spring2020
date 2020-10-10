@@ -92,7 +92,7 @@ const Register = () => {
         let result = await fetch("/api/signup", {method: "POST", headers: userData, credentials: "include"});
         let json = await result.json();
         console.log("kya?", json);
-        router.push('/login')
+        router.push('/login');
     }
     catch(err){
         console.log(err);
