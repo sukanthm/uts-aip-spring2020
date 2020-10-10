@@ -7,6 +7,12 @@ const bcrypt = require('bcrypt');
 
 const saltRounds = 10;
 
+function date_sort(a, b) {
+    if (a['createdAt'] > b['createdAt']) return -1;
+    if (b['createdAt'] > a['createdAt']) return 1;
+    return 0;
+  }
+
 function clean_and_shuffle(input){
     input = input ? input.split(/[\n\r\t\v\f\s,=({["'-;#]+/) : [''];
 
@@ -148,4 +154,5 @@ module.exports = {
     validate_user_loginToken: validate_user_loginToken,
     multerStorage: multerStorage,
     clean_and_shuffle: clean_and_shuffle,
+    date_sort: date_sort,
 }

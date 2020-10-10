@@ -233,6 +233,7 @@ module.exports = function(app){
             }
         }
         outputAllRequests['rows'] = Object.values(outputAllRequests['data']);
+        outputAllRequests['rows'] = outputAllRequests['rows'].sort(helperModule.date_sort);
         delete outputAllRequests['data'];
         outputAllRequests['totalItems'] = totalCount ? Number(totalCount) : 0;
         outputAllRequests['totalPages'] = Math.ceil(outputAllRequests['totalItems']/itemsPerPage);

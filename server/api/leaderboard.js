@@ -6,7 +6,7 @@ module.exports = function(app){
 
     app.get('/api/leaderboard/1', async function(req, res){
         /*
-        get user list by most incmoing favors 
+        get user list by most incoming open favors 
 
         request cookie:
             aip_fp
@@ -32,10 +32,21 @@ module.exports = function(app){
 
         let output = await sequelize.query(
             `
-            select "fp_users"."email" 
-            from "fp_users";
-            `,
-            { type: QueryTypes.SELECT }
+            SELECT "fp_users"."email", COUNT(*) as "incomingFavorCount"
+            FROM "fp_users"
+            LEFT JOIN "fp_favors" ON "fp_users"."id" = "fp_favors"."payeeID"
+            where "fp_favors"."status" = 'Pending'
+            GROUP BY "fp_users"."email"
+            ORDER BY "incomingFavorCount" DESC
+            LIMIT :itemsPerPage OFFSET :offset
+            ;`,
+            {
+                replacements: { 
+                    itemsPerPage: itemsPerPage,
+                    offset: currentPage * itemsPerPage,
+                  },
+                type: QueryTypes.SELECT
+              }
         );
 
         helperModule.manipulate_response_and_send(req, res, {
