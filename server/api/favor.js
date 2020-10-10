@@ -35,7 +35,7 @@ module.exports = function(app){
         if (!validationSuccess)
             return;
         
-        let [successFlag2, [currentPage, itemsPerPage]] = helperModule.get_req_headers(req, ['page', 'itemsPerPage'], res, true);
+        let [successFlag2, [currentPage, itemsPerPage]] = helperModule.get_req_headers(req, ['currentPage', 'itemsPerPage'], res, true);
         currentPage = currentPage ? Number(currentPage) : 0;
         itemsPerPage = itemsPerPage ? Number(itemsPerPage) : 5;
 
