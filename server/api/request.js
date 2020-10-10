@@ -117,7 +117,8 @@ module.exports = function(app){
         gets all requests (no auth) - use for front/landing page
 
         request headers:
-            requestStatus (string): optional. one of ['Open', 'Completed', 'All']
+            dashboardFilter (string): optional. one of ['Creator', 'Sponsor', 'Completor', 'All'] >> created by me, sponsored by me, etc.
+            requestStatus (string): optional. one of ['Open', 'Completed', 'All'] >> global filter for request status.
             currentPage (int): optional. pagination page, default = 0
             itemsPerPage (int): optional. pagination items per page, default = 5
             searchData (string): optional.
@@ -130,13 +131,39 @@ module.exports = function(app){
             output (array of json)
         */
 
-        let [successFlag, [requestStatus, currentPage, itemsPerPage, searchData]] = 
-            helperModule.get_req_headers(req, ['requestStatus', 'page', 'itemsPerPage', 'searchData'], res, true);
+        let [successFlag, [requestStatus, currentPage, itemsPerPage, searchData, dashboardFilter]] = 
+            helperModule.get_req_headers(req, ['requestStatus', 'page', 'itemsPerPage', 'searchData', 'dashboardFilter'], res, true);
         currentPage = currentPage ? Number(currentPage) : 0;
         itemsPerPage = itemsPerPage ? Number(itemsPerPage) : 5;
         searchData = helperModule.clean_and_shuffle(searchData);
         requestStatus = requestStatus ? requestStatus : 'All';
-        
+        let dashboardFilterSQL = '/* */';
+
+        if (!(dashboardFilter === undefined)){
+            let [validationSuccess, user] = await helperModule.validate_user_loginToken(req, res);
+            if (!validationSuccess)
+                return;
+
+            if (!['Creator', 'Sponsor', 'Completor', 'All'].includes(dashboardFilter)){
+                helperModule.manipulate_response_and_send(req, res, {
+                    'success': false, 
+                    'message': 'bad dashboardFilter header value sent', 
+                    }, 406);
+                return;
+            }
+            switch(dashboardFilter) {
+                case "Creator":
+                    dashboardFilterSQL = `"fp_requests"."creatorID" = '` + user.id + `' AND`;
+                    break;
+                case "Sponsor":
+                    dashboardFilterSQL = `"fp_request_rewards"."sponsorID" = '` + user.id + `' AND`;
+                    break;
+                case "Completor":
+                    dashboardFilterSQL = `"fp_requests"."completorID" = '` + user.id + `' AND`;
+                    break;
+            }
+        } 
+
         if (!['Open', 'Completed', 'All'].includes(requestStatus)){
             helperModule.manipulate_response_and_send(req, res, {
                 'success': false, 
@@ -148,23 +175,26 @@ module.exports = function(app){
         
         let allRequests = await sequelize.query(
             `select a.*, "fp_request_rewards"."rewardID", sum("fp_request_rewards"."rewardCount") as "rewardCount", "fp_rewards"."title" as "rewardTitle" from (
-                select DISTINCT "fp_requests"."id", "fp_requests"."title", "fp_requests"."description", "fp_requests"."taskImagePath", "fp_requests"."completedAt", 
+                select COUNT(*) OVER() as customCount, "fp_requests"."id", "fp_requests"."title", "fp_requests"."description", "fp_requests"."taskImagePath", "fp_requests"."completedAt", 
                     "fp_requests"."completionProofPath", "fp_requests"."completorComment", "fp_requests"."status", "fp_requests"."createdAt"
                 from "fp_requests"
                 LEFT OUTER JOIN "fp_request_rewards" on "fp_requests"."id" = "fp_request_rewards"."requestID"
                 LEFT OUTER JOIN "fp_rewards" on "fp_request_rewards"."rewardID" = "fp_rewards"."id"
                 where
+                    ` + dashboardFilterSQL + `
                     "fp_requests"."status" ilike :requestStatus AND (
                         "fp_requests"."title" ilike ANY (ARRAY[:searchData]) OR
                         "fp_requests"."description" ilike ANY (ARRAY[:searchData]) OR
                         "fp_rewards"."title" ilike ANY (ARRAY[:searchData])
                     )
+                GROUP BY "fp_requests"."id", "fp_requests"."title", "fp_requests"."description", "fp_requests"."taskImagePath", "fp_requests"."completedAt", 
+                    "fp_requests"."completionProofPath", "fp_requests"."completorComment", "fp_requests"."status", "fp_requests"."createdAt"
                 ORDER BY "fp_requests"."createdAt" DESC
                 LIMIT :itemsPerPage OFFSET :offset
             ) a 
             LEFT OUTER JOIN "fp_request_rewards" on a."id" = "fp_request_rewards"."requestID"
             LEFT OUTER JOIN "fp_rewards" on "fp_request_rewards"."rewardID" = "fp_rewards"."id"
-            group by a."id", a."title", a."description", a."taskImagePath", a."completedAt", a."completionProofPath", 
+            GROUP BY a.customCount, a."id", a."title", a."description", a."taskImagePath", a."completedAt", a."completionProofPath", 
                 a."completorComment", a."status", a."createdAt", "fp_request_rewards"."rewardID", "fp_rewards"."title"
             ;`,
             {
@@ -178,12 +208,14 @@ module.exports = function(app){
             }
           );
 
+        let totalCount;
         let outputAllRequests = {'data': {}};
         for (let i=0; i<allRequests.length; i++){
             if (allRequests[i]['id'] in outputAllRequests['data']){
                 outputAllRequests['data'][allRequests[i]['id']]['rewards']
                     [allRequests[i]['rewardID']] = allRequests[i]['rewardCount'];
             } else {
+                totalCount = allRequests[i]['customcount'];
                 outputAllRequests['data'][allRequests[i]['id']] = {
                     'id': allRequests[i]['id'],
                     'title': allRequests[i]['title'],
@@ -202,7 +234,7 @@ module.exports = function(app){
         }
         outputAllRequests['rows'] = Object.values(outputAllRequests['data']);
         delete outputAllRequests['data'];
-        outputAllRequests['totalItems'] = outputAllRequests['rows'].length;
+        outputAllRequests['totalItems'] = totalCount ? Number(totalCount) : 0;
         outputAllRequests['totalPages'] = Math.ceil(outputAllRequests['totalItems']/itemsPerPage);
         outputAllRequests['itemsPerPage'] = itemsPerPage;
         outputAllRequests['currentPage'] = currentPage;
