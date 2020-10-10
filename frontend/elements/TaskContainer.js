@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router'
 import RewardsContainer from './RewardsContainer';
+import helpers from '../functions/helpers.js';
 
 const TaskContainer = (props) => {
     // console.log(props.taskVals);
@@ -16,6 +17,8 @@ const TaskContainer = (props) => {
         props.taskVals.taskImagePath = "placeholder.jpg"
     }
 
+    props.taskVals.createdAt = helpers.readableDate(props.taskVals.createdAt);
+
     return (
 
         <div className="task-container container-fluid" onClick={() => detailedTask(props.taskVals.id)}>
@@ -26,6 +29,11 @@ const TaskContainer = (props) => {
                 <div className="col-sm-8 task-des">
                     <b>{props.taskVals.title}</b>
                     <p>{props.taskVals.description}</p>
+                    <br/>
+                    <br/>
+                    <b>Date:</b> {props.taskVals.createdAt}
+                    <br/>
+                    <b>Status:</b> <span className={"status-"+props.taskVals.status}>{props.taskVals.status}</span>
                 </div>
                 <div className="col-sm-2">
                     <p>Rewards</p>
