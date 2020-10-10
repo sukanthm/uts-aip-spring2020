@@ -16,9 +16,9 @@ module.exports = function(app){
         /*
         Adds a request
 
+        request cookie:
+            aip_fp
         request headers:
-            loginToken (string)
-            email (string)
             title (string)
             description (string): optional.
             rewards (JSON): {rewardID: rewardCount, ...}
@@ -31,14 +31,13 @@ module.exports = function(app){
             message (string)
             newRequestID (int)
         */
-        let [successFlag1, [email, loginToken, title, rewards]] = 
-            helperModule.get_req_headers(req, ['email', 'loginToken', 'title', 'rewards'], res);
+        let [successFlag1, [title, rewards]] = helperModule.get_req_headers(req, ['title', 'rewards'], res);
         if (!successFlag1)
             return;
 
         let [successFlag2, [description]] = helperModule.get_req_headers(req, ['description'], res, true);
         
-        let [validationSuccess, user] = await helperModule.validate_user_loginToken(req, email, loginToken, res);
+        let [validationSuccess, user] = await helperModule.validate_user_loginToken(req, res);
         if (!validationSuccess)
             return;
 
@@ -220,9 +219,9 @@ module.exports = function(app){
         /*
         gets a request
 
+        request cookie:
+            aip_fp
         request headers:
-            loginToken (string)
-            email (string)
             requestID (int)
         response headers:
             success (bool)
@@ -234,11 +233,11 @@ module.exports = function(app){
         TODO:
             improve sponsor_id -> sponsorEmail transaltion
         */
-        let [successFlag, [loginToken, email, requestID]] = helperModule.get_req_headers(req, ['loginToken', 'email', 'requestID'], res);
+        let [successFlag, [requestID]] = helperModule.get_req_headers(req, ['requestID'], res);
         if (!successFlag)
             return;
 
-        let [validationSuccess, user] = await helperModule.validate_user_loginToken(req, email, loginToken, res);
+        let [validationSuccess, user] = await helperModule.validate_user_loginToken(req, res);
         if (!validationSuccess)
             return;
         
@@ -313,9 +312,9 @@ module.exports = function(app){
         /*
         completes a request
 
+        request cookie:
+            aip_fp
         request headers:
-            loginToken (string)
-            email (string)
             requestID (int)
             completorComment (string)
         taskImage (form-data): check https://github.com/expressjs/multer for frontend form
@@ -327,12 +326,12 @@ module.exports = function(app){
             message (string)
             completedrequestID (int)
         */
-        let [successFlag, [email, loginToken, requestID, completorComment]] = 
-            helperModule.get_req_headers(req, ['email', 'loginToken', 'requestID', 'completorComment'], res);
+        let [successFlag, [requestID, completorComment]] = 
+            helperModule.get_req_headers(req, ['requestID', 'completorComment'], res);
         if (!successFlag)
             return;
         
-        let [validationSuccess, user] = await helperModule.validate_user_loginToken(req, email, loginToken, res);
+        let [validationSuccess, user] = await helperModule.validate_user_loginToken(req, res);
         if (!validationSuccess)
             return;
 
@@ -464,9 +463,9 @@ module.exports = function(app){
         /*
         changes a request's sponsor's rewards
 
+        request cookie:
+            aip_fp
         request headers:
-            loginToken (string)
-            email (string)
             requestID (int)
             rewardChanges (JSON): {rewardID: rewardCountChange, ...}
         response headers:
@@ -477,12 +476,12 @@ module.exports = function(app){
             message (string)
             updatedRequestID/deletedRequestID (int)
         */
-        let [successFlag, [email, loginToken, requestID, rewardChanges]] = 
-        helperModule.get_req_headers(req, ['email', 'loginToken', 'requestID', 'rewardChanges'], res);
+        let [successFlag, [requestID, rewardChanges]] = 
+        helperModule.get_req_headers(req, ['requestID', 'rewardChanges'], res);
         if (!successFlag)
             return;
    
-        let [validationSuccess, user] = await helperModule.validate_user_loginToken(req, email, loginToken, res);
+        let [validationSuccess, user] = await helperModule.validate_user_loginToken(req, res);
             if (!validationSuccess)
             return;
 

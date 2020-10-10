@@ -1,3 +1,4 @@
+var assert = require('assert');
 var path = require('path');
 var multer  = require('multer');
 const fs = require('fs');
@@ -85,9 +86,32 @@ function get_req_headers(req, headers, res, allOptional=false){
     return [true, output];
 }
 
-async function validate_user_loginToken(req, email, loginToken, res){
+async function validate_user_loginToken(req, res){
+    let aipFpCookie = req.cookies.aip_fp;
+    if (aipFpCookie === undefined){
+        manipulate_response_and_send(req, res, {
+            'success': false, 
+            'message': 'not logged in',
+            }, 401);
+        return [false, undefined];
+    }
+
+    try {
+        aipFpCookie = JSON.parse(aipFpCookie);
+        assert(Object.keys(aipFpCookie).length === 2);
+        assert(Object.keys(aipFpCookie).includes('email'));
+        assert(Object.keys(aipFpCookie).includes('loginToken'));
+    }
+    catch (err) {
+        manipulate_response_and_send(req, res, {
+            'success': false, 
+            'message': 'bad cookie',
+            }, 406);
+        return [false, undefined];
+    }
+
     const user = await fpUser.findOne({
-        where: {email: email},
+        where: {email: aipFpCookie['email']},
     });
     if (user === null){
         manipulate_response_and_send(req, res, {
@@ -96,7 +120,7 @@ async function validate_user_loginToken(req, email, loginToken, res){
             }, 404);
         return [false, undefined];
     }
-    if (! await is_secret_valid(await user.id, loginToken)){
+    if (! await is_secret_valid(await user.id, aipFpCookie['loginToken'])){
         manipulate_response_and_send(req, res, {
             'success': false, 
             'message': 'unAuthenticated user',

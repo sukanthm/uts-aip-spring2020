@@ -154,9 +154,9 @@ module.exports = function(app){
         /*
         Detects a user's potential parties
 
+        request cookie:
+            aip_fp
         request headers:
-            loginToken (string)
-            email (string)
         response headers:
             success (bool)
             message (string)
@@ -165,13 +165,10 @@ module.exports = function(app){
             message (string)
             output (json)
         */
-       let [successFlag, [email, loginToken]] = helperModule.get_req_headers(req, ['email', 'loginToken'], res);
-       if (!successFlag)
-           return;
 
-       let [validationSuccess, user] = await helperModule.validate_user_loginToken(req, email, loginToken, res);
-       if (!validationSuccess)
-           return;
+        let [validationSuccess, user] = await helperModule.validate_user_loginToken(req, res);
+        if (!validationSuccess)
+            return;
 
         let output = await party_detector();
         let outputForUser = {};
@@ -179,7 +176,7 @@ module.exports = function(app){
         for (let rewardID in output){
             outputForUser[rewardID] = [];
             for (let i=0; i<output[rewardID].length; i++){
-                if (output[rewardID][i].includes(email)){
+                if (output[rewardID][i].includes(user.email)){
                     outputForUser[rewardID].push(output[rewardID][i]);
                 }
             }
