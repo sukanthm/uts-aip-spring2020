@@ -89,8 +89,6 @@ module.exports = function(app){
         favors['itemsPerPage'] = itemsPerPage;
         favors['currentPage'] = currentPage;
 
-
-
         for (let i=0; i<favors.rows.length; i++){
             favors.rows[i]['payeeEmail'] = favors.rows[i]['payee_id']['payeeEmail'];
             delete favors.rows[i]['payee_id'];
