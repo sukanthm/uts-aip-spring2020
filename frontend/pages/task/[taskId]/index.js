@@ -88,8 +88,8 @@ const TaskId = () => {
             let taskData = {
                 rewardChanges: JSON.stringify(rewardJson),
                 requestID: taskId,
-                email: "s@a.com",
-                loginToken: "$2b$10$QYVP.E7ikEJqhc8GwbsYauq9E7PPkgR39iyFVriFqlytZjJVQnE/e"
+                email: "d@g.com",
+                loginToken: "$2b$10$hcT7aC5xrGVVBPhwtjQWBOQWPnXvr4OIRm9A1AcOOGfAPJJeY6PCa"
             }
 
             let result = await fetch("/api/request/sponsor", { method: "PUT", headers: taskData });
@@ -120,8 +120,8 @@ const TaskId = () => {
         try {
             let claimData = {
                 completorComment: taskComment,
-                email: "s@a.com",
-                loginToken: "$2b$10$QYVP.E7ikEJqhc8GwbsYauq9E7PPkgR39iyFVriFqlytZjJVQnE/e",
+                email: "d@g.com",
+                loginToken: "$2b$10$hcT7aC5xrGVVBPhwtjQWBOQWPnXvr4OIRm9A1AcOOGfAPJJeY6PCa",
                 requestID: taskId
             }
 
@@ -138,8 +138,8 @@ const TaskId = () => {
     const fetchTaskDetails = async () => {
         try {
             let fetchJson = {
-                email: "s@a.com",
-                loginToken: "$2b$10$QYVP.E7ikEJqhc8GwbsYauq9E7PPkgR39iyFVriFqlytZjJVQnE/e",
+                email: "d@g.com",
+                loginToken: "$2b$10$hcT7aC5xrGVVBPhwtjQWBOQWPnXvr4OIRm9A1AcOOGfAPJJeY6PCa",
                 requestId: taskId
             }
             let result = await fetch("/api/request", { method: "GET", headers: fetchJson });
@@ -183,6 +183,7 @@ const TaskId = () => {
                             <h2 className="forward-page-header">{taskData.title}</h2>
                             <p>{taskData.description}</p>
                             <p>Created by <strong>{taskData.creatorEmail}</strong> at <i>{(taskData.createdAt)}</i></p>
+                            <b>Status:</b> <span className={"status-"+taskData.status}>{taskData.status}</span>
                         </div>
                     </div>
                     <hr />

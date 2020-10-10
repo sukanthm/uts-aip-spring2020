@@ -59,7 +59,7 @@
     flex-grow: 2;
 }
 
-.task-des b{
+.task-des b:first-of-type{
     color: $primary;
 }
 
@@ -187,4 +187,14 @@
 
   .modal-dialog-centered{
       max-width: 1200px;
+  }
+
+  .status-Open{
+      color: $green;
+      font-weight: bolder;
+  }
+
+  .status-Completed{
+      color: $red;
+      font-weight: bolder;
   }

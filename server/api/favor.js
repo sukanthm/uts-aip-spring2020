@@ -11,11 +11,12 @@ module.exports = function(app){
 
     app.get('/api/favors', async function(req, res){
         /*
-        Gets all of a user's favors (owed and owing)
+        Gets all of a user's favors with another user (owed and owing)
 
+        request cookie:
+            aip_fp
         request headers:
-            loginToken (string)
-            email (string)
+            targetEmail (string)
             currentPage (int): optional. pagination page, default = 0
             itemsPerPage (int): optional. pagination items per page, default = 5
         response headers:
@@ -26,11 +27,11 @@ module.exports = function(app){
             message (string)
             output (array of json)
         */
-        let [successFlag1, [email, loginToken]] = helperModule.get_req_headers(req, ['email', 'loginToken'], res);
-        if (!successFlag1)
+        let [successFlag, [targetEmail]] = helperModule.get_req_headers(req, ['targetEmail'], res);
+        if (!successFlag)
             return;
 
-        let [validationSuccess, user] = await helperModule.validate_user_loginToken(req, email, loginToken, res);
+        let [validationSuccess, user] = await helperModule.validate_user_loginToken(req, res);
         if (!validationSuccess)
             return;
         
@@ -38,15 +39,31 @@ module.exports = function(app){
         currentPage = currentPage ? Number(currentPage) : 0;
         itemsPerPage = itemsPerPage ? Number(itemsPerPage) : 5;
 
+        const targetUser = await fpUser.findOne({
+            where: {email: targetEmail},
+        })
+        if (targetUser === null){
+            helperModule.manipulate_response_and_send(req, res, {
+                'success': false, 
+                'message': 'target email not found in DB', 
+                }, 409);
+            return;
+        }
 
         let favors = await fpFavor.findAndCountAll({
             attributes: ['id', 'status', 'rewardID', 'createdAt', 'paidAt', 'creationProofPath', 'completionProofPath', 'comment'],
             limit: itemsPerPage,
             offset: currentPage * itemsPerPage,
             where: {
-                [Op.or]:[
-                    {payerID: user.id},
-                    {payeeID: user.id},
+                [Op.and]: [
+                    {[Op.or]: [
+                        {payerID: user.id},
+                        {payerID: targetUser.id},
+                    ]},
+                    {[Op.or]: [
+                        {payeeID: targetUser.id},
+                        {payeeID: user.id},
+                    ]},
                 ],
             }, 
             order: [
@@ -72,11 +89,11 @@ module.exports = function(app){
         favors['itemsPerPage'] = itemsPerPage;
         favors['currentPage'] = currentPage;
 
-        for (let i=0; i<favors.length; i++){
-            favors[i]['payeeEmail'] = favors[i]['payee_id']['payeeEmail'];
-            delete favors[i]['payee_id'];
-            favors[i]['payerEmail'] = favors[i]['payer_id']['payerEmail'];
-            delete favors[i]['payer_id'];
+        for (let i=0; i<favors.rows.length; i++){
+            favors.rows[i]['payeeEmail'] = favors.rows[i]['payee_id']['payeeEmail'];
+            delete favors.rows[i]['payee_id'];
+            favors.rows[i]['payerEmail'] = favors.rows[i]['payer_id']['payerEmail'];
+            delete favors.rows[i]['payer_id'];
         }
 
         helperModule.manipulate_response_and_send(req, res, {
@@ -91,9 +108,9 @@ module.exports = function(app){
         /*
         Adds a favor
 
+        request cookie:
+            aip_fp
         request headers:
-            loginToken (string)
-            email (string)
             payeeEmail (string)
             payerEmail (string)
             rewardID (int)
@@ -106,16 +123,16 @@ module.exports = function(app){
             message (string)
             newFavorID (int)
         */
-        let [successFlag, [email, loginToken, payeeEmail, payerEmail, rewardID]] = 
-            helperModule.get_req_headers(req, ['email', 'loginToken', 'payeeEmail', 'payerEmail', 'rewardID'], res);
+        let [successFlag, [payeeEmail, payerEmail, rewardID]] = 
+            helperModule.get_req_headers(req, ['payeeEmail', 'payerEmail', 'rewardID'], res);
         if (!successFlag)
             return;
         
-        let [validationSuccess, user] = await helperModule.validate_user_loginToken(req, email, loginToken, res);
+        let [validationSuccess, user] = await helperModule.validate_user_loginToken(req, res);
         if (!validationSuccess)
             return;
 
-        if (![payeeEmail, payerEmail].includes(email)){
+        if (![payeeEmail, payerEmail].includes(user.email)){
             helperModule.manipulate_response_and_send(req, res, {
                 'success': false, 
                 'message': 'unAuthorised user, favor creator is neither payee nor payer', 
@@ -151,7 +168,7 @@ module.exports = function(app){
             comment: 'manually created by: '+user.email,
         });
 
-        if (email === payeeEmail){
+        if (user.email === payeeEmail){
             if (req.file === undefined){
                 helperModule.manipulate_response_and_send(req, res, {
                     'success': false, 
@@ -192,9 +209,9 @@ module.exports = function(app){
         /*
         Gets a user's favor
 
+        request cookie:
+            aip_fp
         request headers:
-            loginToken (string)
-            email (string)
             favorID (int)
         response headers:
             success (bool)
@@ -204,11 +221,11 @@ module.exports = function(app){
             message (string)
             output (json)
         */
-        let [successFlag, [email, loginToken, favorID]] = helperModule.get_req_headers(req, ['email', 'loginToken', 'favorID'], res);
+        let [successFlag, [favorID]] = helperModule.get_req_headers(req, ['favorID'], res);
         if (!successFlag)
             return;
 
-        let [validationSuccess, user] = await helperModule.validate_user_loginToken(req, email, loginToken, res);
+        let [validationSuccess, user] = await helperModule.validate_user_loginToken(req, res);
         if (!validationSuccess)
             return;
         
@@ -238,7 +255,7 @@ module.exports = function(app){
                 }, 404);
             return;    
         }
-        if (![favor.toJSON().payee_id.payeeEmail, favor.toJSON().payer_id.payerEmail].includes(email)){
+        if (![favor.toJSON().payee_id.payeeEmail, favor.toJSON().payer_id.payerEmail].includes(user.email)){
             helperModule.manipulate_response_and_send(req, res, {
                 'success': false, 
                 'message': 'unAuthorised user', 
@@ -264,9 +281,9 @@ module.exports = function(app){
         /*
         Closes a user's favor (set to Paid)
 
+        request cookie:
+            aip_fp
         request headers:
-            loginToken (string)
-            email (string)
             favorID (int)
         proofImage (form-data): optional. required iff email == payer. check https://github.com/expressjs/multer for frontend form
         response headers:
@@ -277,12 +294,11 @@ module.exports = function(app){
             message (string)
             closedFavorID (int)
         */
-        let [successFlag, [email, loginToken, favorID]] = 
-            helperModule.get_req_headers(req, ['email', 'loginToken', 'favorID'], res);
+        let [successFlag, [favorID]] = helperModule.get_req_headers(req, ['favorID'], res);
         if (!successFlag)
             return;
 
-        let [validationSuccess, user] = await helperModule.validate_user_loginToken(req, email, loginToken, res);
+        let [validationSuccess, user] = await helperModule.validate_user_loginToken(req, res);
         if (!validationSuccess)
             return;
         
