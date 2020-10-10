@@ -13,6 +13,11 @@ const TaskId = () => {
     console.log("jeanpaul", router.query);
     const taskId = router.query.taskId;
 
+    const cookie = decodeURIComponent(document.cookie).substring(7);
+    const userMail = JSON.parse(cookie).email;
+
+    console.log("mailo", userMail);
+
     const [showAlert, setShowAlert] = useState(false);
     const [errMsg, setErrMsg] = useState("");
 
@@ -147,7 +152,7 @@ const TaskId = () => {
             sponsors.map((user) => {
                 console.log("ujer", user);
 
-                if (user == "s@a.com")
+                if (user == userMail)
                     setClaimDisable(true);
             })
 
