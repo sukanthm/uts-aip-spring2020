@@ -1,4 +1,5 @@
-const { Op } = require("sequelize");
+import {sequelize, Sequelize} from '../persistence/objects/sequelize';
+const { Op, QueryTypes } = require("sequelize");
 import fpUser from '../persistence/objects/fpUser';
 import fpFavor from '../persistence/objects/fpFavor';
 const helperModule = require('./helper.js');
@@ -368,5 +369,42 @@ module.exports = function(app){
             return;
         }
     })
-  
+
+    app.get('/api/favors/dashboard', async function(req, res){
+        /*
+        Gets a user's consolidated favors stats
+
+        request cookie:
+            aip_fp
+        request headers:
+        response headers:
+            success (bool)
+            message (string)
+        response body:
+            success (bool)
+            message (string)
+            output (json)
+        */
+        let [validationSuccess, user] = await helperModule.validate_user_loginToken(req, res);
+        if (!validationSuccess)
+            return;
+
+        let output = await sequelize.query(
+            `
+            SELECT DISTINCT u2.email as "payeeEmail", u1.email as "payerEmail", COUNT(*) OVER(PARTITION BY f."rewardID", f.status) as "favorCount", f."rewardID", f.status
+            FROM "fp_favors" f
+            JOIN "fp_users" u1 ON f."payerID" = u1.id
+            JOIN "fp_users" u2 ON f."payeeID" = u2.id
+            where f."payerID" = '`+user.id+`' OR f."payeeID" = '`+user.id+`'
+            ;`,
+            {type: QueryTypes.SELECT}
+        );
+
+        helperModule.manipulate_response_and_send(req, res, {
+            'success': true, 
+            'message': 'favors dashboard data sent',
+            'output': output,
+            }, 200);
+        return;
+    })
 }
