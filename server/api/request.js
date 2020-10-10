@@ -118,10 +118,10 @@ module.exports = function(app){
 
         request headers:
             dashboardFilter (string): optional. one of ['Creator', 'Sponsor', 'Completor', 'All'] >> created by me, sponsored by me, etc.
+            searchData (string): optional. searches in request title, request description and reward name
             requestStatus (string): optional. one of ['Open', 'Completed', 'All'] >> global filter for request status.
             currentPage (int): optional. pagination page, default = 0
             itemsPerPage (int): optional. pagination items per page, default = 5
-            searchData (string): optional.
         response headers:
             success (bool)
             message (string)
@@ -132,7 +132,7 @@ module.exports = function(app){
         */
 
         let [successFlag, [requestStatus, currentPage, itemsPerPage, searchData, dashboardFilter]] = 
-            helperModule.get_req_headers(req, ['requestStatus', 'page', 'itemsPerPage', 'searchData', 'dashboardFilter'], res, true);
+            helperModule.get_req_headers(req, ['requestStatus', 'currentPage', 'itemsPerPage', 'searchData', 'dashboardFilter'], res, true);
         currentPage = currentPage ? Number(currentPage) : 0;
         itemsPerPage = itemsPerPage ? Number(itemsPerPage) : 5;
         searchData = helperModule.clean_and_shuffle(searchData);
