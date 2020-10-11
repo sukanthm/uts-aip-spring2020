@@ -109,7 +109,7 @@ const Dashboard = (props) => {
                     hasMore={moreScroll}
                     hasChildren={moreScroll}
                     loader={<h4>Loading...</h4>}
-                    height={400}
+                    height={700}
                     endMessage={
                         <p style={{ textAlign: 'center' }}>
                         <b>Yay! You have seen it all</b>

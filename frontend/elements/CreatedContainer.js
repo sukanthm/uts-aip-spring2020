@@ -1,28 +1,26 @@
 
 import {useEffect, useState, useRef} from 'react';
 import { useRouter } from 'next/router';
-import Header from '../../../template-parts/Header';
-import TaskContainer from '../../../elements/TaskContainer';
+import Header from '../template-parts/Header';
+import TaskContainer from './TaskContainer';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 
 
 
-const SearchText = (props) => {
+const CreatedContainer = (props) => {
 
     const itemsPerPage = 5;
     const currentPage = useRef(0);
-    // const searchToggle = useRef(false);
     const router = useRouter();
-    console.log(router.query);
 
-    const searchText = router.query.searchText;
     const [taskRows, setTaskRows] = useState([]);
     const [moreScroll, setMoreScroll] = useState(true);
 
     const fetchTasks = async(status, currentPage, itemsPerPage, search) => {
         try{
             let fetchJson = {
+                dashboardFilter: "Creator",
                 requestStatus: status,
                 currentPage: currentPage,
                 itemsPerPage: itemsPerPage,
@@ -55,24 +53,19 @@ const SearchText = (props) => {
             console.log("abhi", currentPage.current);
             currentPage.current = currentPage.current + 1;
             console.log("abhi bhi", currentPage.current);
-            fetchTasks("All", currentPage.current, itemsPerPage, searchText);
+            fetchTasks("All", currentPage.current, itemsPerPage, "");
         }
 
-    
 
-        useEffect(() => {fetchTasks("All", currentPage.current, itemsPerPage, searchText)}, []);
+        useEffect(() => {fetchTasks("All", currentPage.current, itemsPerPage, "")}, []);
 
        
+
     return (
-        <>
-            <Header />
+        
             <div className="dashboard-page">
                 <div className="container">
-                    <div className="row">
-                        <div className="col-md-12">
-                            <h2>Search results for "{searchText}"</h2>
-                        </div>
-                    </div>
+                  
                     <hr />
                     
 
@@ -99,8 +92,8 @@ const SearchText = (props) => {
                     </InfiniteScroll>
                 </div>
             </div>
-        </>
+        
     );
 }
 
-export default SearchText;
+export default CreatedContainer;
