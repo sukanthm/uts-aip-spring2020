@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import Header from '../template-parts/Header';
 import TaskContainer from '../elements/TaskContainer';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import ActiveLink from '../template-parts/ActiveLink'
 
 
 
@@ -124,6 +125,16 @@ const Dashboard = (props) => {
                     })
                     }
                     </InfiniteScroll>
+                </div>
+
+                <div className="cust-fab">
+                    <div>
+                        <ActiveLink activeClassName="active" href="/task/new">
+                            <button type="submit" className="btn btn-light">Add Task</button>
+                        </ActiveLink>    
+                    </div>
+                    <br/>
+                    <div><button type="submit" className="btn btn-light">Add Favour</button></div>
                 </div>
             </div>
         </>
