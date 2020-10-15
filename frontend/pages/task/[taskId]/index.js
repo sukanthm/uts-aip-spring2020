@@ -1,9 +1,11 @@
 import { useRouter } from 'next/router';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
+
 import Header from '../../../template-parts/Header';
 import IndividualRewardCard from '../../../elements/IndividualRewardCard';
 import RewardCard from '../../../elements/RewardCard';
 import helpers from '../../../functions/helpers.js';
+import UserContext from '../../../functions/context';
 import Modal from 'react-bootstrap/Modal';
 import { Button, ButtonToolbar } from 'react-bootstrap';
 import Alert from 'react-bootstrap/Alert';
@@ -12,9 +14,10 @@ const TaskId = () => {
     const router = useRouter();
     console.log("jeanpaul", router.query);
     const taskId = router.query.taskId;
+    const { user } = useContext(UserContext);
 
-    const cookie = decodeURIComponent(document.cookie).substring(7);
-    const userMail = JSON.parse(cookie).email;
+    // const cookie = decodeURIComponent(document.cookie).substring(7);
+    const userMail = user;
 
     console.log("mailo", userMail);
 

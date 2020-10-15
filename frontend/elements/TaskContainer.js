@@ -1,6 +1,9 @@
 import { useRouter } from 'next/router'
 import RewardsContainer from './RewardsContainer';
 import helpers from '../functions/helpers.js';
+import UserContext from '../functions/context';
+import { useContext } from 'react';
+
 
 const TaskContainer = (props) => {
     // console.log(props.taskVals);
@@ -8,9 +11,17 @@ const TaskContainer = (props) => {
 
     const router = useRouter();
 
+    const { user } = useContext(UserContext);
+
     const detailedTask = (id) => {
-        console.log("Khol rahe hain", id);
-        router.push("/task/" + id);
+        if(user){
+            console.log("Khol rahe hain", id);
+            router.push("/task/" + id);
+        }
+        else{
+            console.log("user nahi");
+        }
+
     }
 
     if(props.taskVals.taskImagePath.trim() == ""){

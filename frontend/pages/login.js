@@ -1,10 +1,11 @@
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useContext} from 'react';
 import { useRouter } from 'next/router';
 import Header from '../template-parts/Header';
+import UserContext from '../functions/context';
 
 const Login = (props) => {
     const router = useRouter();
-    
+    const { login } = useContext(UserContext);
     const [email, setEmail] = useState("");
     const [password, setPass] = useState("");
 
@@ -22,6 +23,8 @@ const Login = (props) => {
             let result = await fetch("/api/login", {method: "GET", headers: userData});
             let json = await result.json();
             console.log("kya?", json);
+            login(json.email);
+
             router.push('/');
         }
         catch(err){
@@ -78,6 +81,7 @@ const Login = (props) => {
     return(
         <>
             <Header />
+            
             <div className="login-page">
                 <div className="container">
                     <h2 className="text-center mb-5">Log in to your account</h2>
