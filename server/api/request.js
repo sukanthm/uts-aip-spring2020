@@ -50,8 +50,8 @@ module.exports = function(app){
 
         rewards = JSON.parse(rewards);
         if (Object.keys(rewards).length === 0 || (
-                    Math.min.apply(null, Object.values({rewards})) <= 0 && 
-                    Math.max.apply(null, Object.values({rewards})) <= 0
+                    Math.min.apply(null, Object.values(rewards)) <= 0 && 
+                    Math.max.apply(null, Object.values(rewards)) <= 0
                 )){
             helperModule.manipulate_response_and_send(req, res, {
                 'success': false, 
