@@ -37,14 +37,14 @@ const New = () => {
         const formData = new FormData();
         formData.append('proofImage', formImg);
          
-        let rewardFlag = 0;
-        let keys = Object.keys(rewardJson);
-        // Check if rewards have not been left empty
-        keys.map((key) => { 
-            if(rewardJson[key] > 0){
-                rewardFlag = 1;
-            }
-        })
+        // let rewardFlag = 0;
+        // let keys = Object.keys(rewardJson);
+        // // Check if rewards have not been left empty
+        // keys.map((key) => { 
+        //     if(rewardJson[key] > 0){
+        //         rewardFlag = 1;
+        //     }
+        // })
 
         // Title and Rewards are compulsory
 
@@ -53,11 +53,11 @@ const New = () => {
             setShowAlert(true);
             return;
         }
-        else if(rewardFlag == 0){
-            setErrMsg("Nothing in this world is free. Please add rewards to the task");
-            setShowAlert(true);
-            return;
-        }
+        // else if(rewardFlag == 0){
+        //     setErrMsg("Nothing in this world is free. Please add rewards to the task");
+        //     setShowAlert(true);
+        //     return;
+        // }
 
         try{
             let taskData = {
@@ -75,7 +75,7 @@ const New = () => {
             if(json.success == true)
                 router.push(`/task/${json.newRequestID}`);
             else{
-            setErrMsg("Server Error. Please try again later");
+            setErrMsg(json.message);
             setShowAlert(true);
             }
         }

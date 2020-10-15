@@ -10,9 +10,9 @@ const RewardCard = (props) => {
             setCount(val + 1);
         }
         else if(operator == "-"){
-            if(count > 0){
+            // if(count > 0){
                 setCount(val - 1);
-            }
+            // }
         }
     }
 

@@ -78,18 +78,18 @@ const TaskId = () => {
         let rewardFlag = 0;
         let keys = Object.keys(rewardJson);
         // Check if rewards have not been left empty
-        keys.map((key) => {
-            if (rewardJson[key] > 0) {
-                rewardFlag = 1;
-            }
-        })
+        // keys.map((key) => {
+        //     if (rewardJson[key] > 0) {
+        //         rewardFlag = 1;
+        //     }
+        // })
 
-        if (rewardFlag == 0) {
-            setErrMsg("No rewards added!");
-            handleCloseRew();
-            setShowAlert(true);
-            return;
-        }
+        // if (rewardFlag == 0) {
+        //     setErrMsg("No rewards added!");
+        //     handleCloseRew();
+        //     setShowAlert(true);
+        //     return;
+        // }
 
         try {
             let taskData = {
@@ -106,9 +106,17 @@ const TaskId = () => {
                 handleCloseRew();
                 fetchTaskDetails();
             }
+            else if(json.success == false){
+                setErrMsg(json.message);
+                setShowAlert(true);
+                handleCloseRew();
+            }
         }
         catch (err) {
             console.log(err);
+            setErrMsg("Error in updating rewards");
+                setShowAlert(true);
+                handleCloseRew();
         }
 
     }
@@ -181,13 +189,13 @@ const TaskId = () => {
 
     useEffect(() => { fetchTaskDetails() }, [])
 
-    useEffect(() => { console.log("We are testing here:", showCompletor) }, [showCompletor])
+    // useEffect(() => { console.log("We are testing here:", showCompletor) }, [showCompletor])
 
-    const Completor = () => (
-        <div>
-            <p>Completed by <strong>{taskData.completorEmail}</strong> at <i>{(taskData.completedAt)}</i></p>
-        </div>
-    )
+    // const Completor = () => (
+    //     <div>
+    //         <p>Completed by <strong>{taskData.completorEmail}</strong> at <i>{(taskData.completedAt)}</i></p>
+    //     </div>
+    // )
 
 
     return (
@@ -209,7 +217,7 @@ const TaskId = () => {
                             <b>Status:</b> <span className={"status-"+taskData.status}>{taskData.status}</span>
 
                             {/* show information of completor if the task has been completed */}
-                            {showCompletor ? <Completor /> : null}
+                            {/* {showCompletor ? <Completor /> : null} */}
 
                         </div>
                     </div>
@@ -248,7 +256,7 @@ const TaskId = () => {
                             </div>
                         ) : (
                             <div className="col-md-12">
-                                    <p>Completed by {taskData.completorEmail} at {taskData.completedAt}</p>
+                                    <p><b>Completed by </b>{taskData.completorEmail} at {taskData.completedAt}</p>
                             </div>
                         )}
                         
@@ -285,7 +293,7 @@ const TaskId = () => {
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={handleCloseRew}>Cancel</Button>
-                        <Button variant="primary" onClick={() => addReward()}>Add Reward</Button>
+                        <Button variant="primary" onClick={() => addReward()}>Update Reward</Button>
                     </Modal.Footer>
                 </Modal>
 
