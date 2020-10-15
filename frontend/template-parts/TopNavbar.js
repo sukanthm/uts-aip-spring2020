@@ -45,7 +45,7 @@ const TopNavbar = (props) => {
               </ActiveLink>
           </li>
         </ul>
-        
+              <p className="text-light"><i>Logged in as {user}</i></p>
               <button className="btn btn-outline-light mr-sm-2" type="submit" onClick={() => logOut()}>Logout</button>
            
       </div>

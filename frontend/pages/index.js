@@ -1,12 +1,12 @@
 
-import {useEffect, useState, useRef} from 'react';
+import {useEffect, useState, useRef, useContext} from 'react';
 import { useRouter } from 'next/router';
 import Header from '../template-parts/Header';
 import TaskContainer from '../elements/TaskContainer';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import ActiveLink from '../template-parts/ActiveLink'
 import Alert from 'react-bootstrap/Alert';
-
+import UserContext from '../functions/context';
 
 
 const Dashboard = (props) => {
@@ -23,6 +23,8 @@ const Dashboard = (props) => {
 
     const [showAlert, setShowAlert] = useState(false);
     const [errMsg, setErrMsg] = useState("");
+
+    const { user, logout } = useContext(UserContext);
 
     const fetchTasks = async(status, currentPage, itemsPerPage, search) => {
         try{
@@ -139,16 +141,23 @@ const Dashboard = (props) => {
                     }
                     </InfiniteScroll>
                 </div>
-
-                <div className="cust-fab">
-                    <div>
-                        <ActiveLink activeClassName="active" href="/task/new">
-                            <button type="submit" className="btn btn-primary cust-float-new">Add Task</button>
-                        </ActiveLink>    
-                    </div>
-                    {/* <br/> */}
-                    {/* <div><button type="submit" className="btn btn-light">Add Favour</button></div> */}
-                </div>
+                    {user ? (
+                         <div className="cust-fab">
+                            <div>
+                                <ActiveLink activeClassName="active" href="/task/new">
+                                    <button type="submit" className="btn btn-primary cust-float-new">Add Task</button>
+                                </ActiveLink>    
+                            </div>
+                            {/* <br/> */}
+                            {/* <div><button type="submit" className="btn btn-light">Add Favour</button></div> */}
+                         </div>
+                    ) : (
+                        null
+                        )
+                        }
+               
+                    
+                
             </div>
         </>
     );
