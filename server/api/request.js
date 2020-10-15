@@ -309,7 +309,7 @@ module.exports = function(app){
         delete oneRequest['request_id'];
         oneRequest['creatorEmail'] = oneRequest['creator_id']['creatorEmail'];
         delete oneRequest['creator_id'];
-        if (oneRequest['completorEmail'] != null){
+        if (oneRequest['completor_id'] != null){
             oneRequest['completorEmail'] = oneRequest['completor_id']['completorEmail'];
             delete oneRequest['completor_id'];
         }
