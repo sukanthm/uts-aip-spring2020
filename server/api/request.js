@@ -452,12 +452,12 @@ module.exports = function(app){
         }
 
         let favorTrace = [];
-        let favors = oneRequest['request_id'];
+        let favors = JSON.parse(JSON.stringify(oneRequest['request_id']));
         for (let i=0; i<favors.length; i++){
             for (let j=0; j<Number(favors[i]['rewardCount']); j++){
                 let favor = fpFavor.build({
                     payeeID: user.id,
-                    payerID: favors[i]['sponsor_id'],
+                    payerID: favors[i]['sponsorID'],
                     rewardID: favors[i]['rewardID'],
                     comment: 'automagically created for requestID: '+oneRequest.id+' completion',
                 });
