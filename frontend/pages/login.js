@@ -2,6 +2,7 @@ import {useState, useEffect, useContext} from 'react';
 import { useRouter } from 'next/router';
 import Header from '../template-parts/Header';
 import UserContext from '../functions/context';
+import Alert from 'react-bootstrap/Alert';
 
 const Login = (props) => {
     const router = useRouter();
@@ -14,6 +15,9 @@ const Login = (props) => {
     const [firstRender, setFirstRender] = useState(0);
     const [validated, setValidated] = useState(false);
 
+    const [showAlert, setShowAlert] = useState(false);
+    const [errMsg, setErrMsg] = useState("");
+
     const submitForm = async() => {
         try{
             let userData = {
@@ -23,13 +27,22 @@ const Login = (props) => {
             let result = await fetch("/api/login", {method: "GET", headers: userData});
             let json = await result.json();
             console.log("kya?", json);
-            login(json.email);
-
-            router.push('/');
+            if(json.success == true){
+                login(json.email);
+                router.push('/');
+            }
+            else if(json.success == false){
+                setValidated(false);
+                setErrMsg(json.message);
+                setShowAlert(true);
+            }
+            
         }
         catch(err){
             console.log(err);
             setValidated(false);
+            setErrMsg("Server Error");
+            setShowAlert(true);
         }
         }
 
@@ -96,6 +109,13 @@ const Login = (props) => {
                     {passwordFlag ? <small className="form-text text-danger">Password can't be left blank</small> : null}
                     </div>
                     <button type="submit" className="btn btn-primary" onClick={() => validator()}>Submit</button>
+                    <hr/>
+                    <Alert show={showAlert} variant="danger" onClose={() => setShowAlert(false)} dismissible>
+                        <Alert.Heading>Oh snap! Error in authenticating user!</Alert.Heading>
+                        <p>
+                        {errMsg}
+                        </p>
+                    </Alert>
                 </div>
             </div>
       </>

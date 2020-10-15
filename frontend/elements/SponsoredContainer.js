@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import Header from '../template-parts/Header';
 import TaskContainer from './TaskContainer';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import Alert from 'react-bootstrap/Alert';
 
 
 
@@ -18,6 +19,9 @@ const SponsoredContainer = (props) => {
     const [taskRows, setTaskRows] = useState([]);
     const [moreScroll, setMoreScroll] = useState(true);
 
+    const [showAlert, setShowAlert] = useState(false);
+    const [errMsg, setErrMsg] = useState("");
+
     const fetchTasks = async(status, currentPage, itemsPerPage, search) => {
         try{
             let fetchJson = {
@@ -30,6 +34,7 @@ const SponsoredContainer = (props) => {
             let result = await fetch("/api/requests", {method: "GET", headers: fetchJson});
             let json = await result.json();
             console.log("kya?", json);
+            if(json.success == true){
             if(json.output.currentPage == (json.output.totalPages-1)){
                 console.log("ruk gaya");
                 setMoreScroll(false);
@@ -43,9 +48,16 @@ const SponsoredContainer = (props) => {
             console.log("rumba", currentPage);
             setTaskRows(arr);
         }
-        catch(err){
-            console.log(err);
+        else if(json.success == false){
+            setErrMsg(json.message);
+            setShowAlert(true);
         }
+    }
+    catch(err){
+        console.log(err);
+        setErrMsg("Server Error");
+        setShowAlert(true);
+    }
         }
 
         
@@ -67,7 +79,12 @@ const SponsoredContainer = (props) => {
                 <div className="container">
                     
                     <hr />
-                    
+                    <Alert show={showAlert} variant="danger" onClose={() => setShowAlert(false)} dismissible>
+                        <Alert.Heading>Oh snap! Error processing the request!</Alert.Heading>
+                        <p>
+                            {errMsg}
+                        </p>
+                    </Alert>
 
                     <InfiniteScroll
                     dataLength={taskRows.length} //This is important field to render the next data

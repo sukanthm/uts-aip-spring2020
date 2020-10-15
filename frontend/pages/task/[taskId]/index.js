@@ -143,7 +143,16 @@ const TaskId = () => {
             let result = await fetch("/api/request", { credentials: 'include', method: "PUT", headers: claimData, body: formData });
             let json = await result.json();
             console.log("kya?", json);
-            handleCloseCla();
+            if (json.success == true) {
+                handleCloseCla();
+                fetchTaskDetails();
+            }
+            else if(json.success == false){
+                setErrMsg(json.message);
+                setShowAlert(true);
+                handleCloseCla();
+            }
+            
         }
         catch (err) {
             console.log(err);
@@ -162,28 +171,36 @@ const TaskId = () => {
             }
             let result = await fetch("/api/request", { method: "GET", headers: fetchJson });
             let json = await result.json();
-            json.output.createdAt = helpers.readableDate(json.output.createdAt);
-            if(json.output.completedAt != null)
-                json.output.completedAt = helpers.readableDate(json.output.completedAt);
-            console.log("kya?", json);
-            setTaskData(json.output);
-            let sponsors = Object.keys(json.output.rewards);
-            setUsers(sponsors);
-            sponsors.map((user) => {
-                console.log("ujer", user);
+            if(json.success == true){
+                json.output.createdAt = helpers.readableDate(json.output.createdAt);
+                if(json.output.completedAt != null)
+                    json.output.completedAt = helpers.readableDate(json.output.completedAt);
+                console.log("kya?", json);
+                setTaskData(json.output);
+                let sponsors = Object.keys(json.output.rewards);
+                setUsers(sponsors);
+                sponsors.map((user) => {
+                    console.log("ujer", user);
 
-                if (user == userMail || taskData.status == "Completed")
-                    setClaimDisable(true);
+                    if (user == userMail || taskData.status == "Completed")
+                        setClaimDisable(true);
 
-            })
-            
-            if(json.output.status == "Completed"){
-                setIsCompleted(true);
+                })
+                
+                if(json.output.status == "Completed"){
+                    setIsCompleted(true);
+                }
+            }
+            else if(json.success == false){
+                setErrMsg(json.message);
+                setShowAlert(true);
             }
 
         }
         catch (err) {
             console.log(err);
+            setErrMsg("Server Error");
+            setShowAlert(true);
         }
     }
 

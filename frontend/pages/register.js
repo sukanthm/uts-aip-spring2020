@@ -1,6 +1,7 @@
 import {useState, useEffect, useRef} from 'react';
 import Header from '../template-parts/Header';
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/router';
+import Alert from 'react-bootstrap/Alert';
 
 const Register = () => {
     
@@ -15,6 +16,10 @@ const Register = () => {
 
     const [firstRender, setFirstRender] = useState(0);
     const [validated, setValidated] = useState(false);
+
+    const [showAlert, setShowAlert] = useState(false);
+    const [errMsg, setErrMsg] = useState("");
+
 
     useEffect(() => {  // watcher on validated hook variable
         if(firstRender == 0){
@@ -92,11 +97,23 @@ const Register = () => {
         let result = await fetch("/api/signup", {method: "POST", headers: userData, credentials: "include"});
         let json = await result.json();
         console.log("kya?", json);
-        router.push('/login');
+        
+
+        if(json.success == true){
+            router.push('/login');
+        }
+        else if(json.success == false){
+            setValidated(false);
+            setErrMsg(json.message);
+            setShowAlert(true);
+        }
+        
     }
     catch(err){
         console.log(err);
         setValidated(false);
+        setErrMsg("Server Error");
+        setShowAlert(true);
     }
     }
 
@@ -124,6 +141,13 @@ const Register = () => {
                     {passwordFlag ? <small className="form-text text-danger">Password must be atleast 5 characters</small> : null}
                 </div>
                 <button type="submit" className="btn btn-primary"  onClick={() => validator()}>Submit</button>
+                <hr/>
+                <Alert show={showAlert} variant="danger" onClose={() => setShowAlert(false)} dismissible>
+                    <Alert.Heading>Oh snap! Error in registering user!</Alert.Heading>
+                    <p>
+                    {errMsg}
+                    </p>
+                </Alert>
             </div>
         </div>
         </>

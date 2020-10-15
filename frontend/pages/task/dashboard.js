@@ -2,6 +2,7 @@ import Header from '../../template-parts/Header';
 import CreatedContainer from '../../elements/CreatedContainer';
 import SponsoredContainer from '../../elements/SponsoredContainer';
 import CompletedContainer from '../../elements/CompletedContainer';
+import ActiveLink from '../../template-parts/ActiveLink'
 import { useState } from 'react';
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
@@ -39,6 +40,15 @@ const dashboard = (props) => {
                         </div>
                     </Tab>
                 </Tabs>
+                <div className="cust-fab">
+                            <div>
+                                <ActiveLink activeClassName="active" href="/task/new">
+                                    <button type="submit" className="btn btn-primary cust-float-new">Add Task</button>
+                                </ActiveLink>    
+                            </div>
+                            {/* <br/> */}
+                            {/* <div><button type="submit" className="btn btn-light">Add Favour</button></div> */}
+                         </div>
             </div>
         </>
     )

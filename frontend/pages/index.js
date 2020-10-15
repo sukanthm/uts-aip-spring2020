@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import Header from '../template-parts/Header';
 import TaskContainer from '../elements/TaskContainer';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import ActiveLink from '../template-parts/ActiveLink'
+import ActiveLink from '../template-parts/ActiveLink';
 import Alert from 'react-bootstrap/Alert';
 import UserContext from '../functions/context';
 
@@ -37,6 +37,7 @@ const Dashboard = (props) => {
             let result = await fetch("/api/requests", {method: "GET", headers: fetchJson});
             let json = await result.json();
             console.log("kya?", json);
+            if(json.success == true){
             if(json.output.currentPage == (json.output.totalPages-1)){
                 console.log("ruk gaya");
                 setMoreScroll(false);
@@ -50,9 +51,16 @@ const Dashboard = (props) => {
             console.log("rumba", currentPage);
             setTaskRows(arr);
         }
-        catch(err){
-            console.log(err);
+        else if(json.success == false){
+            setErrMsg(json.message);
+            setShowAlert(true);
         }
+    }
+    catch(err){
+        console.log(err);
+        setErrMsg("Server Error");
+        setShowAlert(true);
+    }
         }
 
         const alert = () => {
