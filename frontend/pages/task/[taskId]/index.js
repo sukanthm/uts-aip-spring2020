@@ -244,7 +244,7 @@ const TaskId = () => {
                     </Alert>
 
                     <div className="row">
-<<<<<<< HEAD
+
                         {!isCompleted ? (
                             <div className="col-md-12">
                                 <button className="btn btn-primary right  btn-forward-main" disabled={claimDisable} onClick={() => claimTask()}>Claim Task</button>
@@ -256,12 +256,7 @@ const TaskId = () => {
                             </div>
                         )}
                         
-=======
-                        <div className="col-md-12">
-                            <button className="btn btn-primary right  btn-forward-main" disabled={claimDisable} onClick={() => claimTask()}>Claim Task</button>
-                            <button className="btn btn-outline-primary mr-3 right btn-forward-main" disabled={claimDisable} onClick={() => upTaskReward()}>Add Reward Task</button>
-                        </div>
->>>>>>> aa38d158e4f15e2b9b3306ae8e0fff82657fa454
+
                     </div>
                 </div>
 
