@@ -104,7 +104,13 @@ const TaskId = () => {
             console.log("kya?", json);
             if (json.success == true) {
                 handleCloseRew();
-                fetchTaskDetails();
+                if(json.deletedRequestID){
+                    setErrMsg(json.message);
+                    setShowAlert(true);
+                }
+                else{
+                    fetchTaskDetails();
+                }
             }
             else if(json.success == false){
                 setErrMsg(json.message);
@@ -165,7 +171,6 @@ const TaskId = () => {
     const fetchTaskDetails = async () => {
         try {
             let fetchJson = {
-                email: "d@g.com",
                 loginToken: "$2b$10$hcT7aC5xrGVVBPhwtjQWBOQWPnXvr4OIRm9A1AcOOGfAPJJeY6PCa",
                 requestId: taskId
             }
