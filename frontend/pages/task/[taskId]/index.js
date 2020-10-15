@@ -44,13 +44,9 @@ const TaskId = () => {
     const [taskComment, setTaskComment] = useState();
     const [formImg, setFormImg] = useState();
 
-<<<<<<< HEAD
     //Variables for completed tasks
     const [isCompleted, setIsCompleted] = useState(false);
     
-=======
-    const [showCompletor, setshowCompletor] = useState(false);
->>>>>>> aa38d158e4f15e2b9b3306ae8e0fff82657fa454
 
     let claimTask = () => {
         if (claimDisable == false) {
