@@ -439,6 +439,7 @@ module.exports = function(app){
             oneRequest.completorID = user.id;
             oneRequest.status = 'Completed';
             oneRequest.completorComment = completorComment;
+            oneRequest.completedAt = Date.now();
         }
 
         try {
@@ -476,6 +477,7 @@ module.exports = function(app){
                 oneRequest.completorID = null;
                 oneRequest.status = 'Open';
                 oneRequest.completorComment = '';
+                oneRequest.completedAt = null;
                 oneRequest.save();
                 helperModule.manipulate_response_and_send(req, res, {
                     'success': false, 
