@@ -46,21 +46,14 @@ const TaskContainer = (props) => {
                     <p>{props.taskVals.description}</p>
                     <br/>
                     <br/>
-                    {
-                    user ? (
-                        <div><b>Created By:</b> {props.taskVals.creatorEmail}</div>
-                    ) : (
-                        null
-                    )
-                    }
+                    
                     <b>Date:</b> {props.taskVals.createdAt}
                     <br/>
                     <b>Status:</b> <span className={"status-"+props.taskVals.status}>{props.taskVals.status}</span>
                     { props.taskVals.completedAt ? (
-                        <div>
-                        <b>Completed by </b> {props.taskVals.completorEmail} 
-                        <b>Completed at </b> {props.taskVals.completedAt} 
-                        </div>
+                        
+                       <div> <b>Completed at </b> {props.taskVals.completedAt} </div>
+                        
                     ) : (
                         null
                     )}
