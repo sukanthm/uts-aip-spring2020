@@ -214,7 +214,7 @@ const TaskId = () => {
 
                     <div className="row">
                         <div className="col-md-12">
-                            <button className="btn btn-primary right  btn-forward-main" aria-disabled={claimDisable} onClick={() => claimTask()}>Claim Task</button>
+                            <button className="btn btn-primary right  btn-forward-main" disabled={claimDisable} onClick={() => claimTask()}>Claim Task</button>
                             <button className="btn btn-outline-primary mr-3 right btn-forward-main" onClick={() => upTaskReward()}>Add Reward Task</button>
                         </div>
                     </div>

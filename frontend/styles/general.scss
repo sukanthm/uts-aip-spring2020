@@ -180,6 +180,10 @@
     transition: transform 0.2s;
 }
 
+.task-container{
+    cursor: pointer;
+}
+
 .task-container:hover {
     transform: scale(1.03); /* animation effect on hover */
   }
