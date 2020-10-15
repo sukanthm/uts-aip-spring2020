@@ -309,7 +309,7 @@ module.exports = function(app){
         delete oneRequest['request_id'];
         oneRequest['creatorEmail'] = oneRequest['creator_id']['creatorEmail'];
         delete oneRequest['creator_id'];
-        if (oneRequest['completorEmail'] != null){
+        if (oneRequest['completor_id'] != null){
             oneRequest['completorEmail'] = oneRequest['completor_id']['completorEmail'];
             delete oneRequest['completor_id'];
         }
@@ -439,6 +439,7 @@ module.exports = function(app){
             oneRequest.completorID = user.id;
             oneRequest.status = 'Completed';
             oneRequest.completorComment = completorComment;
+            oneRequest.completedAt = Date.now();
         }
 
         try {
@@ -452,12 +453,12 @@ module.exports = function(app){
         }
 
         let favorTrace = [];
-        let favors = oneRequest['request_id'];
+        let favors = JSON.parse(JSON.stringify(oneRequest['request_id']));
         for (let i=0; i<favors.length; i++){
             for (let j=0; j<Number(favors[i]['rewardCount']); j++){
                 let favor = fpFavor.build({
                     payeeID: user.id,
-                    payerID: favors[i]['sponsor_id'],
+                    payerID: favors[i]['sponsorID'],
                     rewardID: favors[i]['rewardID'],
                     comment: 'automagically created for requestID: '+oneRequest.id+' completion',
                 });
@@ -476,6 +477,7 @@ module.exports = function(app){
                 oneRequest.completorID = null;
                 oneRequest.status = 'Open';
                 oneRequest.completorComment = '';
+                oneRequest.completedAt = null;
                 oneRequest.save();
                 helperModule.manipulate_response_and_send(req, res, {
                     'success': false, 
