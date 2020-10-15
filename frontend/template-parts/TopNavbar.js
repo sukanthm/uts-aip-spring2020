@@ -40,7 +40,9 @@ const TopNavbar = (props) => {
             <a className="nav-link" href="#">Leaderboard</a>
           </li>
           <li className="nav-item">
+          <ActiveLink activeClassName="active" href="/party">
             <a className="nav-link" href="#">Party</a>
+              </ActiveLink>
           </li>
         </ul>
         
