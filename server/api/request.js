@@ -49,7 +49,10 @@ module.exports = function(app){
         })
 
         rewards = JSON.parse(rewards);
-        if (Object.keys(rewards).length === 0){
+        if (Object.keys(rewards).length === 0 || (
+                    Math.min.apply(null, Object.values({rewards})) <= 0 && 
+                    Math.max.apply(null, Object.values({rewards})) <= 0
+                )){
             helperModule.manipulate_response_and_send(req, res, {
                 'success': false, 
                 'message': 'creator must sponsor some rewards', 
@@ -84,24 +87,26 @@ module.exports = function(app){
 
         let rewardsInstances = [];
         for (let reward in rewards){
-            try {
-                let newfpRequestReward = await fpRequestReward.create({
-                    rewardID: Number(reward),
-                    rewardCount: rewards[reward],
-                    sponsorID: creatorID,
-                    requestID: newRequest.id,
-                });
-                rewardsInstances.push(newfpRequestReward);
-            } catch (err) {
-                await newRequest.destroy();
-                for (let i=0; i<rewardsInstances.length; i++){
-                    await rewardsInstances[i].destroy();
+            if (rewards[reward] > 0){
+                try {
+                    let newfpRequestReward = await fpRequestReward.create({
+                        rewardID: Number(reward),
+                        rewardCount: rewards[reward],
+                        sponsorID: creatorID,
+                        requestID: newRequest.id,
+                    });
+                    rewardsInstances.push(newfpRequestReward);
+                } catch (err) {
+                    await newRequest.destroy();
+                    for (let i=0; i<rewardsInstances.length; i++){
+                        await rewardsInstances[i].destroy();
+                    }
+                    helperModule.manipulate_response_and_send(req, res, {
+                        'success': false,
+                        'message': err,
+                        }, 500);
+                    return;
                 }
-                helperModule.manipulate_response_and_send(req, res, {
-                    'success': false, 
-                    'message': err,
-                    }, 500);
-                return;
             }
         }
         helperModule.manipulate_response_and_send(req, res, {
@@ -550,6 +555,7 @@ module.exports = function(app){
 
         let requestRewards = JSON.parse(JSON.stringify(oneRequest))['request_id'];
         rewardChanges = JSON.parse(rewardChanges);
+        let oneRequestReward;
 
         for (let rewardChange in rewardChanges){
             rewardChange = Number(rewardChange);
@@ -557,18 +563,18 @@ module.exports = function(app){
             for (let i=0; i<requestRewards.length; i++){
                 if (user.id == requestRewards[i]['sponsorID'] && rewardChange == requestRewards[i]['rewardID']){
                     requestRewards[i]['rewardCount'] += Number(rewardChanges[rewardChange]);
-                    let x = await fpRequestReward.findOne({
+                    oneRequestReward = await fpRequestReward.findOne({
                         where: {
                             requestID: oneRequest.id,
                             sponsorID: requestRewards[i]['sponsorID'],
                             rewardID: rewardChange,
                         }
                     });
-                    x.rewardCount += Number(rewardChanges[rewardChange]);
+                    oneRequestReward.rewardCount += Number(rewardChanges[rewardChange]);
                     if (requestRewards[i]['rewardCount'] <= 0){
                         requestRewards.splice(i,1);
-                        await x.destroy();
-                    } else await x.save();
+                        await oneRequestReward.destroy();
+                    } else await oneRequestReward.save();
                     foundFlag = true;
                     break;
                 }
