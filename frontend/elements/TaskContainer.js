@@ -20,6 +20,7 @@ const TaskContainer = (props) => {
         }
         else{
             console.log("user nahi");
+            props.alert();
         }
 
     }
@@ -29,6 +30,9 @@ const TaskContainer = (props) => {
     }
 
     props.taskVals.createdAt = helpers.readableDate(props.taskVals.createdAt);
+    if(props.taskVals.completedAt){
+        props.taskVals.completedAt = helpers.readableDate(props.taskVals.completedAt)
+    }
 
     return (
 
@@ -45,6 +49,12 @@ const TaskContainer = (props) => {
                     <b>Date:</b> {props.taskVals.createdAt}
                     <br/>
                     <b>Status:</b> <span className={"status-"+props.taskVals.status}>{props.taskVals.status}</span>
+                    { props.taskVals.completedAt ? (
+                        <p><i>Completed at {props.taskVals.completedAt}</i> </p>
+                    ) : (
+                        null
+                    )}
+
                 </div>
                 <div className="col-sm-2">
                     <p>Rewards</p>

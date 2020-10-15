@@ -5,7 +5,7 @@ import Header from '../template-parts/Header';
 import TaskContainer from '../elements/TaskContainer';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import ActiveLink from '../template-parts/ActiveLink'
-
+import Alert from 'react-bootstrap/Alert';
 
 
 
@@ -20,6 +20,9 @@ const Dashboard = (props) => {
     const [searchText, setSearchText] = useState("");
     const [searchToggle, setSearchToggle] = useState(false);
     const [moreScroll, setMoreScroll] = useState(true);
+
+    const [showAlert, setShowAlert] = useState(false);
+    const [errMsg, setErrMsg] = useState("");
 
     const fetchTasks = async(status, currentPage, itemsPerPage, search) => {
         try{
@@ -48,6 +51,11 @@ const Dashboard = (props) => {
         catch(err){
             console.log(err);
         }
+        }
+
+        const alert = () => {
+            setErrMsg("Log in to view task");
+            setShowAlert(true);
         }
 
         
@@ -103,7 +111,12 @@ const Dashboard = (props) => {
                     </div>
                     <hr />
                     
-
+                    <Alert show={showAlert} variant="danger" onClose={() => setShowAlert(false)} dismissible>
+                        <Alert.Heading>Oh snap! Error in loading task!</Alert.Heading>
+                        <p>
+                        {errMsg}
+                        </p>
+                    </Alert>
                     <InfiniteScroll
                     dataLength={taskRows.length} //This is important field to render the next data
                     next={fetchNext}
@@ -121,7 +134,7 @@ const Dashboard = (props) => {
                     {
                     taskRows.map((key) => {
                         console.log("enter");
-                        return <TaskContainer taskVals={key} key={key.id}></TaskContainer>
+                        return <TaskContainer taskVals={key} key={key.id} alert={alert}></TaskContainer>
                     })
                     }
                     </InfiniteScroll>

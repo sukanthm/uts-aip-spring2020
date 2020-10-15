@@ -44,6 +44,10 @@ const TaskId = () => {
     const [taskComment, setTaskComment] = useState();
     const [formImg, setFormImg] = useState();
 
+    //Variables for completed tasks
+    const [isCompleted, setIsCompleted] = useState(false);
+    
+
     let claimTask = () => {
         if (claimDisable == false) {
             //console.log(router.query);
@@ -99,7 +103,7 @@ const TaskId = () => {
             let json = await result.json();
             console.log("kya?", json);
             if (json.success == true) {
-                handleClose();
+                handleCloseRew();
                 fetchTaskDetails();
             }
         }
@@ -131,12 +135,15 @@ const TaskId = () => {
             let result = await fetch("/api/request", { credentials: 'include', method: "PUT", headers: claimData, body: formData });
             let json = await result.json();
             console.log("kya?", json);
+            handleCloseCla();
         }
         catch (err) {
             console.log(err);
 
         }
     }
+
+    
 
     const fetchTaskDetails = async () => {
         try {
@@ -148,6 +155,8 @@ const TaskId = () => {
             let result = await fetch("/api/request", { method: "GET", headers: fetchJson });
             let json = await result.json();
             json.output.createdAt = helpers.readableDate(json.output.createdAt);
+            if(json.output.completedAt != null)
+                json.output.completedAt = helpers.readableDate(json.output.completedAt);
             console.log("kya?", json);
             setTaskData(json.output);
             let sponsors = Object.keys(json.output.rewards);
@@ -158,6 +167,10 @@ const TaskId = () => {
                 if (user == userMail)
                     setClaimDisable(true);
             })
+            
+            if(json.output.status == "Completed"){
+                setIsCompleted(true);
+            }
 
         }
         catch (err) {
@@ -199,9 +212,9 @@ const TaskId = () => {
                     <div className="row">
                         {/* {individualUser} */}
                         {
-                            users.map((key) => {
+                            users.map((key,i) => {
                                 console.log("albela", key);
-                                return <IndividualRewardCard user={key} rewards={taskData.rewards[key]}></IndividualRewardCard>
+                                return <IndividualRewardCard user={key} key={i} rewards={taskData.rewards[key]}></IndividualRewardCard>
                             })
 
                         }
@@ -216,10 +229,17 @@ const TaskId = () => {
                     </Alert>
 
                     <div className="row">
-                        <div className="col-md-12">
-                            <button className="btn btn-primary right  btn-forward-main" disabled={claimDisable} onClick={() => claimTask()}>Claim Task</button>
-                            <button className="btn btn-outline-primary mr-3 right btn-forward-main" onClick={() => upTaskReward()}>Add Reward Task</button>
-                        </div>
+                        {!isCompleted ? (
+                            <div className="col-md-12">
+                                <button className="btn btn-primary right  btn-forward-main" disabled={claimDisable} onClick={() => claimTask()}>Claim Task</button>
+                                <button className="btn btn-outline-primary mr-3 right btn-forward-main" onClick={() => upTaskReward()}>Update Reward Task</button>
+                            </div>
+                        ) : (
+                            <div className="col-md-12">
+                                    <p>Completed by {taskData.completorEmail} at {taskData.completedAt}</p>
+                            </div>
+                        )}
+                        
                     </div>
                 </div>
 
