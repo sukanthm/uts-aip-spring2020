@@ -41,6 +41,8 @@ const TaskId = () => {
     const [taskComment, setTaskComment] = useState();
     const [formImg, setFormImg] = useState();
 
+    const [showCompletor, setshowCompletor] = useState(false);
+
     let claimTask = () => {
         if (claimDisable == false) {
             //console.log(router.query);
@@ -152,8 +154,9 @@ const TaskId = () => {
             sponsors.map((user) => {
                 console.log("ujer", user);
 
-                if (user == userMail)
+                if (user == userMail || taskData.status == "Completed")
                     setClaimDisable(true);
+
             })
 
         }
@@ -164,7 +167,13 @@ const TaskId = () => {
 
     useEffect(() => { fetchTaskDetails() }, [])
 
+    useEffect(() => { console.log("We are testing here:", showCompletor) }, [showCompletor])
 
+    const Completor = () => (
+        <div>
+            <p>Completed by <strong>{taskData.completorEmail}</strong> at <i>{(taskData.completedAt)}</i></p>
+        </div>
+    )
 
 
     return (
@@ -184,6 +193,10 @@ const TaskId = () => {
                             <p>{taskData.description}</p>
                             <p>Created by <strong>{taskData.creatorEmail}</strong> at <i>{(taskData.createdAt)}</i></p>
                             <b>Status:</b> <span className={"status-"+taskData.status}>{taskData.status}</span>
+
+                            {/* show information of completor if the task has been completed */}
+                            {showCompletor ? <Completor /> : null}
+
                         </div>
                     </div>
                     <hr />
@@ -215,7 +228,7 @@ const TaskId = () => {
                     <div className="row">
                         <div className="col-md-12">
                             <button className="btn btn-primary right  btn-forward-main" disabled={claimDisable} onClick={() => claimTask()}>Claim Task</button>
-                            <button className="btn btn-outline-primary mr-3 right btn-forward-main" onClick={() => upTaskReward()}>Add Reward Task</button>
+                            <button className="btn btn-outline-primary mr-3 right btn-forward-main" disabled={claimDisable} onClick={() => upTaskReward()}>Add Reward Task</button>
                         </div>
                     </div>
                 </div>
