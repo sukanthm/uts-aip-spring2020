@@ -73,11 +73,51 @@ async function is_secret_valid(plaintext, hashed){
     });
 }
 
+function test_data_type(input, type){
+    switch(type) {
+        case "string":
+            return [true, String(input).trim()];
+        case "integer": 
+            return [/^-?\d+$/.test(input), Number(input)];
+        case "rewardID": 
+            return [/^[12345]$/.test(input), Number(input)];
+        case "rewardsDict": //{rewardID: integer, ...}
+            try {
+                if (typeof input === 'string')
+                    input = JSON.parse(input);
+                if (!(input.constructor == Object))
+                    return [false, undefined]; 
+
+                let output = {}, test1, test2, new_key, new_value;
+                for (let key in input){
+                    [test1, new_key] = test_data_type(key, 'rewardID')
+                    assert(test1);
+                    [test2, new_value] = test_data_type(input[key], 'integer')
+                    assert(test2);
+                    output[new_key] = new_value;
+                }
+                return [true, output];
+            } catch (err) {
+                return [false, undefined];
+            }
+    }
+}
+
 function get_req_headers(req, headers, res, allOptional=false){
-    let header, output = [];
+    let header, output = [], testDataType;
     for (let i = 0, len = headers.length; i < len; i++) {
-        header = req.header(headers[i]);
+        header = req.header(headers[i][0]);
+
         if (!allOptional){
+            [testDataType, header] = test_data_type(header, headers[i][1]);
+            if (!testDataType){
+                manipulate_response_and_send(req, res, {
+                    'success': false, 
+                    'message': 'bad header {'+headers[i][0]+'} data type. expecting '+headers[i][1],
+                    }, 400);
+                return [false, headers];
+            }
+
             if ([undefined, null, '', 'null'].includes(header)){
                 manipulate_response_and_send(req, res, {
                     'success': false, 
@@ -86,8 +126,7 @@ function get_req_headers(req, headers, res, allOptional=false){
                 return [false, headers];
             }
         }
-        if (header === undefined) output.push(header);
-        else output.push(header.trim());
+        output.push(header);
     }
     return [true, output];
 }

@@ -31,11 +31,15 @@ module.exports = function(app){
             message (string)
             newRequestID (int)
         */
-        let [successFlag1, [title, rewards]] = helperModule.get_req_headers(req, ['title', 'rewards'], res);
+        let [successFlag1, [title, rewards]] = helperModule.get_req_headers(req, [
+            ['title', 'string'], ['rewards', 'rewardsDict'],
+        ], res);
         if (!successFlag1)
             return;
 
-        let [successFlag2, [description]] = helperModule.get_req_headers(req, ['description'], res, true);
+        let [successFlag2, [description]] = helperModule.get_req_headers(req, [
+            ['description', 'string']
+        ], res, true);
         
         let [validationSuccess, user] = await helperModule.validate_user_loginToken(req, res);
         if (!validationSuccess)
@@ -48,7 +52,6 @@ module.exports = function(app){
             creatorID: creatorID,
         })
 
-        rewards = JSON.parse(rewards);
         if (Object.keys(rewards).length === 0 || (
                     Math.min.apply(null, Object.values(rewards)) <= 0 && 
                     Math.max.apply(null, Object.values(rewards)) <= 0
@@ -81,9 +84,6 @@ module.exports = function(app){
                 }, 500);
             return;
         }
-       
-        if (typeof rewards === "string")
-            rewards = JSON.parse(rewards);
 
         let rewardsInstances = [];
         for (let reward in rewards){
@@ -137,7 +137,10 @@ module.exports = function(app){
         */
 
         let [successFlag, [requestStatus, currentPage, itemsPerPage, searchData, dashboardFilter]] = 
-            helperModule.get_req_headers(req, ['requestStatus', 'currentPage', 'itemsPerPage', 'searchData', 'dashboardFilter'], res, true);
+            helperModule.get_req_headers(req, [
+                ['requestStatus', 'string'], ['currentPage', 'integer'], 
+                ['itemsPerPage', 'integer'], ['searchData', 'string'], ['dashboardFilter', 'string'],
+            ], res, true);
         currentPage = currentPage ? Number(currentPage) : 0;
         itemsPerPage = itemsPerPage ? Number(itemsPerPage) : 5;
         searchData = helperModule.clean_and_shuffle(searchData);
@@ -271,7 +274,9 @@ module.exports = function(app){
         TODO:
             improve sponsor_id -> sponsorEmail transaltion
         */
-        let [successFlag, [requestID]] = helperModule.get_req_headers(req, ['requestID'], res);
+        let [successFlag, [requestID]] = helperModule.get_req_headers(req, [
+            ['requestID', 'integer']
+        ], res);
         if (!successFlag)
             return;
 
@@ -365,7 +370,9 @@ module.exports = function(app){
             completedrequestID (int)
         */
         let [successFlag, [requestID, completorComment]] = 
-            helperModule.get_req_headers(req, ['requestID', 'completorComment'], res);
+            helperModule.get_req_headers(req, [
+                ['requestID', 'integer'], ['completorComment', 'string']
+            ], res);
         if (!successFlag)
             return;
         
@@ -517,7 +524,9 @@ module.exports = function(app){
             updatedRequestID/deletedRequestID (int)
         */
         let [successFlag, [requestID, rewardChanges]] = 
-        helperModule.get_req_headers(req, ['requestID', 'rewardChanges'], res);
+        helperModule.get_req_headers(req, [
+            ['requestID', 'integer'], ['rewardChanges', 'rewardsDict']
+        ], res);
         if (!successFlag)
             return;
    
@@ -554,7 +563,6 @@ module.exports = function(app){
         }
 
         let requestRewards = JSON.parse(JSON.stringify(oneRequest))['request_id'];
-        rewardChanges = JSON.parse(rewardChanges);
         let oneRequestReward;
 
         for (let rewardChange in rewardChanges){

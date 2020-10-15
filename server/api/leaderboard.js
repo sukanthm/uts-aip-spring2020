@@ -22,7 +22,9 @@ module.exports = function(app){
             output (array of json)
         */
         let [successFlag, [currentPage, itemsPerPage]] = 
-            helperModule.get_req_headers(req, ['currentPage', 'itemsPerPage'], res, true);
+            helperModule.get_req_headers(req, [
+                ['currentPage', 'integer'], ['itemsPerPage', 'integer']
+            ], res, true);
         currentPage = currentPage ? Number(currentPage) : 0;
         itemsPerPage = itemsPerPage ? Number(itemsPerPage) : 5;
 

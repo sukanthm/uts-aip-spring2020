@@ -28,7 +28,9 @@ module.exports = function(app){
             message (string)
             output (array of json)
         */
-        let [successFlag, [targetEmail]] = helperModule.get_req_headers(req, ['targetEmail'], res);
+        let [successFlag, [targetEmail]] = helperModule.get_req_headers(req, [
+            ['targetEmail', 'string']
+        ], res);
         if (!successFlag)
             return;
 
@@ -36,7 +38,9 @@ module.exports = function(app){
         if (!validationSuccess)
             return;
         
-        let [successFlag2, [currentPage, itemsPerPage]] = helperModule.get_req_headers(req, ['currentPage', 'itemsPerPage'], res, true);
+        let [successFlag2, [currentPage, itemsPerPage]] = helperModule.get_req_headers(req, [
+            ['currentPage', 'integer'], ['itemsPerPage', 'integer'],
+        ], res, true);
         currentPage = currentPage ? Number(currentPage) : 0;
         itemsPerPage = itemsPerPage ? Number(itemsPerPage) : 5;
 
@@ -125,7 +129,9 @@ module.exports = function(app){
             newFavorID (int)
         */
         let [successFlag, [payeeEmail, payerEmail, rewardID]] = 
-            helperModule.get_req_headers(req, ['payeeEmail', 'payerEmail', 'rewardID'], res);
+            helperModule.get_req_headers(req, [
+                ['payeeEmail', 'string'], ['payerEmail', 'string'], ['rewardID', 'rewardID'],
+            ], res);
         if (!successFlag)
             return;
         
@@ -222,7 +228,9 @@ module.exports = function(app){
             message (string)
             output (json)
         */
-        let [successFlag, [favorID]] = helperModule.get_req_headers(req, ['favorID'], res);
+        let [successFlag, [favorID]] = helperModule.get_req_headers(req, [
+            ['favorID', 'integer']
+        ], res);
         if (!successFlag)
             return;
 
@@ -295,7 +303,9 @@ module.exports = function(app){
             message (string)
             closedFavorID (int)
         */
-        let [successFlag, [favorID]] = helperModule.get_req_headers(req, ['favorID'], res);
+        let [successFlag, [favorID]] = helperModule.get_req_headers(req, [
+            ['favorID', 'integer']
+        ], res);
         if (!successFlag)
             return;
 

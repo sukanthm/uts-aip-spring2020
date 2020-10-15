@@ -21,7 +21,9 @@ module.exports = function(app){
             success (bool)
             message (string)
         */
-        let [successFlag, [email, password, name]] = helperModule.get_req_headers(req, ['email', 'password', 'name'], res);
+        let [successFlag, [email, password, name]] = helperModule.get_req_headers(req, [
+            ['email', 'string'], ['password', 'string'], ['name', 'string'],
+        ], res);
         if (!successFlag)
             return;
 
@@ -63,7 +65,9 @@ module.exports = function(app){
             email (string): user email
             loginToken (string): login token for above email
         */
-        let [successFlag, [email, password]] = helperModule.get_req_headers(req, ['email', 'password'], res);
+        let [successFlag, [email, password]] = helperModule.get_req_headers(req, [
+            ['email', 'string'], ['password', 'string'],
+        ], res);
         if (!successFlag)
             return;
 
