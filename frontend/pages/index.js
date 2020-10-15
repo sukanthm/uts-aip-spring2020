@@ -130,11 +130,11 @@ const Dashboard = (props) => {
                 <div className="cust-fab">
                     <div>
                         <ActiveLink activeClassName="active" href="/task/new">
-                            <button type="submit" className="btn btn-light">Add Task</button>
+                            <button type="submit" className="btn btn-primary cust-float-new">Add Task</button>
                         </ActiveLink>    
                     </div>
-                    <br/>
-                    <div><button type="submit" className="btn btn-light">Add Favour</button></div>
+                    {/* <br/> */}
+                    {/* <div><button type="submit" className="btn btn-light">Add Favour</button></div> */}
                 </div>
             </div>
         </>
