@@ -22,9 +22,10 @@
     "sass": "^1.26.10"
   },
   "scripts": {
-    "dev": "node server.js",
+    "dev": "node server.js 3000 4000",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "prod": "pm2 start server.js --443 --80"
   },
   "eslintConfig": {
     "extends": "react-app"

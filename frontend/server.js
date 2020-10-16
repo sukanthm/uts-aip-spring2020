@@ -2,14 +2,15 @@ const express = require('express')
 const next = require('next')
 const { createProxyMiddleware } = require("http-proxy-middleware")
 
-const port = process.env.PORT || 3000
+const frontendPort = process.argv[2] ? process.argv[2] : 3000;
+const backendPort = process.argv[3] ? process.argv[3] : 4000;
 const dev = process.env.NODE_ENV !== 'production'
 const app = next({ dev })
 const handle = app.getRequestHandler()
 
 const apiPaths = {
     '/api': {
-        target: 'http://localhost:4000', 
+        target: 'http://localhost:' + String(backendPort), 
         pathRewrite: {
             '^/api': '/api'
         },
@@ -26,9 +27,9 @@ app.prepare().then(() => {
     return handle(req, res)
   })
 
-  server.listen(port, (err) => {
+  server.listen(frontendPort, (err) => {
     if (err) throw err
-    console.log(`> Ready on http://localhost:${port}`)
+    console.log(`> Ready on http://localhost:${frontendPort}`)
   })
 }).catch(err => {
     console.log('Error:::::', err)
