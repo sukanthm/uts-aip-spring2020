@@ -4,7 +4,7 @@ const { createProxyMiddleware } = require("http-proxy-middleware")
 
 const frontendPort = process.argv[2] ? process.argv[2] : 3000;
 const backendPort = process.argv[3] ? process.argv[3] : 4000;
-const dev = process.env.NODE_ENV !== 'production'
+const dev = process.argv[4] ? process.argv[4] !== 'production' : true
 const app = next({ dev })
 const handle = app.getRequestHandler()
 
