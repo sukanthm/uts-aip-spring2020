@@ -473,6 +473,7 @@ module.exports = function(app){
                     payerID: favors[i]['sponsorID'],
                     rewardID: favors[i]['rewardID'],
                     comment: 'automagically created for requestID: '+oneRequest.id+' completion',
+                    creationProofPath: req.file.filename,
                 });
                 favorTrace.push(favor);
             }
