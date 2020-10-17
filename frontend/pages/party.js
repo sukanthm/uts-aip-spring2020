@@ -2,6 +2,9 @@ import { useEffect, useState, useRef } from 'react';
 import Header from '../template-parts/Header';
 import { useRouter } from 'next/router';
 import helpers from '../functions/helpers.js';
+import ErrorContainer from '../elements/ErrorContainer';
+
+
 const Party = (props) => {
     const itemsPerPage = 5;
     const currentPage = useRef(0);
@@ -83,15 +86,7 @@ const Party = (props) => {
         return (
             <>
                 <Header />
-                    <div class="container">
-                <div class="jumbotron text-center">
-                        <h1 class="display-4">No Party Detected!</h1>
-                        <br/>
-                        <br/>
-                        <p class="lead">You are not involved in any parties yet. Keep giving and receiving favours to have a party.</p>
-                    </div>
-                </div>
-
+                <ErrorContainer errTitle="No Party Detected!" errMsg="You are not involved in any parties yet. Keep giving and receiving favours to have a party." needBtn={true} btnMsg="Go to Home"/>
             </>
         )
     }
