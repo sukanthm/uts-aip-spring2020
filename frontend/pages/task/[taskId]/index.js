@@ -228,7 +228,7 @@ const TaskId = () => {
                     <div className="row">
                         <div className="col-md-3 task-image-holder">
 
-                            <img src={`/proof_images/${taskData.taskImagePath}`} alt="Task Image" className="task-image container"></img>
+                            <img src={`/api/image/${taskData.taskImagePath}`} alt="Task Image" className="task-image container"></img>
 
                         </div>
                         <div className="col-md-9">

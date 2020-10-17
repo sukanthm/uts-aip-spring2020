@@ -23,6 +23,7 @@ require('./api/favor.js')(app);
 require('./api/party.js')(app);
 require('./api/request.js')(app);
 require('./api/leaderboard.js')(app);
+require('./api/image.js')(app);
 
 const port = process.argv[2] ? process.argv[2] : 4000;
 

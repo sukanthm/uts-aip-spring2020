@@ -175,9 +175,11 @@ async function validate_user_loginToken(req, res){
     return [true, user];
 }
 
+const imagesDir = path.join(__dirname + '/../public_images/'); //w.r.t. to current folder
+
 var multerStorage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, path.join(__dirname + '/../../frontend/public/proof_images/'));
+        cb(null, imagesDir);
     },
     filename: function (req, file, cb) {
       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
@@ -194,4 +196,5 @@ module.exports = {
     multerStorage: multerStorage,
     clean_and_shuffle: clean_and_shuffle,
     date_sort: date_sort,
+    imagesDir: imagesDir,
 }
