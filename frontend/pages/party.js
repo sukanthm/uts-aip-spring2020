@@ -86,7 +86,7 @@ const Party = (props) => {
         return (
             <>
                 <Header />
-                <ErrorContainer errTitle="No Party Detected!" errMsg="You are not involved in any parties yet. Keep giving and receiving favours to have a party." needBtn={true} btnMsg="Go to Home"/>
+                <ErrorContainer imgSrc="../images/error_container/error.png" errTitle="No Party Detected!" errMsg="You are not involved in any parties yet. Keep giving and receiving favours to have a party." needBtn={true} btnMsg="Go to Home"/>
             </>
         )
     }

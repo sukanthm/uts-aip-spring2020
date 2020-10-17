@@ -106,7 +106,7 @@ const TaskId = () => {
                 handleCloseRew();
                 if(json.deletedRequestID){
                     setErrMsg(json.message);
-                    setShowAlert(true);
+                    router.push(`/deleteTask`);
                 }
                 else{
                     fetchTaskDetails();

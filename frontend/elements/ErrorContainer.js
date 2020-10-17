@@ -4,7 +4,7 @@ const ErrorContainer = (props) => {
         <div class="container">
             <div class="jumbotron text-center">
                 <div class="view overlay my-4">
-                    <img src="../images/error.png" class="img-fluid" alt="" />
+                    <img src={props.imgSrc} class="img-fluid" alt="" />
                     <a href="#">
                         <div class="mask rgba-white-slight"></div>
                     </a>
