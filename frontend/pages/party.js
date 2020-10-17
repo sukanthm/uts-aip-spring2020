@@ -20,64 +20,81 @@ const Party = (props) => {
         }
     }
 
+    // function to check is JSON is empty
+    function isEmpty(obj) {
+        for (var key in obj) {
+            if (obj.hasOwnProperty(key))
+                return false;
+        }
+        return true;
+    }
+
     useEffect(() => { fetchTasks("All", currentPage.current, itemsPerPage, "") }, []);
 
-    return (
-        <>
-            <Header />
-            <div className="container">
-                <div className="row">
-                    {
-                        Object.keys(partyData).map((key) => {
-                            return (
-                                <div className="col-md-6">
-                                    <div className="party-container">
-                                    <div className="task-des">
-                                        {/* Printing name of the reward */}
-                                        <h4><span>Party Detected for reward:</span> <b>{helpers.rewardTitle(key)}</b></h4>
-                                    </div>
-                                    <hr/>
-                                    <div>
-                                        {
-                                            // looping through party data and showing the people involved in the party
-                                            partyData[key].map((row, index) => {
-                                                return (
-                                                    <div>
-                                                        <b>People for Party No: {index+1}</b>
-                                                        <p>{row.join()}</p>
-                                                    </div>
-                                                )
-                                            })
-                                        }
-                                    </div>
-                                    </div>
-                                </div>
-                            )
+    // If party is detected
+    if (!isEmpty(partyData)) {
 
-                            console.log("display temp:", helpers.rewardTitle(key));
-                            partyData[key].map((row, index) => {
-                                console.log("this is row:", row);
-                                console.log(row.join());
+        return (
+            <>
+                <Header />
+                <div className="container">
+                    <div className="row">
+                        {
+                            Object.keys(partyData).map((key) => {
+                                return (
+                                    <div className="col-md-6">
+                                        <div className="party-container">
+                                            <div className="task-des">
+                                                {/* Printing name of the reward */}
+                                                <h4><span>Party Detected for reward:</span> <b>{helpers.rewardTitle(key)}</b></h4>
+                                            </div>
+                                            <hr />
+                                            <div>
+                                                {
+                                                    // looping through party data and showing the people involved in the party
+                                                    partyData[key].map((row, index) => {
+                                                        return (
+                                                            <div>
+                                                                <b>People for Party No: {index + 1}</b>
+                                                                <p>{row.join()}</p>
+                                                            </div>
+                                                        )
+                                                    })
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                )
+
+                                console.log("display temp:", helpers.rewardTitle(key));
+                                partyData[key].map((row, index) => {
+                                    console.log("this is row:", row);
+                                    console.log(row.join());
+                                })
                             })
-                        })
-                    }
-                    {/* <div className="party-container container-fluid">
-                        <div className="task-des">
-                            <b>Party Detected!</b>
-                        </div>
-                        <br />
-                        <div>
-                            <b>People Involved in the party</b>
-                            <br />
-                            <div>Person 1</div>
-                            <div>Person 1</div>
-                            <div>Person 1</div>
-                        </div>
-                    </div> */}
+                        }
+                    </div>
                 </div>
-            </div>
-        </>
-    )
+            </>
+        )
+    }
+    // If party is not detected
+    else {
+        return (
+            <>
+                <Header />
+                    <div class="container">
+                <div class="jumbotron text-center">
+                        <h1 class="display-4">No Party Detected!</h1>
+                        <br/>
+                        <br/>
+                        <p class="lead">You are not involved in any parties yet. Keep giving and receiving favours to have a party.</p>
+                    </div>
+                </div>
+
+            </>
+        )
+    }
 }
 
 export default Party;
