@@ -2,8 +2,10 @@ import ActiveLink from './ActiveLink'
 import UserContext from '../functions/context';
 import { useState,useContext } from 'react';
 import Navbar from 'react-bootstrap/Navbar';
+import { useRouter } from 'next/router';
 
 const TopNavbar = (props) => {
+  const router = useRouter();
 
 
   const { user, logout } = useContext(UserContext);

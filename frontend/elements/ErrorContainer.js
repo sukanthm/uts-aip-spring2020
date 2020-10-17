@@ -16,7 +16,7 @@ const ErrorContainer = (props) => {
                 <br />
                 {/* Check if a button is needed or not */}
                 {props.needBtn ? (
-                    <ActiveLink activeClassName="active" href="/">
+                    <ActiveLink activeClassName="active" href={props.destin}>
                         <button type="submit" className="btn btn-primary btn-lg">{props.btnMsg}</button>
                     </ActiveLink>
                 ) : (null)}

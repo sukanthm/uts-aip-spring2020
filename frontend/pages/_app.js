@@ -16,7 +16,7 @@ function MyApp({ Component, pageProps }) {
   const logout = () => {
     setUser(null);
     document.cookie = 'aip_fp=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-    Router.push("/");
+    Router.push("/logOut");
   }
 
   useEffect(() => {
