@@ -1,6 +1,7 @@
 import ActiveLink from './ActiveLink'
 import UserContext from '../functions/context';
 import { useState,useContext } from 'react';
+import Navbar from 'react-bootstrap/Navbar';
 
 const TopNavbar = (props) => {
 
@@ -45,7 +46,7 @@ const TopNavbar = (props) => {
               </ActiveLink>
           </li>
         </ul>
-              <p className="text-light"><i>Logged in as {user}</i></p>
+              <Navbar.Text className="text-light mr-4"><i>Logged in as: <b>{user}</b></i></Navbar.Text>
               <button className="btn btn-outline-light mr-sm-2" type="submit" onClick={() => logOut()}>Logout</button>
            
       </div>
