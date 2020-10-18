@@ -14,6 +14,7 @@ const TaskId = () => {
     const router = useRouter();
     console.log("jeanpaul", router.query);
     const taskId = router.query.taskId;
+    if (!taskId) return null;
     const { user } = useContext(UserContext);
 
     // const cookie = decodeURIComponent(document.cookie).substring(7);
@@ -95,8 +96,8 @@ const TaskId = () => {
             let taskData = {
                 rewardChanges: JSON.stringify(rewardJson),
                 requestID: taskId,
-                email: "d@g.com",
-                loginToken: "$2b$10$hcT7aC5xrGVVBPhwtjQWBOQWPnXvr4OIRm9A1AcOOGfAPJJeY6PCa"
+                // email: "d@g.com",
+                // loginToken: "$2b$10$hcT7aC5xrGVVBPhwtjQWBOQWPnXvr4OIRm9A1AcOOGfAPJJeY6PCa"
             }
 
             let result = await fetch("/api/request/sponsor", { method: "PUT", headers: taskData });
@@ -141,8 +142,8 @@ const TaskId = () => {
         try {
             let claimData = {
                 completorComment: taskComment,
-                email: "d@g.com",
-                loginToken: "$2b$10$hcT7aC5xrGVVBPhwtjQWBOQWPnXvr4OIRm9A1AcOOGfAPJJeY6PCa",
+                // email: "d@g.com",
+                // loginToken: "$2b$10$hcT7aC5xrGVVBPhwtjQWBOQWPnXvr4OIRm9A1AcOOGfAPJJeY6PCa",
                 requestID: taskId
             }
 
@@ -170,11 +171,11 @@ const TaskId = () => {
 
     const fetchTaskDetails = async () => {
         try {
-            let fetchJson = {
-                loginToken: "$2b$10$hcT7aC5xrGVVBPhwtjQWBOQWPnXvr4OIRm9A1AcOOGfAPJJeY6PCa",
-                requestId: taskId
-            }
-            let result = await fetch("/api/request", { method: "GET", headers: fetchJson });
+            // let fetchJson = {
+            //     loginToken: "$2b$10$hcT7aC5xrGVVBPhwtjQWBOQWPnXvr4OIRm9A1AcOOGfAPJJeY6PCa",
+            //     requestId: taskId
+            // }
+            let result = await fetch("/api/request/" + taskId, { method: "GET" });
             let json = await result.json();
             if(json.success == true){
                 json.output.createdAt = helpers.readableDate(json.output.createdAt);
