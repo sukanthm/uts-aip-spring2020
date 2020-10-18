@@ -10,7 +10,7 @@ module.exports = function(app){
 
         request cookie:
             aip_fp
-        request headers:
+        request query params:
             currentPage (int): optional. pagination page, default = 0
             itemsPerPage (int): optional. pagination items per page, default = 5
         response headers:
@@ -22,7 +22,7 @@ module.exports = function(app){
             output (array of json)
         */
         let [successFlag, [currentPage, itemsPerPage]] = 
-            helperModule.get_req_headers(req, [
+            helperModule.get_req_query_params(req, [
                 ['currentPage', 'integer'], ['itemsPerPage', 'integer']
             ], res, true);
         currentPage = currentPage ? Number(currentPage) : 0;

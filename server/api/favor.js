@@ -10,14 +10,15 @@ var upload = multer({ storage: multerStorage });
 
 module.exports = function(app){
 
-    app.get('/api/favors', async function(req, res){
+    app.get('/api/favors/:targetEmail', async function(req, res){
         /*
         Gets all of a user's favors with another user (owed and owing)
 
         request cookie:
             aip_fp
-        request headers:
+        url resource:
             targetEmail (string)
+        request query params:
             currentPage (int): optional. pagination page, default = 0
             itemsPerPage (int): optional. pagination items per page, default = 5
         response headers:
@@ -28,17 +29,13 @@ module.exports = function(app){
             message (string)
             output (array of json)
         */
-        let [successFlag, [targetEmail]] = helperModule.get_req_headers(req, [
-            ['targetEmail', 'string']
-        ], res);
-        if (!successFlag)
-            return;
-
         let [validationSuccess, user] = await helperModule.validate_user_loginToken(req, res);
         if (!validationSuccess)
             return;
         
-        let [successFlag2, [currentPage, itemsPerPage]] = helperModule.get_req_headers(req, [
+        let targetEmail = helperModule.test_data_type(req.params.targetEmail, 'string')[1];
+
+        let [successFlag2, [currentPage, itemsPerPage]] = helperModule.get_req_query_params(req, [
             ['currentPage', 'integer'], ['itemsPerPage', 'integer'],
         ], res, true);
         currentPage = currentPage ? Number(currentPage) : 0;
@@ -212,13 +209,13 @@ module.exports = function(app){
         }
     });
 
-    app.get('/api/favor', async function(req, res){
+    app.get('/api/favor/:favorID', async function(req, res){
         /*
         Gets a user's favor
 
         request cookie:
             aip_fp
-        request headers:
+        url resource:
             favorID (int)
         response headers:
             success (bool)
@@ -228,11 +225,14 @@ module.exports = function(app){
             message (string)
             output (json)
         */
-        let [successFlag, [favorID]] = helperModule.get_req_headers(req, [
-            ['favorID', 'integer']
-        ], res);
-        if (!successFlag)
-            return;
+        let [successFlag, favorID] = helperModule.test_data_type(req.params.favorID, 'integer');
+        if (!successFlag){
+                helperModule.manipulate_response_and_send(req, res, {
+                    'success': false, 
+                    'message': 'bad favor id requested', 
+                    }, 404);
+                return;
+        }
 
         let [validationSuccess, user] = await helperModule.validate_user_loginToken(req, res);
         if (!validationSuccess)
@@ -380,7 +380,7 @@ module.exports = function(app){
         }
     })
 
-    app.get('/api/favors/dashboard', async function(req, res){
+    app.get('/api/dashboard/favors', async function(req, res){
         /*
         Gets a user's consolidated favors stats
 
@@ -401,7 +401,8 @@ module.exports = function(app){
 
         let output = await sequelize.query(
             `
-            SELECT DISTINCT u2.email as "payeeEmail", u1.email as "payerEmail", COUNT(*) OVER(PARTITION BY f."rewardID", f.status) as "favorCount", f."rewardID", f.status
+            SELECT DISTINCT u2.email as "payeeEmail", u1.email as "payerEmail", f."rewardID", f.status, 
+                COUNT(*) OVER(PARTITION BY f."rewardID", f.status, u2.email, u1.email) as "favorCount"
             FROM "fp_favors" f
             JOIN "fp_users" u1 ON f."payerID" = u1.id
             JOIN "fp_users" u2 ON f."payeeID" = u2.id

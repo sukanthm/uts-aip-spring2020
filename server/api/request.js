@@ -125,6 +125,7 @@ module.exports = function(app){
             dashboardFilter (string): optional. one of ['Creator', 'Sponsor', 'Completor', 'All'] >> created by me, sponsored by me, etc.
             searchData (string): optional. searches in request title, request description and reward name
             requestStatus (string): optional. one of ['Open', 'Completed', 'All'] >> global filter for request status.
+        request query params:
             currentPage (int): optional. pagination page, default = 0
             itemsPerPage (int): optional. pagination items per page, default = 5
         response headers:
@@ -135,11 +136,13 @@ module.exports = function(app){
             message (string)
             output (array of json)
         */
-
-        let [successFlag, [requestStatus, currentPage, itemsPerPage, searchData, dashboardFilter]] = 
+        let [successFlag1, [requestStatus, searchData, dashboardFilter]] = 
             helperModule.get_req_headers(req, [
-                ['requestStatus', 'string'], ['currentPage', 'integer'], 
-                ['itemsPerPage', 'integer'], ['searchData', 'string'], ['dashboardFilter', 'string'],
+                ['requestStatus', 'string'], ['searchData', 'string'], ['dashboardFilter', 'string'],
+            ], res, true);
+        let [successFlag2, [currentPage, itemsPerPage]] = 
+            helperModule.get_req_query_params(req, [
+                ['currentPage', 'integer'], ['itemsPerPage', 'integer'],
             ], res, true);
         currentPage = currentPage ? Number(currentPage) : 0;
         itemsPerPage = itemsPerPage ? Number(itemsPerPage) : 5;
@@ -256,13 +259,13 @@ module.exports = function(app){
         return;
     })
 
-    app.get('/api/request', async function(req, res){
+    app.get('/api/request/:requestID', async function(req, res){
         /*
         gets a request
 
         request cookie:
             aip_fp
-        request headers:
+        url resource:
             requestID (int)
         response headers:
             success (bool)
@@ -274,11 +277,14 @@ module.exports = function(app){
         TODO:
             improve sponsor_id -> sponsorEmail transaltion
         */
-        let [successFlag, [requestID]] = helperModule.get_req_headers(req, [
-            ['requestID', 'integer']
-        ], res);
-        if (!successFlag)
-            return;
+        let [successFlag, requestID] = helperModule.test_data_type(req.params.requestID, 'integer');
+        if (!successFlag){
+                helperModule.manipulate_response_and_send(req, res, {
+                    'success': false, 
+                    'message': 'bad request id requested', 
+                    }, 404);
+                return;
+        }
 
         let [validationSuccess, user] = await helperModule.validate_user_loginToken(req, res);
         if (!validationSuccess)

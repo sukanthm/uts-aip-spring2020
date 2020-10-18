@@ -3,7 +3,7 @@ const helperModule = require('./helper.js');
 
 module.exports = function(app){
 
-    app.get('/api/signup', function(req, res){
+    app.get('/api/signup', async function(req, res){
         //show signup HTML here
         res.send('HI, use the post API to signup');
     });

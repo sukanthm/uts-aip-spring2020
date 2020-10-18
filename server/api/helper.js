@@ -1,3 +1,4 @@
+const url = require('url');
 var assert = require('assert');
 var path = require('path');
 var multer  = require('multer');
@@ -131,6 +132,37 @@ function get_req_headers(req, headers, res, allOptional=false){
     return [true, output];
 }
 
+function get_req_query_params(req, params, res, allOptional=false){
+    let param, output = [], testDataType;
+
+    const queryObject = url.parse(req.url, true).query;
+
+    for (let i = 0, len = params.length; i < len; i++) {
+        param = queryObject[params[i][0]];
+
+        if (!allOptional){
+            [testDataType, param] = test_data_type(param, params[i][1]);
+            if (!testDataType){
+                manipulate_response_and_send(req, res, {
+                    'success': false, 
+                    'message': 'bad param {'+params[i][0]+'} data type. expecting '+params[i][1],
+                    }, 400);
+                return [false, params];
+            }
+
+            if (!(param)){
+                manipulate_response_and_send(req, res, {
+                    'success': false, 
+                    'message': 'mandatory query params missing',
+                    }, 400);
+                return [false, params];
+            }
+        }
+        output.push(param);
+    }
+    return [true, output];
+}
+
 async function validate_user_loginToken(req, res){
     let aipFpCookie = req.cookies.aip_fp;
     if (aipFpCookie === undefined){
@@ -197,4 +229,6 @@ module.exports = {
     clean_and_shuffle: clean_and_shuffle,
     date_sort: date_sort,
     imagesDir: imagesDir,
+    get_req_query_params: get_req_query_params,
+    test_data_type: test_data_type,
 }
