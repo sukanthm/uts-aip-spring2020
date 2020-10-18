@@ -25,7 +25,7 @@
     "dev": "node server.js 3000 4000",
     "build": "next build",
     "start": "next start",
-    "prod": "pm2 start server.js -- 443 80 'production'"
+    "prod": "pm2 start server.js -- 80 443 'production'"
   },
   "eslintConfig": {
     "extends": "react-app"
