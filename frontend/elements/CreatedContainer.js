@@ -24,13 +24,11 @@ const CreatedContainer = (props) => {
     const fetchTasks = async(status, currentPage, itemsPerPage, search) => {
         try{
             let fetchJson = {
-                dashboardFilter: "Creator",
                 requestStatus: status,
-                currentPage: currentPage,
-                itemsPerPage: itemsPerPage,
                 searchData: search
             }
-            let result = await fetch("/api/requests", {method: "GET", headers: fetchJson});
+
+            let result = await fetch(`/api/requests?currentPage=${currentPage}&itemsPerPage=${itemsPerPage}`, {method: "GET", headers: fetchJson});
             let json = await result.json();
             if(json.success == true){
                 console.log("kya?", json);

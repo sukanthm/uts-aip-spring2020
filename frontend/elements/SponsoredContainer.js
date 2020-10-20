@@ -25,13 +25,11 @@ const SponsoredContainer = (props) => {
     const fetchTasks = async(status, currentPage, itemsPerPage, search) => {
         try{
             let fetchJson = {
-                dashboardFilter: "Sponsor",
                 requestStatus: status,
-                currentPage: currentPage,
-                itemsPerPage: itemsPerPage,
                 searchData: search
             }
-            let result = await fetch("/api/requests", {method: "GET", headers: fetchJson});
+
+            let result = await fetch(`/api/requests?currentPage=${currentPage}&itemsPerPage=${itemsPerPage}`, {method: "GET", headers: fetchJson});
             let json = await result.json();
             console.log("kya?", json);
             if(json.success == true){
