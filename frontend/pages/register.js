@@ -137,53 +137,54 @@ const Register = () => {
     return(
         <>
             <Header />
-            <div className="register-class">
-            <div className="container">
-                <h2>Register</h2>
-                <div className="form-group">
-                    <label htmlFor="register-name">Full Name</label>
-                    <input type="text" className="form-control" id="register-name"  placeholder="Your Name"  value={fullName} onChange={(e) => setFullName(e.target.value)} onKeyDown={(e) => enterPressed(e)}/>
-                    {nameFlag ? <small className="form-text text-danger">Name must be atleast 5 characters</small> : null}
-                    
-                    
-                </div>
-                <div className="form-group">
-                    <label htmlFor="register-email">Email address</label>
-                    <input type="email" className="form-control" id="register-email" placeholder="Enter email"  value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={(e) => enterPressed(e)}/>
-                    {emailFlag ? <small className="form-text text-danger">Email not valid</small> : null}
-                </div>
-                <div className="form-group">
-                    <label htmlFor="register-password">Password</label>
-                    <input type="password" className="form-control" id="register-password" aria-describedby="register-password-help" placeholder="Create a password"   value={password} onChange={(e) => setPass(e.target.value)} onKeyDown={(e) => enterPressed(e)}/>
-                    {passwordFlag ? <small className="form-text text-danger">Password must be atleast 5 characters</small> : null}
-                </div>
-                <button type="submit" className="btn btn-primary"  onClick={() => validator()}>Submit</button>
-                <hr/>
-                <Alert show={showAlert} variant="danger" onClose={() => setShowAlert(false)} dismissible>
-                    <Alert.Heading>Oh snap! Error in registering user!</Alert.Heading>
-                    <p>
-                    {errMsg}
-                    </p>
-                </Alert>
-            </div>
+            <div className="container party-container">
+                <div className="row justify-content-center">
+                    <div className="col-6">
+                        <h2 className="text-center mb-5">Create new account</h2>
+                        <div className="form-group">
+                            <label htmlFor="register-name">Full Name</label>
+                            <input type="text" className="form-control" id="register-name" placeholder="Your Name" value={fullName} onChange={(e) => setFullName(e.target.value)} onKeyDown={(e) => enterPressed(e)}/>
+                            {nameFlag ? <small className="form-text text-danger">Name must be atleast 5 characters</small> : null}
 
-            
+
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="register-email">Email address</label>
+                            <input type="email" className="form-control" id="register-email" placeholder="Enter email" value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={(e) => enterPressed(e)}/>
+                            {emailFlag ? <small className="form-text text-danger">Email not valid</small> : null}
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="register-password">Password</label>
+                            <input type="password" className="form-control" id="register-password" aria-describedby="register-password-help" placeholder="Create a password" value={password} onChange={(e) => setPass(e.target.value)} onKeyDown={(e) => enterPressed(e)}/>
+                            {passwordFlag ? <small className="form-text text-danger">Password must be atleast 5 characters</small> : null}
+                        </div>
+                        <br />
+                        <button type="submit" className="btn btn-primary btn-lg" onClick={() => validator()}>Sign Up</button>
+                        <hr />
+                        <Alert show={showAlert} variant="danger" onClose={() => setShowAlert(false)} dismissible>
+                            <Alert.Heading>Oh snap! Error in registering user!</Alert.Heading>
+                            <p>
+                                {errMsg}
+                            </p>
+                        </Alert>
+                    </div>
+                </div>
+            </div>
 
             {/* Modal for Success Message */}
             <Modal show={showCla} onHide={handleCloseCla}>
-                    <Modal.Header>
-                        <Modal.Title>Account Created Successfully</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <div className="container">
-                            Thank you for creating an Account with us. You can now "Sign In" to start using our wesbite. Thank you.
+                <Modal.Header>
+                    <Modal.Title>Account Created Successfully</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <div className="container">
+                        Thank you for creating an Account with us. You can now "Sign In" to start using our wesbite. Thank you.
                         </div>
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="primary" onClick={() => completeTask()}>Sign In</Button>
-                    </Modal.Footer>
-                </Modal>
-        </div>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="primary" onClick={() => completeTask()}>Sign In</Button>
+                </Modal.Footer>
+            </Modal>
         </>
     )
 }

@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import Header from '../template-parts/Header';
 import UserContext from '../functions/context';
 import Alert from 'react-bootstrap/Alert';
+import ActiveLink from '../template-parts/ActiveLink';
 
 const Login = (props) => {
     const router = useRouter();
@@ -101,31 +102,37 @@ const Login = (props) => {
     return(
         <>
             <Header />
-            
-            <div className="login-page">
-                <div className="container">
-                    <h2 className="text-center mb-5">Log in to your account</h2>
-                    <div className="form-group">
-                    <label htmlFor="login-user">Email address</label>
-                    <input type="text" className="form-control" id="login-user" placeholder="Enter email" value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={(e) => enterPressed(e)}/>
-                    {emailFlag ? <small className="form-text text-danger">Email not valid</small> : null}
-                    </div>
-                    <div className="form-group">
-                    <label htmlFor="login-password">Password</label>
-                    <input type="password" className="form-control" id="login-password" placeholder="Password"  value={password} onChange={(e) => setPass(e.target.value)} onKeyDown={(e) => enterPressed(e)}/>
-                    {passwordFlag ? <small className="form-text text-danger">Password can't be left blank</small> : null}
-                    </div>
-                    <button type="submit" className="btn btn-primary" onClick={() => validator()}>Submit</button>
-                    <hr/>
-                    <Alert show={showAlert} variant="danger" onClose={() => setShowAlert(false)} dismissible>
-                        <Alert.Heading>Oh snap! Error in authenticating user!</Alert.Heading>
-                        <p>
-                        {errMsg}
+            <div className="container party-container">
+                <div className="row justify-content-center">
+                    <div className="col-6">
+                        <h2 className="text-center mb-5">Log in to your account</h2>
+                        <div className="form-group">
+                            <label htmlFor="login-user">Email address</label>
+                            <input type="text" className="form-control" id="login-user" placeholder="Enter email" value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={(e) => enterPressed(e)}/>
+                            {emailFlag ? <small className="form-text text-danger">Email not valid</small> : null}
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="login-password">Password</label>
+                            <input type="password" className="form-control" id="login-password" placeholder="Password"  value={password} onChange={(e) => setPass(e.target.value)} onKeyDown={(e) => enterPressed(e)}/>
+                            {passwordFlag ? <small className="form-text text-danger">Password can't be left blank</small> : null}
+                        </div>
+                        <br />
+                        <button type="submit" className="btn btn-primary btn-lg" onClick={() => validator()}>Log In</button>
+                        <hr />
+
+                        <p>Don't have an account yet? <ActiveLink activeClassName="active" href="/register"><a>Sign Up</a></ActiveLink>
                         </p>
-                    </Alert>
+                        <hr />
+                        <Alert show={showAlert} variant="danger" onClose={() => setShowAlert(false)} dismissible>
+                            <Alert.Heading>Oh snap! Error in authenticating user!</Alert.Heading>
+                            <p>
+                                {errMsg}
+                            </p>
+                        </Alert>
+                    </div>
                 </div>
             </div>
-      </>
+        </>
     )
 }
 
