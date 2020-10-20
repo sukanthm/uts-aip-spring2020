@@ -2,6 +2,8 @@ import {useState, useEffect, useRef} from 'react';
 import Header from '../template-parts/Header';
 import { useRouter } from 'next/router';
 import Alert from 'react-bootstrap/Alert';
+import Modal from 'react-bootstrap/Modal';
+import { Button, ButtonToolbar } from 'react-bootstrap';
 
 const Register = () => {
     
@@ -20,6 +22,10 @@ const Register = () => {
     const [showAlert, setShowAlert] = useState(false);
     const [errMsg, setErrMsg] = useState("");
 
+    //Variables for Modal
+    const [showCla, setShowCla] = useState(false);
+    const handleCloseCla = () => setShowCla(false);
+    const handleShowCla = () => setShowCla(true);
 
     useEffect(() => {  // watcher on validated hook variable
         if(firstRender == 0){
@@ -100,7 +106,7 @@ const Register = () => {
         
 
         if(json.success == true){
-            router.push('/login');
+            handleShowCla();
         }
         else if(json.success == false){
             setValidated(false);
@@ -116,6 +122,10 @@ const Register = () => {
         setShowAlert(true);
     }
     }
+
+    const completeTask = async () => {
+        router.push('/login');
+}
 
     return(
         <>
@@ -149,6 +159,23 @@ const Register = () => {
                     </p>
                 </Alert>
             </div>
+
+            
+
+            {/* Modal for Success Message */}
+            <Modal show={showCla} onHide={handleCloseCla}>
+                    <Modal.Header>
+                        <Modal.Title>Account Created Successfully</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <div className="container">
+                            Thank you for creating an Account with us. You can now "Sign In" to start using our wesbite. Thank you.
+                        </div>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="primary" onClick={() => completeTask()}>Sign In</Button>
+                    </Modal.Footer>
+                </Modal>
         </div>
         </>
     )
