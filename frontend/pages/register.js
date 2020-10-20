@@ -83,6 +83,13 @@ const Register = () => {
         }
     }
 
+    const enterPressed = (e) => {
+        console.log("pressa");
+        if(e.key === "Enter"){
+            validator();
+        }
+    }
+
     const submitForm = async () => {
         try{
         console.log(fullName);
@@ -125,19 +132,19 @@ const Register = () => {
                 <h2>Register</h2>
                 <div className="form-group">
                     <label htmlFor="register-name">Full Name</label>
-                    <input type="text" className="form-control" id="register-name"  placeholder="Your Name"  value={fullName} onChange={(e) => setFullName(e.target.value)}/>
+                    <input type="text" className="form-control" id="register-name"  placeholder="Your Name"  value={fullName} onChange={(e) => setFullName(e.target.value)} onKeyDown={(e) => enterPressed(e)}/>
                     {nameFlag ? <small className="form-text text-danger">Name must be atleast 5 characters</small> : null}
                     
                     
                 </div>
                 <div className="form-group">
                     <label htmlFor="register-email">Email address</label>
-                    <input type="email" className="form-control" id="register-email" placeholder="Enter email"  value={email} onChange={(e) => setEmail(e.target.value)}/>
+                    <input type="email" className="form-control" id="register-email" placeholder="Enter email"  value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={(e) => enterPressed(e)}/>
                     {emailFlag ? <small className="form-text text-danger">Email not valid</small> : null}
                 </div>
                 <div className="form-group">
                     <label htmlFor="register-password">Password</label>
-                    <input type="password" className="form-control" id="register-password" aria-describedby="register-password-help" placeholder="Create a password"   value={password} onChange={(e) => setPass(e.target.value)}/>
+                    <input type="password" className="form-control" id="register-password" aria-describedby="register-password-help" placeholder="Create a password"   value={password} onChange={(e) => setPass(e.target.value)} onKeyDown={(e) => enterPressed(e)}/>
                     {passwordFlag ? <small className="form-text text-danger">Password must be atleast 5 characters</small> : null}
                 </div>
                 <button type="submit" className="btn btn-primary"  onClick={() => validator()}>Submit</button>
