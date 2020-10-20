@@ -219,6 +219,26 @@ var multerStorage = multer.diskStorage({
     }
 })
 
+class defaultDict {
+    constructor(){
+        this.data = {};
+    }
+    add(keys, value){
+        let evalString, sliceJoin;
+        for (let i=0; i<keys.length; i++){
+            sliceJoin = '["' + keys.slice(0, i).join(`"]["`) + '"]';
+            evalString = sliceJoin.length > 4 ? 'this.data' + sliceJoin : 'this.data';
+            if(!(eval('"'+keys[i]+'" in '+evalString+';'))){
+                if (i<keys.length-1)
+                    eval(evalString + '["' + keys[i] + '"] = {};');
+                else
+                    eval(evalString + '["' + keys[i] + '"] = 0;');
+            }
+        }
+        eval(evalString + '["' + keys[keys.length - 1] + '"] += ' + value + ';');
+    }
+}
+
 module.exports = {
     manipulate_response_and_send: manipulate_response_and_send,
     is_secret_valid: is_secret_valid,
@@ -231,4 +251,5 @@ module.exports = {
     imagesDir: imagesDir,
     get_req_query_params: get_req_query_params,
     test_data_type: test_data_type,
+    defaultDict: defaultDict,
 }

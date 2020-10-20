@@ -51,10 +51,14 @@ module.exports = function(app){
               }
         );
 
+        let new_output = {}
+        for (let i=0; i<output.length; i++)
+            new_output[output[i]['email']] = Number(output[i]['incomingFavorCount']);
+
         helperModule.manipulate_response_and_send(req, res, {
             'success': true, 
-            'message': 'sent requests as queried',
-            'output': output,
+            'message': 'sent leaderboard 1 as queried //{email: incomingFavorCount, ...}',
+            'output': new_output,
             }, 200);
         return;
     })

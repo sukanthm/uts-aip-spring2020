@@ -411,11 +411,37 @@ module.exports = function(app){
             {type: QueryTypes.SELECT}
         );
 
+        let dataEmail, inOrOutFlag;
+        let newOutput1 = new helperModule.defaultDict();
+        let newOutput2 = new helperModule.defaultDict();
+        for (let i=0; i<output.length; i++){
+            if(user.email === output[i]['payerEmail']){
+                inOrOutFlag = 'outgoing';
+                dataEmail = output[i]['payeeEmail']
+            } else {
+                inOrOutFlag = 'incoming';
+                dataEmail = output[i]['payerEmail']
+            }
+
+            newOutput1.add(
+                [inOrOutFlag, output[i]['rewardID']], 
+                output[i]['favorCount']
+            );
+
+            newOutput2.add(
+                [dataEmail, inOrOutFlag, output[i]['rewardID']], 
+                output[i]['favorCount']
+            );
+        }
+
         helperModule.manipulate_response_and_send(req, res, {
             'success': true, 
             'message': 'favors dashboard data sent',
-            'output': output,
-            }, 200);
+            'output': {
+                'consolidated': newOutput1.data,
+                'byUser': newOutput2.data,
+            },
+        }, 200);
         return;
     })
 }
