@@ -46,6 +46,13 @@ const Login = (props) => {
         }
         }
 
+        const enterPressed = (e) => {
+            console.log("pressa");
+            if(e.key === "Enter"){
+                validator();
+            }
+        }
+
     useEffect(() => {  // watcher on validated hook variable
         if(firstRender == 0){
             // used to prevent running useEffect on first load
@@ -100,12 +107,12 @@ const Login = (props) => {
                     <h2 className="text-center mb-5">Log in to your account</h2>
                     <div className="form-group">
                     <label htmlFor="login-user">Email address</label>
-                    <input type="text" className="form-control" id="login-user" placeholder="Enter email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                    <input type="text" className="form-control" id="login-user" placeholder="Enter email" value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={(e) => enterPressed(e)}/>
                     {emailFlag ? <small className="form-text text-danger">Email not valid</small> : null}
                     </div>
                     <div className="form-group">
                     <label htmlFor="login-password">Password</label>
-                    <input type="password" className="form-control" id="login-password" placeholder="Password"  value={password} onChange={(e) => setPass(e.target.value)}/>
+                    <input type="password" className="form-control" id="login-password" placeholder="Password"  value={password} onChange={(e) => setPass(e.target.value)} onKeyDown={(e) => enterPressed(e)}/>
                     {passwordFlag ? <small className="form-text text-danger">Password can't be left blank</small> : null}
                     </div>
                     <button type="submit" className="btn btn-primary" onClick={() => validator()}>Submit</button>
