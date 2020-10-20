@@ -1,10 +1,10 @@
-
 import {useEffect, useState, useRef} from 'react';
 import { useRouter } from 'next/router';
 import Header from '../template-parts/Header';
 import TaskContainer from './TaskContainer';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import Alert from 'react-bootstrap/Alert';
+import ErrorContainer from '../elements/ErrorContainer';
 
 
 
@@ -25,11 +25,13 @@ const SponsoredContainer = (props) => {
     const fetchTasks = async(status, currentPage, itemsPerPage, search) => {
         try{
             let fetchJson = {
+                dashboardFilter: "Sponsor",
                 requestStatus: status,
+                currentPage: currentPage,
+                itemsPerPage: itemsPerPage,
                 searchData: search
             }
-
-            let result = await fetch(`/api/requests?currentPage=${currentPage}&itemsPerPage=${itemsPerPage}`, {method: "GET", headers: fetchJson});
+            let result = await fetch("/api/requests", {method: "GET", headers: fetchJson});
             let json = await result.json();
             console.log("kya?", json);
             if(json.success == true){
@@ -71,7 +73,8 @@ const SponsoredContainer = (props) => {
 
         useEffect(() => {fetchTasks("All", currentPage.current, itemsPerPage, "")}, []);
 
-    return (
+    if (taskRows.length > 0) {
+        return (
         
             <div className="dashboard-page">
                 <div className="container">
@@ -109,6 +112,14 @@ const SponsoredContainer = (props) => {
             </div>
         
     );
+}
+else {
+    return (
+        <>
+            <ErrorContainer imgSrc="../images/error_container/error.png" errTitle="No Tasks Detected!" errMsg="You haven't sponsored any task yet." />
+        </>
+    )
+}
 }
 
 export default SponsoredContainer;
