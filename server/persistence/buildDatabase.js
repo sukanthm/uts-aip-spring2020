@@ -1,7 +1,5 @@
 const express = require('express');
-const app = express();
 import {sequelize} from './initORM.js';
-//import create_rewards from './objects/fpReward.js';
 const fpRewardModule = require('./objects/fpReward.js');
 
 

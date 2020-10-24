@@ -39,19 +39,6 @@ function run_dfs(favorList){
     output:
         output (array): 2d array of parties for this reward
     */
-    // favorList = [  //test data
-    //     ['0','1'], 
-    //     ['1','2'], 
-    //     ['2','0'], 
-
-    //     ['0','1'], 
-    //     ['1','4'],
-    //     ['4','2'], 
-    //     ['2','0'],
-
-    //     ['eh','wut'],
-    // ];
-
     let parties = [];
     let searchPartyAgain = true;
     let stack, traversed, GRAPH;
@@ -108,14 +95,7 @@ async function party_detector(){
     let favorList = await fpFavor.findAll({
         attributes: ['rewardID'],
         where: {
-            // [Op.and]: [{
-            //     [Op.or]: [
-            //         {payerID: userID},
-            //         {payeeID: userID},
-            //         ]
-            //     }, {
-                    status: 'Pending',
-                // }]
+            status: 'Pending',
         },
         include: [
             {

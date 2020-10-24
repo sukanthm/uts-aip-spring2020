@@ -5,11 +5,7 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 
-import {
-    sequelize, Sequelize, fpUser, 
-    fpReward, fpRequest, //fpRequestCompletion,
-    fpRequestReward, fpFavor
-} from './persistence/initORM.js';
+import { sequelize } from './persistence/initORM.js';
 
 const app = express();
 app.use(cookieParser());

@@ -1,4 +1,4 @@
-import {sequelize, Sequelize} from '../persistence/objects/sequelize';
+import {sequelize} from '../persistence/objects/sequelize';
 const { Op, QueryTypes } = require("sequelize");
 import fpUser from '../persistence/objects/fpUser';
 import fpFavor from '../persistence/objects/fpFavor';
@@ -264,7 +264,8 @@ module.exports = function(app){
                 }, 404);
             return;    
         }
-        if (![favor.toJSON().payee_id.payeeEmail, favor.toJSON().payer_id.payerEmail].includes(user.email)){
+        favor = JSON.parse(JSON.stringify(favor));
+        if (![favor.payee_id.payeeEmail, favor.payer_id.payerEmail].includes(user.email)){
             helperModule.manipulate_response_and_send(req, res, {
                 'success': false, 
                 'message': 'unAuthorised user', 
@@ -272,7 +273,6 @@ module.exports = function(app){
             return;    
         }
 
-        favor = JSON.parse(JSON.stringify(favor));
         favor['payeeEmail'] = favor['payee_id']['payeeEmail'];
         delete favor['payee_id'];
         favor['payerEmail'] = favor['payer_id']['payerEmail'];

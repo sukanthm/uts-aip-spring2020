@@ -56,7 +56,7 @@ function manipulate_response_and_send(req, res, resBodyObject, httpCode){
     return;
 }
 
-async function custom_hash(input){
+async function custom_hash(input){ //from https://github.com/kelektiv/node.bcrypt.js#readme
     return new Promise((resolve, reject) => {
         bcrypt.hash(input, saltRounds, function(err, hash) {
           if (err) reject(err);
@@ -65,7 +65,7 @@ async function custom_hash(input){
     });
 }
 
-async function is_secret_valid(plaintext, hashed){
+async function is_secret_valid(plaintext, hashed){ //from https://github.com/kelektiv/node.bcrypt.js#readme
     return new Promise((resolve, reject) => {
         bcrypt.compare(plaintext, hashed, function(err, result) {
         if (err) reject(err);
@@ -75,13 +75,18 @@ async function is_secret_valid(plaintext, hashed){
 }
 
 function test_data_type(input, type){
+    let flag;
     switch(type) {
         case "string":
-            return [true, String(input).trim()];
+            if ([undefined, null].includes(input))
+                return [false, undefined]
+            return [true, String(input).trim().replace(/(?![\x00-\x7F])./g, '').substring(0, 255)];
         case "integer": 
-            return [/^-?\d+$/.test(input), Number(input)];
+            flag = /^-?\d+$/.test(input);
+            return [flag, flag ? Number(input) : undefined];
         case "rewardID": 
-            return [/^[12345]$/.test(input), Number(input)];
+            flag = /^[12345]$/.test(input);
+            return [flag, flag ? Number(input) : undefined];
         case "rewardsDict": //{rewardID: integer, ...}
             try {
                 if (typeof input === 'string')
@@ -106,59 +111,55 @@ function test_data_type(input, type){
 
 function get_req_headers(req, headers, res, allOptional=false){
     let header, output = [], testDataType;
-    for (let i = 0, len = headers.length; i < len; i++) {
+    for (let i = 0; i < headers.length; i++) {
         header = req.header(headers[i][0]);
+        [testDataType, header] = test_data_type(header, headers[i][1]);
+        output.push(header);
 
         if (!allOptional){
-            [testDataType, header] = test_data_type(header, headers[i][1]);
             if (!testDataType){
                 manipulate_response_and_send(req, res, {
                     'success': false, 
                     'message': 'bad header {'+headers[i][0]+'} data type. expecting '+headers[i][1],
                     }, 400);
-                return [false, headers];
+                return [false, null];
             }
-
-            if ([undefined, null, '', 'null'].includes(header)){
+            if (header === undefined){
                 manipulate_response_and_send(req, res, {
                     'success': false, 
                     'message': 'mandatory request headers missing',
                     }, 400);
-                return [false, headers];
+                return [false, null];
             }
         }
-        output.push(header);
     }
     return [true, output];
 }
 
 function get_req_query_params(req, params, res, allOptional=false){
     let param, output = [], testDataType;
-
     const queryObject = url.parse(req.url, true).query;
-
-    for (let i = 0, len = params.length; i < len; i++) {
+    for (let i = 0; i < params.length; i++) {
         param = queryObject[params[i][0]];
+        [testDataType, param] = test_data_type(param, params[i][1]);
+        output.push(param);
 
-        if (!allOptional){
-            [testDataType, param] = test_data_type(param, params[i][1]);
+        if (!allOptional){   
             if (!testDataType){
                 manipulate_response_and_send(req, res, {
                     'success': false, 
                     'message': 'bad param {'+params[i][0]+'} data type. expecting '+params[i][1],
                     }, 400);
-                return [false, params];
+                return [false, null];
             }
-
             if (!(param)){
                 manipulate_response_and_send(req, res, {
                     'success': false, 
                     'message': 'mandatory query params missing',
                     }, 400);
-                return [false, params];
+                return [false, null];
             }
         }
-        output.push(param);
     }
     return [true, output];
 }
@@ -209,7 +210,7 @@ async function validate_user_loginToken(req, res){
 
 const imagesDir = path.join(__dirname + '/../public_images/'); //w.r.t. to current folder
 
-var multerStorage = multer.diskStorage({
+var multerStorage = multer.diskStorage({ //from https://github.com/expressjs/multer#readme
     destination: function (req, file, cb) {
         cb(null, imagesDir);
     },
