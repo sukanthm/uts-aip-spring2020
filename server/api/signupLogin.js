@@ -4,8 +4,8 @@ const helperModule = require('./helper.js');
 module.exports = function(app){
 
     app.get('/api/signup', async function(req, res){
-        //show signup HTML here
-        res.send('HI, use the post API to signup');
+        //DUMMY TEST API
+        res.send('HI, use the POST method to signup');
     });
 
     app.post('/api/signup', async function(req, res){

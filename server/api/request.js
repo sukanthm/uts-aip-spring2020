@@ -85,12 +85,13 @@ module.exports = function(app){
             return;
         }
 
+        //requestRewards creation trace. to roll back db state if something fails.
         let rewardsInstances = [];
         for (let reward in rewards){
             if (rewards[reward] > 0){
                 try {
                     let newfpRequestReward = await fpRequestReward.create({
-                        rewardID: Number(reward),
+                        rewardID: reward,
                         rewardCount: rewards[reward],
                         sponsorID: creatorID,
                         requestID: newRequest.id,
@@ -144,13 +145,14 @@ module.exports = function(app){
             helperModule.get_req_query_params(req, [
                 ['currentPage', 'integer'], ['itemsPerPage', 'integer'],
             ], res, true);
-        currentPage = currentPage ? Number(currentPage) : 0;
-        itemsPerPage = itemsPerPage ? Number(itemsPerPage) : 5;
+        currentPage = currentPage ? currentPage : 0;
+        itemsPerPage = itemsPerPage ? itemsPerPage : 5;
         searchData = helperModule.clean_and_shuffle(searchData);
         requestStatus = requestStatus ? requestStatus : 'All';
-        let dashboardFilterSQL = '/* */';
+        let dashboardFilterSQL = '/* */'; //postgres multiline comment => no filter, for when dashboardFilter == All
 
         if (!(dashboardFilter === undefined)){
+            //dashboardFilter can be used only by logged in users
             let [validationSuccess, user] = await helperModule.validate_user_loginToken(req, res);
             if (!validationSuccess)
                 return;
@@ -163,6 +165,7 @@ module.exports = function(app){
                 return;
             }
             switch(dashboardFilter) {
+                //creating custom dashboardFilter SQL line
                 case "Creator":
                     dashboardFilterSQL = `"fp_requests"."creatorID" = '` + user.id + `' AND`;
                     break;
@@ -182,8 +185,11 @@ module.exports = function(app){
                 }, 406);
             return;
         }
-        requestStatus = requestStatus === 'All' ? '%' : requestStatus;
+        requestStatus = requestStatus === 'All' ? '%' : requestStatus; //match anything
         
+        
+        //find requests that satisfy requestStatus and dashboardFilter and searchData
+        //then paginate, then (subquery) get the sponsor details
         let allRequests = await sequelize.query(
             `select a.*, "fp_request_rewards"."rewardID", sum("fp_request_rewards"."rewardCount") as "rewardCount", "fp_rewards"."title" as "rewardTitle" from (
                 select COUNT(*) OVER() as customCount, "fp_requests"."id", "fp_requests"."title", "fp_requests"."description", "fp_requests"."taskImagePath", "fp_requests"."completedAt", 
@@ -209,7 +215,7 @@ module.exports = function(app){
                 a."completorComment", a."status", a."createdAt", "fp_request_rewards"."rewardID", "fp_rewards"."title"
             ;`,
             {
-              replacements: { 
+              replacements: { //ORM escapes these values
                   requestStatus: requestStatus,
                   searchData: searchData,
                   itemsPerPage: itemsPerPage,
@@ -217,8 +223,9 @@ module.exports = function(app){
                 },
               type: QueryTypes.SELECT
             }
-          );
+        );
 
+        //output json clean up
         let totalCount;
         let outputAllRequests = {'data': {}};
         for (let i=0; i<allRequests.length; i++){
@@ -320,7 +327,8 @@ module.exports = function(app){
             return;    
         }
 
-        oneRequest = JSON.parse(JSON.stringify(oneRequest));
+        //output json clean up
+        oneRequest = JSON.parse(JSON.stringify(oneRequest));  //deep copy & remove ORM headers
         oneRequest['rewards'] = oneRequest['request_id'];
         delete oneRequest['request_id'];
         oneRequest['creatorEmail'] = oneRequest['creator_id']['creatorEmail'];
@@ -334,7 +342,9 @@ module.exports = function(app){
             delete oneRequest['completor_id'];
         }
 
-        let sponsorMap = {}; //improve sponsor_id -> sponsorEmail transaltion
+        //sponsor_id -> sponsorEmail transaltion
+        //memoized
+        let sponsorMap = {};
         let sponsorRewardMap = {};
         for (let i=0; i<oneRequest['rewards'].length; i++){
             if(!(oneRequest['rewards'][i]['sponsorID'] in sponsorMap)){
@@ -347,6 +357,8 @@ module.exports = function(app){
             sponsorRewardMap[sponsorMap[oneRequest['rewards'][i]['sponsorID']]]
                 [oneRequest['rewards'][i]['rewardID']] = oneRequest['rewards'][i]['rewardCount'];
         }
+        
+        //deep copy
         oneRequest['rewards'] = JSON.parse(JSON.stringify(sponsorRewardMap));
 
         helperModule.manipulate_response_and_send(req, res, {
@@ -421,12 +433,14 @@ module.exports = function(app){
             return;
         }
 
+        //gets all sponsors for a request, needs hacky ORM code
         let sponsors = await fpRequestReward.findAll({
             attributes: [[Sequelize.fn('DISTINCT', Sequelize.col('sponsorID')), 'sponsorID']],
             where: {
                 requestID: oneRequest.id,
             }
         });
+        //deep copy & remove ORM headers
         sponsors = JSON.parse(JSON.stringify(sponsors));
         for (let i=0; i<sponsors.length; i++){
             if (user.id === sponsors[i]['sponsorID']){
@@ -470,8 +484,9 @@ module.exports = function(app){
             return;
         }
 
+        //create favors creation trace. to roll back db state if something fails.
         let favorTrace = [];
-        let favors = JSON.parse(JSON.stringify(oneRequest['request_id']));
+        let favors = JSON.parse(JSON.stringify(oneRequest['request_id'])); //deep copy & remove ORM headers
         for (let i=0; i<favors.length; i++){
             for (let j=0; j<Number(favors[i]['rewardCount']); j++){
                 let favor = fpFavor.build({
@@ -485,6 +500,7 @@ module.exports = function(app){
             }
         }
 
+        //execute favors trace, with rollback on error for the completed request and all it's favors
         for (let i=0; i<favorTrace.length; i++){
             try {
                 favorTrace[i].save();
@@ -569,51 +585,48 @@ module.exports = function(app){
             return;
         }
 
-        let requestRewards = JSON.parse(JSON.stringify(oneRequest))['request_id'];
         let oneRequestReward;
-
-        for (let rewardChange in rewardChanges){
-            rewardChange = Number(rewardChange);
-            let foundFlag = false;
-            for (let i=0; i<requestRewards.length; i++){
-                if (user.id == requestRewards[i]['sponsorID'] && rewardChange == requestRewards[i]['rewardID']){
-                    requestRewards[i]['rewardCount'] += Number(rewardChanges[rewardChange]);
-                    oneRequestReward = await fpRequestReward.findOne({
-                        where: {
-                            requestID: oneRequest.id,
-                            sponsorID: requestRewards[i]['sponsorID'],
-                            rewardID: rewardChange,
-                        }
-                    });
-                    oneRequestReward.rewardCount += Number(rewardChanges[rewardChange]);
-                    if (requestRewards[i]['rewardCount'] <= 0){
-                        requestRewards.splice(i,1);
-                        await oneRequestReward.destroy();
-                    } else await oneRequestReward.save();
-                    foundFlag = true;
-                    break;
+        for (let rewardID in rewardChanges){
+            //find api caller's sponsorhip rows and create/update/delete as necessary
+            oneRequestReward = await fpRequestReward.findOne({
+                where: {
+                    requestID: oneRequest.id,
+                    sponsorID: user.id,
+                    rewardID: rewardID,
                 }
-            }
-            if (!foundFlag){
-                if (rewardChanges[rewardChange] > 0){
-                    requestRewards.push(
-                        {
-                            rewardCount: rewardChanges[rewardChange],
-                            rewardID: rewardChange,
-                            sponsorID: user.id,
-                        }
-                    );
+            });
+            if (oneRequestReward === null){
+                if (rewardChanges[rewardID] > 0){
                     await fpRequestReward.create({
-                            rewardCount: rewardChanges[rewardChange],
-                            rewardID: rewardChange,
-                            sponsorID: user.id,
-                            requestID: oneRequest.id,                         
+                        rewardCount: rewardChanges[rewardID],
+                        rewardID: rewardID,
+                        sponsorID: user.id,
+                        requestID: oneRequest.id,                         
                     });
                 }
+            } else {
+                oneRequestReward.rewardCount += rewardChanges[rewardID];
+                if (oneRequestReward.rewardCount <= 0)
+                    await oneRequestReward.destroy();
+                else
+                    await oneRequestReward.save();
             }
         }
 
-        if (requestRewards.length === 0){
+        //find total rewards present for this request post update
+        let totalRewardsCount = await sequelize.query(
+            `
+            SELECT SUM(a."rewardCount") as "sum"
+            FROM "fp_request_rewards" a
+            WHERE a."requestID" = :requestID
+            ;`,
+            {
+              replacements: { //ORM escapes these values
+                  requestID: oneRequest.id,
+              }, type: QueryTypes.SELECT
+            }
+        );
+        if (totalRewardsCount[0]['sum'] === null){
             oneRequest.destroy();
             helperModule.manipulate_response_and_send(req, res, {
                 'success': true, 

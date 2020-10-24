@@ -5,7 +5,7 @@ module.exports = function(app){
 
     app.get('/api/image/:fileName', async function(req, res){
         /*
-        Gets an image (no auth)
+        Gets an image if present in imagesDir (no auth)
 
         url resource:
             fileName (string)

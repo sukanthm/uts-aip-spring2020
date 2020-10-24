@@ -6,6 +6,7 @@ module.exports = function(app){
 
     app.get('/api/leaderboard/1', async function(req, res){
         /*
+        1st leaderboard api
         get user list by most incoming open favors 
 
         request cookie:
@@ -25,8 +26,8 @@ module.exports = function(app){
             helperModule.get_req_query_params(req, [
                 ['currentPage', 'integer'], ['itemsPerPage', 'integer']
             ], res, true);
-        currentPage = currentPage ? Number(currentPage) : 0;
-        itemsPerPage = itemsPerPage ? Number(itemsPerPage) : 5;
+        currentPage = currentPage ? currentPage : 0;
+        itemsPerPage = itemsPerPage ? itemsPerPage : 5;
 
         let [validationSuccess, user] = await helperModule.validate_user_loginToken(req, res);
         if (!validationSuccess)
@@ -51,6 +52,7 @@ module.exports = function(app){
               }
         );
 
+        //output json clean up
         let new_output = {}
         for (let i=0; i<output.length; i++)
             new_output[output[i]['email']] = Number(output[i]['incomingFavorCount']);

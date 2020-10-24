@@ -3,6 +3,7 @@ import fpUser from '../persistence/objects/fpUser';
 const helperModule = require('./helper.js');
 
 function get_array_index(array, target){
+    //arrays cant be hashed, thus typical 1D array search wont work on a 2D array
     for(let i=0; i<array.length; i++){
         if(JSON.stringify(array[i]) === JSON.stringify(target))
             return i;
@@ -10,7 +11,23 @@ function get_array_index(array, target){
 }
 
 function is_cyclic(node, traversed, stack, GRAPH){
-    /* RECURSION
+    /* 
+    RECURSION for a given set of nodes and relationships, we do a depth first search to get the first loop
+    
+    DFS implementation:
+    (0) start
+    (1) pick next LOOP_START node and set as traversed (lowest userID on first iteration, dict sorts keys ASC)
+    (2) go to LOOP_START's next NEIGHBOR node and set as traversed
+    (3) does NEIGHBOR have any outgoing relationships? 
+        (3.1) {NO}: break and go to step 2
+        (3.2) {YES}: add NEIGHBOR to stack
+    (4) for every NEIGHBOR's neighbor:
+        (4.1) has this NEIGHBOR's neighbor already been traversed?
+            (4.1.1) {NO}: go to step 1 (recursion depth += 1 and LOOP_START = NEIGHBOR)
+            (4.1.2) {YES}: is this node in the stack?
+                (4.1.2.1) {YES}: loop found, loop path present in stack
+    (5) remove NEIGHBOR from stack
+    (6) stop. no loop exist at this stage
     */
     traversed[node] = true;
     if (node in GRAPH)
@@ -33,6 +50,7 @@ function is_cyclic(node, traversed, stack, GRAPH){
 function run_dfs(favorList){
     /*
     DFS of favor trees to reveal parties
+    after a loop is found, we re-initialize the graph (remove the latest loop), and reset other variables
 
     input:
         favorList (array): 2d array of favor transactions for a single reward
@@ -54,6 +72,8 @@ function run_dfs(favorList){
         }
 
         GRAPH = {};
+        //{ID1: [ID2, ID4], ID4: [ID3], ...}
+        //keys are payee_id, values are arrays of payer_id(s)
         for (var i = 0; i < favorList.length; i++){
             if (!(favorList[i][0] in GRAPH)){
                 GRAPH[favorList[i][0]] = [];
@@ -69,12 +89,15 @@ function run_dfs(favorList){
 
                     let index;
                     for (let i=0; i<stack.length; i++){
+                        //removing the loop's transactions to recreate the GRAPH
                         if (i === stack.length-1)
                             index = get_array_index(favorList, [stack[i], stack[0]]);
                         else
                             index = get_array_index(favorList, [stack[i], stack[i+1]]);
                         favorList.splice(index, 1);
                     }
+                    //break to recreate GRAPH and reset other vars 
+                    //  before searching for other loops
                     break;
                 }
             }
@@ -110,6 +133,7 @@ async function party_detector(){
         ]
     });
     
+    //deep copy & remove ORM headers
     favorList = JSON.parse(JSON.stringify(favorList));
     let favorsByReward = {};
 
@@ -153,6 +177,7 @@ module.exports = function(app){
         let output = await party_detector();
         let outputForUser = {};
 
+        //send user only parties that they is present in
         for (let rewardID in output){
             outputForUser[rewardID] = [];
             for (let i=0; i<output[rewardID].length; i++){

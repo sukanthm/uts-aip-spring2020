@@ -38,8 +38,8 @@ module.exports = function(app){
         let [successFlag2, [currentPage, itemsPerPage]] = helperModule.get_req_query_params(req, [
             ['currentPage', 'integer'], ['itemsPerPage', 'integer'],
         ], res, true);
-        currentPage = currentPage ? Number(currentPage) : 0;
-        itemsPerPage = itemsPerPage ? Number(itemsPerPage) : 5;
+        currentPage = currentPage ? currentPage : 0;
+        itemsPerPage = itemsPerPage ? itemsPerPage : 5;
 
         const targetUser = await fpUser.findOne({
             where: {email: targetEmail},
@@ -84,7 +84,8 @@ module.exports = function(app){
             ]
         });
 
-        favors = JSON.parse(JSON.stringify(favors));
+        //output json clean up
+        favors = JSON.parse(JSON.stringify(favors)); //deep copy & remove ORM headers
         favors['totalItems'] = favors['count'];
         delete favors['count'];
         favors['totalPages'] = Math.ceil(favors['totalItems']/itemsPerPage);
@@ -238,7 +239,6 @@ module.exports = function(app){
         if (!validationSuccess)
             return;
         
-        favorID = Number(favorID);
         let favor = await fpFavor.findOne({
             attributes: ['id', 'status', 'rewardID', 'createdAt', 'paidAt', 'creationProofPath', 'completionProofPath', 'comment'],
             where: {
@@ -264,6 +264,7 @@ module.exports = function(app){
                 }, 404);
             return;    
         }
+        //deep copy & remove ORM headers
         favor = JSON.parse(JSON.stringify(favor));
         if (![favor.payee_id.payeeEmail, favor.payer_id.payerEmail].includes(user.email)){
             helperModule.manipulate_response_and_send(req, res, {
@@ -273,6 +274,7 @@ module.exports = function(app){
             return;    
         }
 
+        //output json clean up
         favor['payeeEmail'] = favor['payee_id']['payeeEmail'];
         delete favor['payee_id'];
         favor['payerEmail'] = favor['payer_id']['payerEmail'];
@@ -313,7 +315,6 @@ module.exports = function(app){
         if (!validationSuccess)
             return;
         
-        favorID = Number(favorID);
         let favor = await fpFavor.findOne({
             where: {
                 id: favorID,
@@ -327,7 +328,7 @@ module.exports = function(app){
                 }, 404);
             return;    
         }
-        let payerID = await favor.payerID, payeeID = await favor.payeeID, userID = await user.id;
+        let payerID = favor.payerID, payeeID = favor.payeeID, userID = user.id;
         if (![payerID, payeeID].includes(userID)){
             helperModule.manipulate_response_and_send(req, res, {
                 'success': false, 
@@ -411,6 +412,7 @@ module.exports = function(app){
             {type: QueryTypes.SELECT}
         );
 
+        //output json clean up
         let dataEmail, inOrOutFlag;
         let newOutput1 = new helperModule.defaultDict();
         let newOutput2 = new helperModule.defaultDict();

@@ -9,24 +9,30 @@ const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
 function date_sort(a, b) {
+    //custom sort function to target output json's data rows
     if (a['createdAt'] > b['createdAt']) return -1;
     if (b['createdAt'] > a['createdAt']) return 1;
     return 0;
   }
 
 function clean_and_shuffle(input){
+    //anti sql injection
+    //removes most injection specific characters, shuffles words around, escapes every word
     input = input ? input.split(/[\n\r\t\v\f\s,=({["'-;#]+/) : [''];
 
-    var j, x, i;
+    let j, x, i, input_temp = [];
     for (i=0; i<input.length; i++){
-        if (input[i] === '')
-            input.splice(i,1);
+        //removing empty strings
+        if (!(input[i] === ''))
+            input_temp.append(input[i]);
     }
+    input = input_temp;
     
     if (input.length === 0)
         return ['%'];
 
-    for (i = input.length - 1; i > 0; i--) {
+    //shuffle from https://stackoverflow.com/a/12646864
+    for (i = input.length - 1; i > 0; i--) { 
         j = Math.floor(Math.random() * (i + 1));
         x = input[i];
         input[i] = input[j];
@@ -45,6 +51,7 @@ function manipulate_response_and_send(req, res, resBodyObject, httpCode){
     res.set('message', resBodyObject['message']);
     res.status(httpCode);
 
+    //if api call went bad and a file was uploaded; delete it
     if (httpCode != 200 && req.file !== undefined){
         fs.unlink(req.file.path, (err) => {
             if (err) throw err;
@@ -56,7 +63,8 @@ function manipulate_response_and_send(req, res, resBodyObject, httpCode){
     return;
 }
 
-async function custom_hash(input){ //from https://github.com/kelektiv/node.bcrypt.js#readme
+async function custom_hash(input){ 
+    //from https://github.com/kelektiv/node.bcrypt.js#readme
     return new Promise((resolve, reject) => {
         bcrypt.hash(input, saltRounds, function(err, hash) {
           if (err) reject(err);
@@ -65,7 +73,8 @@ async function custom_hash(input){ //from https://github.com/kelektiv/node.bcryp
     });
 }
 
-async function is_secret_valid(plaintext, hashed){ //from https://github.com/kelektiv/node.bcrypt.js#readme
+async function is_secret_valid(plaintext, hashed){ 
+    //from https://github.com/kelektiv/node.bcrypt.js#readme
     return new Promise((resolve, reject) => {
         bcrypt.compare(plaintext, hashed, function(err, result) {
         if (err) reject(err);
@@ -80,17 +89,23 @@ function test_data_type(input, type){
         case "string":
             if ([undefined, null].includes(input))
                 return [false, undefined]
+            //remove all non-ASCII characters and truncate
+            //this is enforced by http as well, as we are using request headers
             return [true, String(input).trim().replace(/(?![\x00-\x7F])./g, '').substring(0, 255)];
-        case "integer": 
+        case "integer":
             flag = /^-?\d+$/.test(input);
             return [flag, flag ? Number(input) : undefined];
-        case "rewardID": 
+        case "rewardID":
+            //currently only 5 rewards present, all IDs serially created
             flag = /^[12345]$/.test(input);
             return [flag, flag ? Number(input) : undefined];
         case "rewardsDict": //{rewardID: integer, ...}
             try {
                 if (typeof input === 'string')
                     input = JSON.parse(input);
+                
+                //required as strings, arrays, and more can be JSON.parsed
+                //but only maps/dictionaries (and other classes) have constructors
                 if (!(input.constructor == Object))
                     return [false, undefined]; 
 
@@ -210,7 +225,8 @@ async function validate_user_loginToken(req, res){
 
 const imagesDir = path.join(__dirname + '/../public_images/'); //w.r.t. to current folder
 
-var multerStorage = multer.diskStorage({ //from https://github.com/expressjs/multer#readme
+var multerStorage = multer.diskStorage({
+    //from https://github.com/expressjs/multer#readme
     destination: function (req, file, cb) {
         cb(null, imagesDir);
     },
@@ -221,13 +237,22 @@ var multerStorage = multer.diskStorage({ //from https://github.com/expressjs/mul
 })
 
 class defaultDict {
+    //infinite depth defaultDict
+    //inspired by python's collections.defaultDict
     constructor(){
         this.data = {};
     }
     add(keys, value){
+        /*
+        keys (array): cascading dictionary keys
+        value (int) 
+        */
         let evalString, sliceJoin;
         for (let i=0; i<keys.length; i++){
-            sliceJoin = '["' + keys.slice(0, i).join(`"]["`) + '"]';
+            console.log(keys[i]);
+            keys[i] = keys[i].replace(/[\\"]/g, '\\"');
+            console.log(keys[i]);
+            sliceJoin = '["' + keys.slice(0, i).join('"]["') + '"]';
             evalString = sliceJoin.length > 4 ? 'this.data' + sliceJoin : 'this.data';
             if(!(eval('"'+keys[i]+'" in '+evalString+';'))){
                 if (i<keys.length-1)
