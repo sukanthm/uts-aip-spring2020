@@ -22,10 +22,10 @@
     "sass": "^1.26.10"
   },
   "scripts": {
-    "dev": "node server.js 3000 4000",
+    "dev": "node frontend.js 3000 4000",
     "build": "next build",
     "start": "next start",
-    "prod": "pm2 start server.js -- 80 443 'production'"
+    "prod": "npm run build && pm2 start frontend.js -- 80 443 'production'"
   },
   "eslintConfig": {
     "extends": "react-app"
