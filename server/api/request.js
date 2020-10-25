@@ -281,8 +281,6 @@ module.exports = function(app){
             success (bool)
             message (string)
             output (json)
-        TODO:
-            improve sponsor_id -> sponsorEmail transaltion
         */
         let [successFlag, requestID] = helperModule.test_data_type(req.params.requestID, 'integer');
         if (!successFlag){
@@ -296,30 +294,27 @@ module.exports = function(app){
         let [validationSuccess, user] = await helperModule.validate_user_loginToken(req, res);
         if (!validationSuccess)
             return;
-        
-        let oneRequest = await fpRequest.findOne({
-            attributes: ['id', 'status', 'title', 'description', 'completedAt', 'createdAt', 'taskImagePath', 'completionProofPath'],
-            where: {
-                id: requestID
-              },
-            include: [
-            {
-                model: fpUser,
-                as: 'creator_id',
-                attributes: [['email', 'creatorEmail']],
-            },{
-                model: fpUser,
-                as: 'completor_id',
-                attributes: [['email', 'completorEmail']],
-            },{
-                model: fpRequestReward,
-                as: 'request_id',
-                attributes: ['rewardID', 'rewardCount', 'sponsorID'],
-            },
-        ]
-        });
 
-        if (oneRequest === null){
+        let oneRequest = await sequelize.query(
+            `
+            SELECT r.id, r.status, r.title, r.description, r."completedAt", r."createdAt", r."taskImagePath", r."completionProofPath",
+                u1.email as "creatorEmail", u2.email as "completorEmail", u3.email as "sponsorEmail", rr."rewardID", rr."rewardCount"
+            FROM "fp_requests" r
+            JOIN "fp_users" u1 on u1.id = r."creatorID"
+            LEFT JOIN "fp_users" u2 on u2.id = r."completorID"
+            JOIN "fp_request_rewards" rr on rr."requestID" = r.id
+            JOIN "fp_users" u3 on u3.id = rr."sponsorID"
+            WHERE r.id = :requestID
+            ;`,
+            {
+              replacements: { //ORM escapes these values
+                requestID: requestID,
+                },
+              type: QueryTypes.SELECT
+            }
+        );
+
+        if (oneRequest.length === 0){
             helperModule.manipulate_response_and_send(req, res, {
                 'success': false, 
                 'message': 'bad request id requested', 
@@ -328,43 +323,22 @@ module.exports = function(app){
         }
 
         //output json clean up
-        oneRequest = JSON.parse(JSON.stringify(oneRequest));  //deep copy & remove ORM headers
-        oneRequest['rewards'] = oneRequest['request_id'];
-        delete oneRequest['request_id'];
-        oneRequest['creatorEmail'] = oneRequest['creator_id']['creatorEmail'];
-        delete oneRequest['creator_id'];
-        if (oneRequest['completor_id'] != null){
-            oneRequest['completorEmail'] = oneRequest['completor_id']['completorEmail'];
-            delete oneRequest['completor_id'];
+        let outputOneRequest = {"rewards": {}}
+        for (let i=0; i<oneRequest.length; i++){
+            if (!(oneRequest[i]['sponsorEmail'] in outputOneRequest['rewards']))
+                outputOneRequest['rewards'][oneRequest[i]['sponsorEmail']] = {};
+            outputOneRequest['rewards'][oneRequest[i]['sponsorEmail']]
+                [oneRequest[i]['rewardID']] = oneRequest[i]['rewardCount'];
         }
-        else {
-            oneRequest['completorEmail'] = null;
-            delete oneRequest['completor_id'];
-        }
-
-        //sponsor_id -> sponsorEmail transaltion
-        //memoized
-        let sponsorMap = {};
-        let sponsorRewardMap = {};
-        for (let i=0; i<oneRequest['rewards'].length; i++){
-            if(!(oneRequest['rewards'][i]['sponsorID'] in sponsorMap)){
-                let sponsor = await fpUser.findOne({
-                    where: {id: oneRequest['rewards'][i]['sponsorID']},
-                });
-                sponsorMap[sponsor.id] = sponsor.email;
-                sponsorRewardMap[sponsor.email] = {};
-            } 
-            sponsorRewardMap[sponsorMap[oneRequest['rewards'][i]['sponsorID']]]
-                [oneRequest['rewards'][i]['rewardID']] = oneRequest['rewards'][i]['rewardCount'];
-        }
-        
-        //deep copy
-        oneRequest['rewards'] = JSON.parse(JSON.stringify(sponsorRewardMap));
+        let keys = ['id', 'status', 'title', 'description', 'createdAt', 
+            'taskImagePath', 'completionProofPath', 'creatorEmail', 'completorEmail'];
+        for (let i=0; i<keys.length; i++)
+            outputOneRequest[keys[i]] = oneRequest[0][keys[i]];
 
         helperModule.manipulate_response_and_send(req, res, {
             'success': true, 
             'message': 'sent request as queried', 
-            'output': oneRequest,
+            'output': outputOneRequest,
             }, 200);
         return;
     })
