@@ -9,26 +9,26 @@ const fpRequest = sequelize.define('fp_request', {
     },
     title: Sequelize.TEXT,
     description: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
         defaultValue: '',
     },
     taskImagePath: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
         defaultValue: '',
     },
     completedAt: {
         type: Sequelize.DATE,
     },
     completionProofPath: {        
-        type: Sequelize.STRING,   
+        type: Sequelize.TEXT,   
         defaultValue: '',
     },
     completorComment: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
         defaultValue: '',
     },
     status: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
         isIn: [['Open', 'Completed']],
         defaultValue: 'Open',
     },

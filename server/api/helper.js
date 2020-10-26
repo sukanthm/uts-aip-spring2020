@@ -89,9 +89,8 @@ function test_data_type(input, type){
         case "string":
             if ([undefined, null].includes(input))
                 return [false, undefined]
-            //remove all non-ASCII characters and truncate
-            //this is enforced by http as well, as we are using request headers
-            return [true, String(input).trim().replace(/(?![\x00-\x7F])./g, '').substring(0, 255)];
+            //remove all non-ASCII characters
+            return [true, String(input).trim().replace(/(?![\x00-\x7F])./g, '')];
         case "integer":
             flag = /^-?\d+$/.test(input);
             return [flag, flag ? Number(input) : undefined];

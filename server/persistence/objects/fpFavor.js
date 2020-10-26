@@ -9,29 +9,23 @@ const fpFavor = sequelize.define('fp_favor', {
         primaryKey: true
     },
     status: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
         isIn: [['Pending', 'Paid']],
         defaultValue: 'Pending'
     },
     paidAt: {
         type: Sequelize.DATE,
     },
-    /*  
-    rewardCount: {
-        type: Sequelize.INTEGER,
-        defaultValue: 1,
-    }, 
-    */
     creationProofPath: {                  
-        type: Sequelize.STRING,   
+        type: Sequelize.TEXT,   
         defaultValue: ''
     },
     completionProofPath: {                  
-        type: Sequelize.STRING,   
+        type: Sequelize.TEXT,   
         defaultValue: ''
     },
     comment: {
-        type: Sequelize.STRING,   
+        type: Sequelize.TEXT,   
         defaultValue: ''
     }
 });
