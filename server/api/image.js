@@ -1,9 +1,10 @@
 const fs = require('fs')
 const helperModule = require('./helper.js');
+const backendModule = require('../backend.js');
 
 module.exports = function(app){
 
-    app.get('/api/image/:fileName', async function(req, res){
+    app.get('/api/image/:fileName', backendModule.multerUpload.none(), async function(req, res){
         /*
         Gets an image if present in imagesDir (no auth)
 

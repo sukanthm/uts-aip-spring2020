@@ -3,14 +3,11 @@ const { Op, QueryTypes } = require("sequelize");
 import fpUser from '../persistence/objects/fpUser';
 import fpFavor from '../persistence/objects/fpFavor';
 const helperModule = require('./helper.js');
-var multer  = require('multer');
-
-var multerStorage = helperModule.multerStorage;
-var upload = multer({ storage: multerStorage });
+const backendModule = require('../backend.js');
 
 module.exports = function(app){
 
-    app.get('/api/favors/:targetEmail', async function(req, res){
+    app.get('/api/favors/:targetEmail', backendModule.multerUpload.none(), async function(req, res){
         /*
         Gets all of a user's favors with another user (owed and owing)
 
@@ -18,7 +15,7 @@ module.exports = function(app){
             aip_fp
         url resource:
             targetEmail (string)
-        request headers:
+        request body keys:
             statusFilter (string): one of ['Paid', 'Pending']
         request query params:
             currentPage (int): optional. pagination page, default = 0
@@ -37,7 +34,7 @@ module.exports = function(app){
         
         let targetEmail = helperModule.test_data_type(req.params.targetEmail, 'string')[1];
 
-        let [successFlag, [statusFilter]] = helperModule.get_req_headers(req, [
+        let [successFlag, [statusFilter]] = helperModule.get_req_body_json(req, [
                 ['statusFilter', 'string']
             ], res);
         if (!successFlag)
@@ -124,13 +121,13 @@ module.exports = function(app){
         return;
     });
 
-    app.post('/api/favor', upload.single('proofImage'), async function(req, res){
+    app.post('/api/favor', backendModule.multerUpload.single('proofImage'), async function(req, res){
         /*
         Adds a favor
 
         request cookie:
             aip_fp
-        request headers:
+        request body keys:
             payeeEmail (string)
             payerEmail (string)
             rewardID (int)
@@ -144,7 +141,7 @@ module.exports = function(app){
             newFavorID (int)
         */
         let [successFlag, [payeeEmail, payerEmail, rewardID]] = 
-            helperModule.get_req_headers(req, [
+            helperModule.get_req_body_json(req, [
                 ['payeeEmail', 'string'], ['payerEmail', 'string'], ['rewardID', 'rewardID'],
             ], res);
         if (!successFlag)
@@ -227,7 +224,7 @@ module.exports = function(app){
         }
     });
 
-    app.get('/api/favor/:favorID', async function(req, res){
+    app.get('/api/favor/:favorID', backendModule.multerUpload.none(), async function(req, res){
         /*
         Gets a user's favor
 
@@ -305,13 +302,13 @@ module.exports = function(app){
         return;
     })
 
-    app.put('/api/favor', upload.single('proofImage'), async function(req, res){
+    app.put('/api/favor', backendModule.multerUpload.single('proofImage'), async function(req, res){
         /*
         Closes a user's favor (set to Paid)
 
         request cookie:
             aip_fp
-        request headers:
+        request body keys:
             favorID (int)
         proofImage (form-data): optional. required iff email == payer. check https://github.com/expressjs/multer for frontend form
         response headers:
@@ -322,7 +319,7 @@ module.exports = function(app){
             message (string)
             closedFavorID (int)
         */
-        let [successFlag, [favorID]] = helperModule.get_req_headers(req, [
+        let [successFlag, [favorID]] = helperModule.get_req_body_json(req, [
             ['favorID', 'integer']
         ], res);
         if (!successFlag)
@@ -398,13 +395,13 @@ module.exports = function(app){
         }
     })
 
-    app.get('/api/dashboard/favors', async function(req, res){
+    app.get('/api/dashboard/favors', backendModule.multerUpload.none(), async function(req, res){
         /*
         Gets a user's consolidated favors stats
 
         request cookie:
             aip_fp
-        request headers:
+        request body keys:
             statusFilter (string): one of ['Paid', 'Pending']
         response headers:
             success (bool)
@@ -418,7 +415,7 @@ module.exports = function(app){
         if (!validationSuccess)
             return;
 
-        let [successFlag, [statusFilter]] = helperModule.get_req_headers(req, [
+        let [successFlag, [statusFilter]] = helperModule.get_req_body_json(req, [
                 ['statusFilter', 'string']
             ], res);
         if (!successFlag)

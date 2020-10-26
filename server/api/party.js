@@ -1,6 +1,7 @@
 import fpFavor from '../persistence/objects/fpFavor';
 import fpUser from '../persistence/objects/fpUser';
 const helperModule = require('./helper.js');
+const backendModule = require('../backend.js');
 
 function get_array_index(array, target){
     //arrays cant be hashed, thus typical 1D array search wont work on a 2D array
@@ -154,13 +155,12 @@ async function party_detector(){
 
 module.exports = function(app){
 
-    app.get('/api/party', async function(req, res){
+    app.get('/api/party', backendModule.multerUpload.none(), async function(req, res){
         /*
         Detects a user's potential parties
 
         request cookie:
             aip_fp
-        request headers:
         response headers:
             success (bool)
             message (string)

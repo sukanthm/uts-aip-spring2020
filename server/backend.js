@@ -1,16 +1,24 @@
 const express = require('express');
-const bodyParser = require('body-parser');
+// const bodyParser = require('body-parser');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
+
+var multer  = require('multer');
+const helperModule = require('./api/helper.js');
+var multerStorage = helperModule.multerStorage;
+var upload = multer({ storage: multerStorage });
+module.exports = {
+    multerUpload: upload,
+}
 
 import { sequelize } from './persistence/initORM.js';
 
 const app = express();
 app.use(cookieParser());
 app.use(helmet());
-app.use(bodyParser.json());
+// app.use(bodyParser.json());
 app.use(cors());
 app.use(morgan('combined'));
 

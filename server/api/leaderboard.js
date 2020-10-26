@@ -1,10 +1,11 @@
 const { Op, QueryTypes } = require("sequelize");
 import {sequelize, Sequelize} from '../persistence/objects/sequelize';
 const helperModule = require('./helper.js');
+const backendModule = require('../backend.js');
 
 module.exports = function(app){
 
-    app.get('/api/leaderboard/1', async function(req, res){
+    app.get('/api/leaderboard/1', backendModule.multerUpload.none(), async function(req, res){
         /*
         1st leaderboard api
         get user list by most incoming open favors 

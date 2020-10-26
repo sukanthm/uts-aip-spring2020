@@ -1,16 +1,17 @@
 import fpUser from '../persistence/objects/fpUser';
 const helperModule = require('./helper.js');
+const backendModule = require('../backend.js');
 
 module.exports = function(app){
 
-    app.get('/api/signup', async function(req, res){
+    app.get('/api/signup', backendModule.multerUpload.none(), async function(req, res){
         //DUMMY TEST API
         res.send('HI, use the POST method to signup');
     });
 
-    app.post('/api/signup', async function(req, res){
+    app.post('/api/signup', backendModule.multerUpload.none(), async function(req, res){
         /*
-        request headers:
+        request body keys:
             email (string): regex checked in react
             password (string): plaintext
             name (string)
@@ -21,7 +22,7 @@ module.exports = function(app){
             success (bool)
             message (string)
         */
-        let [successFlag, [email, password, name]] = helperModule.get_req_headers(req, [
+        let [successFlag, [email, password, name]] = helperModule.get_req_body_json(req, [
             ['email', 'string'], ['password', 'string'], ['name', 'string'],
         ], res);
         if (!successFlag)
@@ -50,9 +51,9 @@ module.exports = function(app){
         return;
     });
 
-    app.get('/api/login', async function(req, res){
+    app.get('/api/login', backendModule.multerUpload.none(), async function(req, res){
         /*
-        request headers:
+        request body keys:
             email (string): regex checked in react
             password (string): plaintext
         response headers:
@@ -65,7 +66,7 @@ module.exports = function(app){
             email (string): user email
             loginToken (string): login token for above email
         */
-        let [successFlag, [email, password]] = helperModule.get_req_headers(req, [
+        let [successFlag, [email, password]] = helperModule.get_req_body_json(req, [
             ['email', 'string'], ['password', 'string'],
         ], res);
         if (!successFlag)

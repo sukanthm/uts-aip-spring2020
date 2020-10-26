@@ -5,20 +5,17 @@ import fpFavor from '../persistence/objects/fpFavor';
 import fpRequest from '../persistence/objects/fpRequest';
 import fpRequestReward from '../persistence/objects/fpRequestReward';
 const helperModule = require('./helper.js');
-var multer  = require('multer');
-
-var multerStorage = helperModule.multerStorage;
-var upload = multer({ storage: multerStorage });
+const backendModule = require('../backend.js');
 
 module.exports = function(app){
 
-    app.post('/api/request', upload.single('proofImage'), async function(req, res){
+    app.post('/api/request', backendModule.multerUpload.single('proofImage'), async function(req, res){
         /*
         Adds a request
 
         request cookie:
             aip_fp
-        request headers:
+        request body keys:
             title (string)
             description (string): optional.
             rewards (JSON): {rewardID: rewardCount, ...}
@@ -31,13 +28,13 @@ module.exports = function(app){
             message (string)
             newRequestID (int)
         */
-        let [successFlag1, [title, rewards]] = helperModule.get_req_headers(req, [
+        let [successFlag1, [title, rewards]] = helperModule.get_req_body_json(req, [
             ['title', 'string'], ['rewards', 'rewardsDict'],
         ], res);
         if (!successFlag1)
             return;
 
-        let [successFlag2, [description]] = helperModule.get_req_headers(req, [
+        let [successFlag2, [description]] = helperModule.get_req_body_json(req, [
             ['description', 'string']
         ], res, true);
         
@@ -118,11 +115,11 @@ module.exports = function(app){
         return;
     })
 
-    app.get('/api/requests', async function(req, res){   
+    app.get('/api/requests', backendModule.multerUpload.none(), async function(req, res){   
         /*
         gets all requests (no auth) - use for front/landing page
 
-        request headers:
+        request body keys:
             dashboardFilter (string): optional. one of ['Creator', 'Sponsor', 'Completor', 'All'] >> created by me, sponsored by me, etc.
             searchData (string): optional. searches in request title, request description and reward name
             requestStatus (string): optional. one of ['Open', 'Completed', 'All'] >> global filter for request status.
@@ -138,7 +135,7 @@ module.exports = function(app){
             output (array of json)
         */
         let [successFlag1, [requestStatus, searchData, dashboardFilter]] = 
-            helperModule.get_req_headers(req, [
+            helperModule.get_req_body_json(req, [
                 ['requestStatus', 'string'], ['searchData', 'string'], ['dashboardFilter', 'string'],
             ], res, true);
         let [successFlag2, [currentPage, itemsPerPage]] = 
@@ -266,7 +263,7 @@ module.exports = function(app){
         return;
     })
 
-    app.get('/api/request/:requestID', async function(req, res){
+    app.get('/api/request/:requestID', backendModule.multerUpload.none(), async function(req, res){
         /*
         gets a request
 
@@ -343,13 +340,13 @@ module.exports = function(app){
         return;
     })
 
-    app.put('/api/request', upload.single('proofImage'), async function(req, res){
+    app.put('/api/request', backendModule.multerUpload.single('proofImage'), async function(req, res){
         /*
         completes a request
 
         request cookie:
             aip_fp
-        request headers:
+        request body keys:
             requestID (int)
             completorComment (string)
         taskImage (form-data): check https://github.com/expressjs/multer for frontend form
@@ -362,7 +359,7 @@ module.exports = function(app){
             completedrequestID (int)
         */
         let [successFlag, [requestID, completorComment]] = 
-            helperModule.get_req_headers(req, [
+            helperModule.get_req_body_json(req, [
                 ['requestID', 'integer'], ['completorComment', 'string']
             ], res);
         if (!successFlag)
@@ -503,13 +500,13 @@ module.exports = function(app){
         return;
     })
 
-    app.put('/api/request/sponsor', async function(req, res){
+    app.put('/api/request/sponsor', backendModule.multerUpload.none(), async function(req, res){
         /*
         changes a request's sponsor's rewards
 
         request cookie:
             aip_fp
-        request headers:
+        request body keys:
             requestID (int)
             rewardChanges (JSON): {rewardID: rewardCountChange, ...}
         response headers:
@@ -521,7 +518,7 @@ module.exports = function(app){
             updatedRequestID/deletedRequestID (int)
         */
         let [successFlag, [requestID, rewardChanges]] = 
-        helperModule.get_req_headers(req, [
+        helperModule.get_req_body_json(req, [
             ['requestID', 'integer'], ['rewardChanges', 'rewardsDict']
         ], res);
         if (!successFlag)

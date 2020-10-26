@@ -24,7 +24,7 @@ function clean_and_shuffle(input){
     for (i=0; i<input.length; i++){
         //removing empty strings
         if (!(input[i] === ''))
-            input_temp.append(input[i]);
+            input_temp.push(input[i]);
     }
     input = input_temp;
     
@@ -123,15 +123,17 @@ function test_data_type(input, type){
     }
 }
 
-function get_req_headers(req, headers, res, allOptional=false){
+function get_req_body_json(req, headers, res, allOptional=false){
+    //getting json data from request body after multer extracts optional image
     let header, output = [], testDataType;
+    const bodyObject = req.body ? req.body : {};
     for (let i = 0; i < headers.length; i++) {
-        header = req.header(headers[i][0]);
+        header = bodyObject[headers[i][0]];
 
         if (!allOptional && header === undefined){
             manipulate_response_and_send(req, res, {
                 'success': false, 
-                'message': 'mandatory request header {'+headers[i][0]+'} missing',
+                'message': 'mandatory request body header {'+headers[i][0]+'} missing',
                 }, 400);
             return [false, headers];
         }
@@ -142,7 +144,7 @@ function get_req_headers(req, headers, res, allOptional=false){
         if (!allOptional && !testDataType){
             manipulate_response_and_send(req, res, {
                 'success': false, 
-                'message': 'bad header {'+headers[i][0]+'} data type. expecting '+headers[i][1],
+                'message': 'bad request body header {'+headers[i][0]+'} data type. expecting '+headers[i][1],
                 }, 400);
             return [false, headers];
         }
@@ -151,6 +153,7 @@ function get_req_headers(req, headers, res, allOptional=false){
 }
 
 function get_req_query_params(req, params, res, allOptional=false){
+    //get request url query params. ex: /api?foo=bar&baz=fox
     let param, output = [], testDataType;
     const queryObject = url.parse(req.url, true).query;
     for (let i = 0; i < params.length; i++) {
@@ -265,7 +268,7 @@ class defaultDict {
 module.exports = {
     manipulate_response_and_send: manipulate_response_and_send,
     is_secret_valid: is_secret_valid,
-    get_req_headers: get_req_headers,
+    get_req_body_json: get_req_body_json,
     custom_hash: custom_hash,
     validate_user_loginToken: validate_user_loginToken,
     multerStorage: multerStorage,
