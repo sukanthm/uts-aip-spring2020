@@ -127,24 +127,24 @@ function get_req_headers(req, headers, res, allOptional=false){
     let header, output = [], testDataType;
     for (let i = 0; i < headers.length; i++) {
         header = req.header(headers[i][0]);
+
+        if (!allOptional && header === undefined){
+            manipulate_response_and_send(req, res, {
+                'success': false, 
+                'message': 'mandatory request header {'+headers[i][0]+'} missing',
+                }, 400);
+            return [false, headers];
+        }
+
         [testDataType, header] = test_data_type(header, headers[i][1]);
         output.push(header);
 
-        if (!allOptional){
-            if (!testDataType){
-                manipulate_response_and_send(req, res, {
-                    'success': false, 
-                    'message': 'bad header {'+headers[i][0]+'} data type. expecting '+headers[i][1],
-                    }, 400);
-                return [false, null];
-            }
-            if (header === undefined){
-                manipulate_response_and_send(req, res, {
-                    'success': false, 
-                    'message': 'mandatory request headers missing',
-                    }, 400);
-                return [false, null];
-            }
+        if (!allOptional && !testDataType){
+            manipulate_response_and_send(req, res, {
+                'success': false, 
+                'message': 'bad header {'+headers[i][0]+'} data type. expecting '+headers[i][1],
+                }, 400);
+            return [false, headers];
         }
     }
     return [true, output];
@@ -155,24 +155,24 @@ function get_req_query_params(req, params, res, allOptional=false){
     const queryObject = url.parse(req.url, true).query;
     for (let i = 0; i < params.length; i++) {
         param = queryObject[params[i][0]];
+
+        if (!allOptional && param === undefined){
+            manipulate_response_and_send(req, res, {
+                'success': false, 
+                'message': 'mandatory query param {'+params[i][0]+'} missing',
+                }, 400);
+            return [false, params];
+        }
+
         [testDataType, param] = test_data_type(param, params[i][1]);
         output.push(param);
 
-        if (!allOptional){   
-            if (!testDataType){
-                manipulate_response_and_send(req, res, {
-                    'success': false, 
-                    'message': 'bad param {'+params[i][0]+'} data type. expecting '+params[i][1],
-                    }, 400);
-                return [false, null];
-            }
-            if (!(param)){
-                manipulate_response_and_send(req, res, {
-                    'success': false, 
-                    'message': 'mandatory query params missing',
-                    }, 400);
-                return [false, null];
-            }
+        if (!allOptional && !testDataType){
+            manipulate_response_and_send(req, res, {
+                'success': false, 
+                'message': 'bad param {'+params[i][0]+'} data type. expecting '+params[i][1],
+                }, 400);
+            return [false, params];
         }
     }
     return [true, output];
@@ -248,9 +248,7 @@ class defaultDict {
         */
         let evalString, sliceJoin;
         for (let i=0; i<keys.length; i++){
-            console.log(keys[i]);
-            keys[i] = keys[i].replace(/[\\"]/g, '\\"');
-            console.log(keys[i]);
+            keys[i] = String(keys[i]).replace(/[\\"]/g, '\\"');
             sliceJoin = '["' + keys.slice(0, i).join('"]["') + '"]';
             evalString = sliceJoin.length > 4 ? 'this.data' + sliceJoin : 'this.data';
             if(!(eval('"'+keys[i]+'" in '+evalString+';'))){

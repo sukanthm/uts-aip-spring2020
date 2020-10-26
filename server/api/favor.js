@@ -18,6 +18,8 @@ module.exports = function(app){
             aip_fp
         url resource:
             targetEmail (string)
+        request headers:
+            statusFilter (string): one of ['Paid', 'Pending']
         request query params:
             currentPage (int): optional. pagination page, default = 0
             itemsPerPage (int): optional. pagination items per page, default = 5
@@ -34,6 +36,20 @@ module.exports = function(app){
             return;
         
         let targetEmail = helperModule.test_data_type(req.params.targetEmail, 'string')[1];
+
+        let [successFlag, [statusFilter]] = helperModule.get_req_headers(req, [
+                ['statusFilter', 'string']
+            ], res);
+        if (!successFlag)
+            return;
+
+        if (!['Pending', 'Paid'].includes(statusFilter)){
+            helperModule.manipulate_response_and_send(req, res, {
+                'success': false, 
+                'message': 'bad statusFilter header value sent', 
+                }, 406);
+            return;
+        }
 
         let [successFlag2, [currentPage, itemsPerPage]] = helperModule.get_req_query_params(req, [
             ['currentPage', 'integer'], ['itemsPerPage', 'integer'],
@@ -58,6 +74,7 @@ module.exports = function(app){
             offset: currentPage * itemsPerPage,
             where: {
                 [Op.and]: [
+                    {status: statusFilter},
                     {[Op.or]: [
                         {payerID: user.id},
                         {payerID: targetUser.id},
@@ -101,7 +118,7 @@ module.exports = function(app){
 
         helperModule.manipulate_response_and_send(req, res, {
             'success': true, 
-            'message': 'sent all requested favors', 
+            'message': 'sent all requested '+statusFilter+' favors', 
             'output': favors,
             }, 200);
         return;
@@ -388,6 +405,7 @@ module.exports = function(app){
         request cookie:
             aip_fp
         request headers:
+            statusFilter (string): one of ['Paid', 'Pending']
         response headers:
             success (bool)
             message (string)
@@ -400,6 +418,20 @@ module.exports = function(app){
         if (!validationSuccess)
             return;
 
+        let [successFlag, [statusFilter]] = helperModule.get_req_headers(req, [
+                ['statusFilter', 'string']
+            ], res);
+        if (!successFlag)
+            return;
+
+        if (!['Pending', 'Paid'].includes(statusFilter)){
+            helperModule.manipulate_response_and_send(req, res, {
+                'success': false, 
+                'message': 'bad statusFilter header value sent', 
+                }, 406);
+            return;
+        }
+
         let output = await sequelize.query(
             `
             SELECT DISTINCT u2.email as "payeeEmail", u1.email as "payerEmail", f."rewardID", f.status, 
@@ -407,9 +439,15 @@ module.exports = function(app){
             FROM "fp_favors" f
             JOIN "fp_users" u1 ON f."payerID" = u1.id
             JOIN "fp_users" u2 ON f."payeeID" = u2.id
-            where f."payerID" = '`+user.id+`' OR f."payeeID" = '`+user.id+`'
+            where (f."payerID" = :userID OR f."payeeID" = :userID) AND f.status = :statusFilter
             ;`,
-            {type: QueryTypes.SELECT}
+            {
+                replacements: { //ORM escapes these values
+                    userID: user.id,
+                    statusFilter: statusFilter,
+                },    
+                type: QueryTypes.SELECT
+            }
         );
 
         //output json clean up
@@ -438,7 +476,7 @@ module.exports = function(app){
 
         helperModule.manipulate_response_and_send(req, res, {
             'success': true, 
-            'message': 'favors dashboard data sent',
+            'message': statusFilter + ' favors dashboard data sent',
             'output': {
                 'consolidated': newOutput1.data,
                 'byUser': newOutput2.data,
