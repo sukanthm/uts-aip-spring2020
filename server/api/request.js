@@ -327,7 +327,7 @@ module.exports = function(app){
             outputOneRequest['rewards'][oneRequest[i]['sponsorEmail']]
                 [oneRequest[i]['rewardID']] = oneRequest[i]['rewardCount'];
         }
-        let keys = ['id', 'status', 'title', 'description', 'createdAt', 
+        let keys = ['id', 'status', 'title', 'description', 'createdAt', 'completedAt',
             'taskImagePath', 'completionProofPath', 'creatorEmail', 'completorEmail'];
         for (let i=0; i<keys.length; i++)
             outputOneRequest[keys[i]] = oneRequest[0][keys[i]];
