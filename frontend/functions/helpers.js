@@ -70,6 +70,15 @@ readableDate : (s) => {
                return newDate.toString(); 
                }
                else return s;
+    },
+
+    // Check if json is empty
+    isEmpty : (obj) => {
+        for (var key in obj) {
+            if (obj.hasOwnProperty(key))
+                return false;
+        }
+        return true;
     }
 }
 
