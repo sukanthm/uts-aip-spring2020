@@ -23,19 +23,10 @@ const Party = (props) => {
         }
     }
 
-    // function to check is JSON is empty
-    function isEmpty(obj) {
-        for (var key in obj) {
-            if (obj.hasOwnProperty(key))
-                return false;
-        }
-        return true;
-    }
-
     useEffect(() => { fetchTasks("All", currentPage.current, itemsPerPage, "") }, []);
 
     // If party is detected
-    if (!isEmpty(partyData)) {
+    if (!helpers.isEmpty(partyData)) {
 
         return (
             <>
