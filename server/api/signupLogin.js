@@ -56,7 +56,7 @@ module.exports = function(app){
         request body keys:
             email (string): regex checked in react
             password (string): plaintext
-        response headers:
+        request http headers:
             success (bool)
             message (string)
         cookie {aip_fp}: sets login token
@@ -66,7 +66,7 @@ module.exports = function(app){
             email (string): user email
             loginToken (string): login token for above email
         */
-        let [successFlag, [email, password]] = helperModule.get_req_body_json(req, [
+        let [successFlag, [email, password]] = helperModule.get_req_headers(req, [
             ['email', 'string'], ['password', 'string'],
         ], res);
         if (!successFlag)

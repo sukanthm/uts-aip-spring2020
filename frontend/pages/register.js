@@ -98,36 +98,32 @@ const Register = () => {
 
     const submitForm = async () => {
         try{
-        console.log(fullName);
-        console.log(email);
-        console.log(password);
+            let formData = new FormData();
+            formData.append('email', email);
+            formData.append('password', password);
+            formData.append('name', fullName);
 
-        let userData = {
-            email: email,
-            password: password,
-            name: fullName
-        }
-        let result = await fetch("/api/signup", {method: "POST", headers: userData, credentials: "include"});
-        let json = await result.json();
-        console.log("kya?", json);
-        
+            let result = await fetch("/api/signup", {method: "POST", 
+                credentials: "include", body: formData,
+                });
+            let json = await result.json();
+            
 
-        if(json.success == true){
-            handleShowCla();
+            if (json.success == true){
+                handleShowCla();
+            }
+            else if (json.success == false){
+                setValidated(false);
+                setErrMsg(json.message);
+                setShowAlert(true);
+            }
         }
-        else if(json.success == false){
+        catch(err){
+            console.log(err);
             setValidated(false);
-            setErrMsg(json.message);
+            setErrMsg("Server Error");
             setShowAlert(true);
         }
-        
-    }
-    catch(err){
-        console.log(err);
-        setValidated(false);
-        setErrMsg("Server Error");
-        setShowAlert(true);
-    }
     }
 
     const completeTask = async () => {

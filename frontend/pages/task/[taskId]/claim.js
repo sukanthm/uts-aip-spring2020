@@ -17,21 +17,13 @@ const Claim = () => {
         setFormImg(file);
     }
 
-    const completeTask = async() => {
-        console.log(imgFile);
-        console.log(taskComment);
-        const formData = new FormData();
+    const completeTask = async() => {       
+        formData.append('completorComment', taskComment);
+        formData.append('requestID', taskId);
         formData.append('proofImage', formImg);
 
         try{
-            let claimData = {
-                completorComment: taskComment,
-                email: "s@a.com",
-                loginToken: "$2b$10$QYVP.E7ikEJqhc8GwbsYauq9E7PPkgR39iyFVriFqlytZjJVQnE/e",
-                requestID: taskId
-            }
-
-            let result = await fetch("/api/request", {credentials: 'include', method: "PUT", headers: claimData, body: formData});
+            let result = await fetch("/api/request", {credentials: 'include', method: "PUT", body: formData});
             let json = await result.json();
             console.log("kya?", json);
         }
@@ -41,6 +33,7 @@ const Claim = () => {
         }
     }
     
+    //page not being used as far as i understand -sukanth
 
     return(
         <>

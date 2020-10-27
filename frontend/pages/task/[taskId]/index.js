@@ -93,14 +93,11 @@ const TaskId = () => {
         // }
 
         try {
-            let taskData = {
-                rewardChanges: JSON.stringify(rewardJson),
-                requestID: taskId,
-                // email: "d@g.com",
-                // loginToken: "$2b$10$hcT7aC5xrGVVBPhwtjQWBOQWPnXvr4OIRm9A1AcOOGfAPJJeY6PCa"
-            }
+            let formData = new FormData();
+            formData.append('rewardChanges', JSON.stringify(rewardJson));
+            formData.append('requestID', taskId);
 
-            let result = await fetch("/api/request/sponsor", { method: "PUT", headers: taskData });
+            let result = await fetch("/api/request/sponsor", { method: "PUT", body: formData });
             let json = await result.json();
             console.log("kya?", json);
             if (json.success == true) {
@@ -138,16 +135,12 @@ const TaskId = () => {
         console.log(taskComment);
         const formData = new FormData();
         formData.append('proofImage', formImg);
+        formData.append('completorComment', taskComment);
+        formData.append('requestID', taskId);
 
         try {
-            let claimData = {
-                completorComment: taskComment,
-                // email: "d@g.com",
-                // loginToken: "$2b$10$hcT7aC5xrGVVBPhwtjQWBOQWPnXvr4OIRm9A1AcOOGfAPJJeY6PCa",
-                requestID: taskId
-            }
 
-            let result = await fetch("/api/request", { credentials: 'include', method: "PUT", headers: claimData, body: formData });
+            let result = await fetch("/api/request", { credentials: 'include', method: "PUT", body: formData });
             let json = await result.json();
             console.log("kya?", json);
             if (json.success == true) {

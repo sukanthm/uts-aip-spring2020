@@ -60,16 +60,11 @@ const New = () => {
         // }
 
         try{
-            let taskData = {
-                title: taskTitle,
-                description: taskDesc,
-                rewards: JSON.stringify(rewardJson),
-                email: "s@a.com",
-                loginToken: "$2b$10$QYVP.E7ikEJqhc8GwbsYauq9E7PPkgR39iyFVriFqlytZjJVQnE/e"
-            }
+            formData.append('title', taskTitle);
+            formData.append('description', taskDesc);
+            formData.append('rewards', JSON.stringify(rewardJson));
 
-            console.log("dekho dekho", taskData);
-            let result = await fetch("/api/request", {credentials: 'include', method: "POST", headers: taskData, body: formData});
+            let result = await fetch("/api/request", {credentials: 'include', method: "POST", body: formData});
             let json = await result.json();
             console.log("kya?", json);
             if(json.success == true)

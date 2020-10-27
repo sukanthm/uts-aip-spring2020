@@ -15,7 +15,7 @@ module.exports = function(app){
             aip_fp
         url resource:
             targetEmail (string)
-        request body keys:
+        request http headers:
             statusFilter (string): one of ['Paid', 'Pending']
         request query params:
             currentPage (int): optional. pagination page, default = 0
@@ -34,7 +34,7 @@ module.exports = function(app){
         
         let targetEmail = helperModule.test_data_type(req.params.targetEmail, 'string')[1];
 
-        let [successFlag, [statusFilter]] = helperModule.get_req_body_json(req, [
+        let [successFlag, [statusFilter]] = helperModule.get_req_headers(req, [
                 ['statusFilter', 'string']
             ], res);
         if (!successFlag)
@@ -401,7 +401,7 @@ module.exports = function(app){
 
         request cookie:
             aip_fp
-        request body keys:
+        request http headers:
             statusFilter (string): one of ['Paid', 'Pending']
         response headers:
             success (bool)
@@ -415,7 +415,7 @@ module.exports = function(app){
         if (!validationSuccess)
             return;
 
-        let [successFlag, [statusFilter]] = helperModule.get_req_body_json(req, [
+        let [successFlag, [statusFilter]] = helperModule.get_req_headers(req, [
                 ['statusFilter', 'string']
             ], res);
         if (!successFlag)

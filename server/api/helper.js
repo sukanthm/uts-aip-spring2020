@@ -123,17 +123,15 @@ function test_data_type(input, type){
     }
 }
 
-function get_req_body_json(req, headers, res, allOptional=false){
-    //getting json data from request body after multer extracts optional image
+function get_req_headers(req, headers, res, allOptional=false){
     let header, output = [], testDataType;
-    const bodyObject = req.body ? req.body : {};
     for (let i = 0; i < headers.length; i++) {
-        header = bodyObject[headers[i][0]];
+        header = req.header(headers[i][0]);
 
         if (!allOptional && header === undefined){
             manipulate_response_and_send(req, res, {
                 'success': false, 
-                'message': 'mandatory request body header {'+headers[i][0]+'} missing',
+                'message': 'mandatory request http header {'+headers[i][0]+'} missing',
                 }, 400);
             return [false, headers];
         }
@@ -144,9 +142,40 @@ function get_req_body_json(req, headers, res, allOptional=false){
         if (!allOptional && !testDataType){
             manipulate_response_and_send(req, res, {
                 'success': false, 
-                'message': 'bad request body header {'+headers[i][0]+'} data type. expecting '+headers[i][1],
+                'message': 'bad request http header {'+headers[i][0]+'} data type. expecting '+headers[i][1],
                 }, 400);
             return [false, headers];
+        }
+    }
+    return [true, output];
+}
+
+
+function get_req_body_json(req, keys, res, allOptional=false){
+    //get json data from request body (only multipart/form-data) after multer extracts optional image
+    let key, output = [], testDataType;
+    console.log(req.body);
+    const bodyObject = req.body ? req.body : {};
+    for (let i = 0; i < keys.length; i++) {
+        key = bodyObject[keys[i][0]];
+
+        if (!allOptional && key === undefined){
+            manipulate_response_and_send(req, res, {
+                'success': false, 
+                'message': 'mandatory request body key {'+keys[i][0]+'} missing',
+                }, 400);
+            return [false, keys];
+        }
+
+        [testDataType, key] = test_data_type(key, keys[i][1]);
+        output.push(key);
+
+        if (!allOptional && !testDataType){
+            manipulate_response_and_send(req, res, {
+                'success': false, 
+                'message': 'bad request body key {'+keys[i][0]+'} data type. expecting '+keys[i][1],
+                }, 400);
+            return [false, keys];
         }
     }
     return [true, output];
@@ -162,7 +191,7 @@ function get_req_query_params(req, params, res, allOptional=false){
         if (!allOptional && param === undefined){
             manipulate_response_and_send(req, res, {
                 'success': false, 
-                'message': 'mandatory query param {'+params[i][0]+'} missing',
+                'message': 'mandatory URL query param {'+params[i][0]+'} missing',
                 }, 400);
             return [false, params];
         }
@@ -173,7 +202,7 @@ function get_req_query_params(req, params, res, allOptional=false){
         if (!allOptional && !testDataType){
             manipulate_response_and_send(req, res, {
                 'success': false, 
-                'message': 'bad param {'+params[i][0]+'} data type. expecting '+params[i][1],
+                'message': 'bad URL query param {'+params[i][0]+'} data type. expecting '+params[i][1],
                 }, 400);
             return [false, params];
         }
@@ -268,14 +297,16 @@ class defaultDict {
 module.exports = {
     manipulate_response_and_send: manipulate_response_and_send,
     is_secret_valid: is_secret_valid,
-    get_req_body_json: get_req_body_json,
     custom_hash: custom_hash,
     validate_user_loginToken: validate_user_loginToken,
     multerStorage: multerStorage,
     clean_and_shuffle: clean_and_shuffle,
     date_sort: date_sort,
     imagesDir: imagesDir,
-    get_req_query_params: get_req_query_params,
     test_data_type: test_data_type,
     defaultDict: defaultDict,
+
+    get_req_headers: get_req_headers, //for GET
+    get_req_body_json: get_req_body_json, //for POST, PUT
+    get_req_query_params: get_req_query_params, //for all http methods
 }

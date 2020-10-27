@@ -119,7 +119,7 @@ module.exports = function(app){
         /*
         gets all requests (no auth) - use for front/landing page
 
-        request body keys:
+        request http headers:
             dashboardFilter (string): optional. one of ['Creator', 'Sponsor', 'Completor', 'All'] >> created by me, sponsored by me, etc.
             searchData (string): optional. searches in request title, request description and reward name
             requestStatus (string): optional. one of ['Open', 'Completed', 'All'] >> global filter for request status.
@@ -135,7 +135,7 @@ module.exports = function(app){
             output (array of json)
         */
         let [successFlag1, [requestStatus, searchData, dashboardFilter]] = 
-            helperModule.get_req_body_json(req, [
+            helperModule.get_req_headers(req, [
                 ['requestStatus', 'string'], ['searchData', 'string'], ['dashboardFilter', 'string'],
             ], res, true);
         let [successFlag2, [currentPage, itemsPerPage]] = 
