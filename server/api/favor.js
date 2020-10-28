@@ -131,7 +131,7 @@ module.exports = function(app){
             payeeEmail (string)
             payerEmail (string)
             rewardID (int)
-        proofImage (form-data): optional. required iff email == payee. check https://github.com/expressjs/multer for frontend form
+        proofImage (form-data): optional. required iff email == payer. check https://github.com/expressjs/multer for frontend form
         response headers:
             success (bool)
             message (string)
@@ -187,11 +187,11 @@ module.exports = function(app){
             comment: 'manually created by: '+user.email,
         });
 
-        if (user.email === payeeEmail){
+        if (user.email === payerEmail){
             if (req.file === undefined){
                 helperModule.manipulate_response_and_send(req, res, {
                     'success': false, 
-                    'message': 'favor creator is payee, image proof missing', 
+                    'message': 'favor creator is payer, image proof missing', 
                     }, 400);
                 return;
             }
