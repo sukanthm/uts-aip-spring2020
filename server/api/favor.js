@@ -310,7 +310,7 @@ module.exports = function(app){
             aip_fp
         request body keys:
             favorID (int)
-        proofImage (form-data): optional. required iff email == payer. check https://github.com/expressjs/multer for frontend form
+        proofImage (form-data): optional. required iff email == payee. check https://github.com/expressjs/multer for frontend form
         response headers:
             success (bool)
             message (string)
@@ -358,11 +358,11 @@ module.exports = function(app){
             return;
         }
 
-        if (userID === payerID){
+        if (userID === payeeID){
             if (req.file === undefined){
                 helperModule.manipulate_response_and_send(req, res, {
                     'success': false, 
-                    'message': 'favor updator is payer, image proof missing', 
+                    'message': 'favor closer is payee, image proof missing', 
                     }, 400);
                 return;
             }
