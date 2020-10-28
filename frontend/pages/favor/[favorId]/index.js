@@ -55,36 +55,53 @@ const favorId = () => {
         <>
         <Header></Header>
         <div hidden={!fetchSuccess} className="container">      
-
-            <div className="row">
-            <div className="col-md-9">
-                <h2 className="forward-page-header">Favor ID: {favorData.id}</h2>
-                <p>Comment: <strong>{favorData.comment}</strong></p>
-                <p>Payer Email: <strong>{favorData.payerEmail}</strong></p>
-                <p>Payee Email: <strong>{favorData.payeeEmail}</strong></p>
-                <b>Status: </b> <span className={"status-"+favorData.status}>{favorData.status}</span>
-                <p>Reward ID: <strong>{favorData.rewardID}</strong></p> 
-                <p>Reward Title: <strong>{rewardTitle}</strong></p> 
-                <img src={'../../images/'+rewardTitle+'.png'} className="col-lg-12"></img>
-                {/* resize image */}
-                <p>Created at: <strong>{favorData.createdAt}</strong></p>
-                <p hidden={favorData.status == 'Pending'}>Paid at: <strong>{favorData.paidAt}</strong></p>
-            </div>
-            </div>
-
-            <div hidden={creationImage==''} className="col-md-3 task-image-holder">                        
-                <img src={`/api/image/${creationImage}`} alt="creation Image" className="task-image container"></img>
-                <div className="task-image-upload container center">
-                    <label>Creation Image</label>
-                </div>
-            </div>
-
-            <div hidden={completionImage==''} className="col-md-3 task-image-holder">                        
-                <img src={`/api/image/${completionImage}`} alt="completion Image" className="task-image container"></img>
-                <div className="task-image-upload container center">
-                    <label>Completion Image</label>
-                </div>
-            </div>
+            <table className="table">
+                <thead>
+                    <th colSpan="2"><h2>Favor ID: {favorData.id}</h2></th>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Comment:</td>
+                        <td><strong>{favorData.comment}</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Payer Email:</td>
+                        <td><strong>{favorData.payerEmail}</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Payee Email:</td>
+                        <td><strong>{favorData.payeeEmail}</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Status:</td>
+                        <td><strong>{favorData.status}</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Reward ID:</td>
+                        <td><strong>{favorData.rewardID}</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Reward Title:</td>
+                        <td><strong>{rewardTitle}</strong><br/><img src={'../../images/'+rewardTitle+'.png'}></img></td>
+                    </tr>
+                    <tr>
+                        <td>Created at:</td>
+                        <td><strong>{favorData.createdAt}</strong></td>
+                    </tr>
+                    <tr hidden={favorData.status == 'Pending'}>
+                        <td>Paid at:</td>
+                        <td><strong>{favorData.paidAt}</strong></td>
+                    </tr>
+                    <tr hidden={creationImage==''}>
+                        <td>Creation Image:</td>
+                        <td><img src={`/api/image/${creationImage}`} alt="creation Image" className="img-size-maintain"></img></td>
+                    </tr>
+                    <tr hidden={completionImage==''}>
+                        <td>Completion Image:</td>
+                        <td><img src={`/api/image/${completionImage}`} alt="completion Image" className="img-size-maintain"></img></td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
         <Alert show={showAlert} variant="danger" onClose={() => setShowAlert(false)} dismissible>
             <Alert.Heading>Oh snap! Error in creating task!</Alert.Heading>
