@@ -7,7 +7,7 @@
     "initdb": "initdb -D ../pgdb/",
     "postgres": "postgres -D ../pgdb/ -k '' >db.log 2>&1 &",
     "createdb": "createdb -h localhost forward_pay",
-    "builddb": "node -r esm ./persistence/buildDatabase.js",
+    "builddb": "rm -rf public_images/* && node -r esm ./persistence/buildDatabase.js",
     "start": "nodemon -r esm backend.js 4000",
     "stoppostgres": "pkill postgres",
     "prod": "pm2 start backend.js --node-args='-r esm' -- 443"
