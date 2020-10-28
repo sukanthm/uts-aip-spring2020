@@ -25,7 +25,7 @@ const AllRewardsRadio = (props) => {
                                     <h5>{'Coffee'}</h5>
                                 </div>
                                 <div className="container reward-icon">
-                                    <img src='../images/coffee.png' className="col-lg-12"></img>
+                                    <img src='../images/reward/coffee.png' className="col-lg-12"></img>
                                 </div>
                                 <hr />
                                 <div className="container">
@@ -42,7 +42,7 @@ const AllRewardsRadio = (props) => {
                                     <h5>{'Candy'}</h5>
                                 </div>
                                 <div className="container reward-icon">
-                                    <img src='../images/candy.png' className="col-lg-12"></img>
+                                    <img src='../images/reward/candy.png' className="col-lg-12"></img>
                                 </div>
                                 <hr />
                                 <div className="container">
@@ -59,7 +59,7 @@ const AllRewardsRadio = (props) => {
                                     <h5>{'Meal'}</h5>
                                 </div>
                                 <div className="container reward-icon">
-                                    <img src='../images/meal.png' className="col-lg-12"></img>
+                                    <img src='../images/reward/meal.png' className="col-lg-12"></img>
                                 </div>
                                 <hr />
                                 <div className="container">
@@ -76,7 +76,7 @@ const AllRewardsRadio = (props) => {
                                     <h5>{'Snacks'}</h5>
                                 </div>
                                 <div className="container reward-icon">
-                                    <img src='../images/snacks.png' className="col-lg-12"></img>
+                                    <img src='../images/reward/snacks.png' className="col-lg-12"></img>
                                 </div>
                                 <hr />
                                 <div className="container">
@@ -93,7 +93,7 @@ const AllRewardsRadio = (props) => {
                                     <h5>{'Drink'}</h5>
                                 </div>
                                 <div className="container reward-icon">
-                                    <img src='../images/drink.png' className="col-lg-12"></img>
+                                    <img src='../images/reward/drink.png' className="col-lg-12"></img>
                                 </div>
                                 <hr />
                                 <div className="container">

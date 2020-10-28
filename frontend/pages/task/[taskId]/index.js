@@ -289,19 +289,19 @@ const TaskId = () => {
                         <div className="container text-center">
                             <div className="row reward-cont">
                                 <div className="col-md-2">
-                                    <RewardCard img="../../../images/coffee.png" category="Coffee" amount={rewardData}></RewardCard>
+                                    <RewardCard img="../../../images/reward/coffee.png" category="Coffee" amount={rewardData}></RewardCard>
                                 </div>
                                 <div className="col-md-2">
-                                    <RewardCard img="../../../images/candy.png" category="Candy" amount={rewardData}></RewardCard>
+                                    <RewardCard img="../../../images/reward/candy.png" category="Candy" amount={rewardData}></RewardCard>
                                 </div>
                                 <div className="col-md-2">
-                                    <RewardCard img="../../../images/meal.png" category="Meal" amount={rewardData}></RewardCard>
+                                    <RewardCard img="../../../images/reward/meal.png" category="Meal" amount={rewardData}></RewardCard>
                                 </div>
                                 <div className="col-md-2">
-                                    <RewardCard img="../../../images/snacks.png" category="Snacks" amount={rewardData}></RewardCard>
+                                    <RewardCard img="../../../images/reward/snacks.png" category="Snacks" amount={rewardData}></RewardCard>
                                 </div>
                                 <div className="col-md-2">
-                                    <RewardCard img="../../../images/drink.png" category="Drink" amount={rewardData}></RewardCard>
+                                    <RewardCard img="../../../images/reward/drink.png" category="Drink" amount={rewardData}></RewardCard>
                                 </div>
 
                             </div>

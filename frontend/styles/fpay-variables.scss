@@ -44,12 +44,12 @@ $rewards: () !default;
 
 $rewards: map-merge(
     (
-        "candy":"008-chocolate-bar.png",
-        "cheers":"003-cocktail.png",
-        "coffee":"001-coffee.png",
-        "drink":"002-soda.png",
-        "meal":"005-burger.png",
-        "snacks":"007-snack.png"
+        "candy":"candy.png",
+        // "cheers":"003-cocktail.png",
+        "coffee":"coffee.png",
+        "drink":"drink.png",
+        "meal":"meal.png",
+        "snacks":"snacks.png"
     ),
     $rewards
 );
