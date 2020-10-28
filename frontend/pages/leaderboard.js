@@ -30,7 +30,7 @@ const leaderboard = (props) => {
             <>
                 <Header />
                 <div className="container">
-                    <h4>People with most active Favours:</h4>
+                    <h4>Most Active Incoming Favors:</h4>
                     {
                         Object.keys(leaderData).map((key, index) => {
                             return (
@@ -39,9 +39,7 @@ const leaderboard = (props) => {
                                         <div className="party-container">
                                             <div className="task-des">
                                                 {/* Email address */}
-                                                <h4><span>{index + 1}:</span> <b>{key}</b></h4>
-                                                {/* Favour count */}
-                                                <p><span>Favours completed: </span><b>{leaderData[key]}</b></p>
+                                                <h4><span>{index + 1}:</span> {key}: <small class="count badge badge-primary">{leaderData[key]}</small></h4>
                                             </div>
                                         </div>
                                     </div>
