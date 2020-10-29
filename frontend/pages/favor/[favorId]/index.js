@@ -23,6 +23,7 @@ const favorId = () => {
     const [claimDisable, setClaimDisable] = useState(false);
 
     const [imgFile, setImgFile] = useState("../../../images/upload-img.png");
+    const [formImg, setFormImg] = useState();
     const [showAlert, setShowAlert] = useState(false);
     const [errMsg, setErrMsg] = useState("");
 
@@ -64,8 +65,10 @@ const favorId = () => {
         let result = await fetch(`/api/favor/`, {credentials: 'include', method: "PUT", body: formData});
         let json = await result.json();
 
-        if(json.success == true)
-            router.push(`/favor/${favorId}`);
+        if(json.success == true){
+            //router.push(`/favor/${favorId}`);
+            window.location.reload();
+        }
         else {
             setErrMsg(json.message);
             setShowAlert(true);
