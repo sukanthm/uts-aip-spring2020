@@ -21,7 +21,7 @@ function MyApp({ Component, pageProps }) {
 
   useEffect(() => {
     const cookie = decodeURIComponent(document.cookie).substring(7);
-    console.log("check rahe initially", cookie);
+    // console.log("check rahe initially", cookie);
     if(cookie.trim() != ""){
       const userMail = JSON.parse(cookie).email;
       setUser(userMail);

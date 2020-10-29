@@ -1,15 +1,15 @@
 import { useEffect, useState, useRef } from 'react';
 import Header from '../template-parts/Header';
 import { useRouter } from 'next/router';
-import helpers from '../functions/helpers.js';
 import ErrorContainer from '../elements/ErrorContainer';
+import ActiveLink from '../template-parts/ActiveLink';
 
 const leaderboard = (props) => {
     const itemsPerPage = 5;
     const currentPage = useRef(0);
     const router = useRouter();
     const [leaderData, setLeaderData] = useState({});
-
+    
     const fetchTasks = async () => {
         try {
             let result = await fetch("/api/leaderboard/1", { method: "GET" });
@@ -25,11 +25,11 @@ const leaderboard = (props) => {
     useEffect(() => { fetchTasks("All", currentPage.current, itemsPerPage, "") }, []);
 
     // If leaders are detected
-    if (!helpers.isEmpty(leaderData)) {
+
         return (
             <>
                 <Header />
-                <div className="container">
+                <div hidden={!Object.keys(leaderData).length} className="container">
                     <h4>Most Active Incoming Favors:</h4>
                     {
                         Object.keys(leaderData).map((key, index) => {
@@ -48,17 +48,26 @@ const leaderboard = (props) => {
                         })
                     }
                 </div>
+                
+                <ErrorContainer hidden={Object.keys(leaderData).length} imgSrc="../images/error_container/error.png" 
+                    errTitle="No Leaders Detected!" errMsg="Oh no. There are no active leaders currently." needBtn={true} btnMsg="Go to Home" destin="/" />
+
+                <div className="cust-fab">
+                    <div>
+                        <ActiveLink activeClassName="active" href="/task/new">
+                            <button type="submit" className="btn btn-primary cust-float-new">Add Task</button>
+                        </ActiveLink>    
+                    </div>
+                    <hr/> {/* //need to put makeup here */}
+                    <div>
+                        <ActiveLink activeClassName="active" href="/favor/new">
+                            <button type="submit" className="btn btn-primary cust-float-new">Add Favor</button>
+                        </ActiveLink>    
+                    </div>
+                </div>
             </>
         )
-    }
-    else {
-        return (
-            <>
-                <Header />
-                <ErrorContainer imgSrc="../images/error_container/error.png" errTitle="No Leaders Detected!" errMsg="Oh no. There are no active leaders currently." needBtn={true} btnMsg="Go to Home" destin="/" />
-            </>
-        )
-    }
+
 }
 
 export default leaderboard;

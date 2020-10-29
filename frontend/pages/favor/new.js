@@ -39,11 +39,6 @@ const New = () => {
 
     async function createFavor(){
         setShowAlert(false);
-        if (user === null){
-            setErrMsg('not logged in');
-            setShowAlert(true);
-            return;
-        }
         if (targetEmail === ''){
             setErrMsg('Please enter Target Email');
             setShowAlert(true);

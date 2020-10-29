@@ -157,10 +157,14 @@ const Dashboard = (props) => {
                             <div>
                                 <ActiveLink activeClassName="active" href="/task/new">
                                     <button type="submit" className="btn btn-primary cust-float-new">Add Task</button>
-                                </ActiveLink>
+                                </ActiveLink>    
                             </div>
-                            {/* <br/> */}
-                            {/* <div><button type="submit" className="btn btn-light">Add Favour</button></div> */}
+                            <hr/> {/* //need to put makeup here */}
+                            <div>
+                                <ActiveLink activeClassName="active" href="/favor/new">
+                                    <button type="submit" className="btn btn-primary cust-float-new">Add Favor</button>
+                                </ActiveLink>    
+                            </div>
                         </div>
                     ) : (
                             null
@@ -179,15 +183,19 @@ const Dashboard = (props) => {
                 <Header />
                 <ErrorContainer imgSrc="../images/error_container/error.png" errTitle="No Tasks Detected!" errMsg="There are currently no tasks available. Create a new task to get started."/>
                 {user ? (
-                        <div className="cust-fab">
-                            <div>
-                                <ActiveLink activeClassName="active" href="/task/new">
-                                    <button type="submit" className="btn btn-primary cust-float-new">Add Task</button>
-                                </ActiveLink>
-                            </div>
-                            {/* <br/> */}
-                            {/* <div><button type="submit" className="btn btn-light">Add Favour</button></div> */}
-                        </div>
+                <div className="cust-fab">
+                    <div>
+                        <ActiveLink activeClassName="active" href="/task/new">
+                            <button type="submit" className="btn btn-primary cust-float-new">Add Task</button>
+                        </ActiveLink>    
+                    </div>
+                    <hr/> {/* //need to put makeup here */}
+                    <div>
+                        <ActiveLink activeClassName="active" href="/favor/new">
+                            <button type="submit" className="btn btn-primary cust-float-new">Add Favor</button>
+                        </ActiveLink>    
+                    </div>
+                </div>
                     ) : (
                             null
                         )

@@ -16,6 +16,13 @@ const favorId = () => {
     if (!favorId) return null;
     const { user } = useContext(UserContext);
 
+    //Variables for Claim Modal
+    const [showCla, setShowCla] = useState(false);
+    const handleCloseCla = () => setShowCla(false);
+    const handleShowCla = () => setShowCla(true);
+    const [claimDisable, setClaimDisable] = useState(false);
+
+    const [imgFile, setImgFile] = useState("../../../images/upload-img.png");
     const [showAlert, setShowAlert] = useState(false);
     const [errMsg, setErrMsg] = useState("");
 
@@ -25,14 +32,13 @@ const favorId = () => {
     const [creationImage, setCreationImage] = useState(false);
     const [completionImage, setCompletionImage] = useState(false);
 
-    async function getFavor(){
+    function uploadImage(file){
         setShowAlert(false);
-        if (user === null){
-            setErrMsg('not logged in');
-            setShowAlert(true);
-            return;
-        }
+        setImgFile(URL.createObjectURL(file));
+        setFormImg(file);
+    }
 
+    async function getFavor(){
         let result = await fetch(`/api/favor/${favorId}`, {credentials: 'include', method: "GET"});
         let json = await result.json();
 
@@ -46,6 +52,23 @@ const favorId = () => {
             setRewardTitle(helpers.rewardTitle(json.output.rewardID));
             setCreationImage(json.output.creationProofPath);
             setCompletionImage(json.output.completionProofPath);
+        }
+    }
+
+    async function payFavor(){
+        const formData = new FormData();
+        formData.append('favorID', favorId);
+        if(user == favorData.payeeEmail)
+            formData.append('proofImage', formImg);
+        
+        let result = await fetch(`/api/favor/`, {credentials: 'include', method: "PUT", body: formData});
+        let json = await result.json();
+
+        if(json.success == true)
+            router.push(`/api/favor/${favorId}`);
+        else {
+            setErrMsg(json.message);
+            setShowAlert(true);
         }
     }
 
@@ -65,12 +88,16 @@ const favorId = () => {
                         <td><strong>{favorData.comment}</strong></td>
                     </tr>
                     <tr>
-                        <td>Payer Email:</td>
-                        <td><strong>{favorData.payerEmail}</strong></td>
-                    </tr>
-                    <tr>
                         <td>Payee Email:</td>
                         <td><strong>{favorData.payeeEmail}</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Payee &rArr; Payer</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Payer Email:</td>
+                        <td><strong>{favorData.payerEmail}</strong></td>
                     </tr>
                     <tr>
                         <td>Status:</td>
@@ -82,7 +109,7 @@ const favorId = () => {
                     </tr>
                     <tr>
                         <td>Reward Title:</td>
-                        <td><strong>{rewardTitle}</strong><br/><img src={'../../images/'+rewardTitle+'.png'}></img></td>
+                        <td><strong>{rewardTitle}</strong><br/><img src={'../../images/reward/'+rewardTitle+'.png'}></img></td>
                     </tr>
                     <tr>
                         <td>Created at:</td>
@@ -104,11 +131,44 @@ const favorId = () => {
             </table>
         </div>
         <Alert show={showAlert} variant="danger" onClose={() => setShowAlert(false)} dismissible>
-            <Alert.Heading>Oh snap! Error in creating task!</Alert.Heading>
+            <Alert.Heading>Oh snap! Error in displaying favor!</Alert.Heading>
                 <p>
                     {errMsg}
                 </p>
         </Alert>
+        
+        <div className="col-md-12">
+            <button hidden={favorData.status === 'Paid'} className="btn btn-primary right  btn-forward-main" disabled={claimDisable} onClick={() => setShowCla(true)}>Pay favor</button>
+        </div>
+
+        {/* Modal for Claim */}
+        <Modal show={showCla} onHide={handleCloseCla} dialogClassName="modal-90w" centered>
+            <Modal.Header>
+                <Modal.Title>Pay this favor</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <div className="container">
+                    <div className="container-fluid">
+                        <div className="row">
+                            <div hidden={user == favorData.payerEmail} className="col-md-3 task-image-holder">
+                                <img src={imgFile} alt="Upload Image" className="task-image container"></img>
+                                <div className="task-image-upload container-fluid center">
+                                    <label htmlFor="task-image-edit">
+                                        <h6>Edit Image</h6>
+                                    </label>
+                                    <input type="file" onChange={(e) => uploadImage(e.target.files[0])} id="task-image-edit"></input>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button variant="secondary" onClick={handleCloseCla}>Cancel</Button>
+                <Button variant="primary" onClick={() => payFavor()}>Claim</Button>
+            </Modal.Footer>
+        </Modal>
         </>
     )
 }
