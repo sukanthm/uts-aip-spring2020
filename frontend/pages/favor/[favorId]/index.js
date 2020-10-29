@@ -70,6 +70,7 @@ const favorId = () => {
             window.location.reload();
         }
         else {
+            setShowCla(false);
             setErrMsg(json.message);
             setShowAlert(true);
         }
@@ -141,7 +142,8 @@ const favorId = () => {
         </Alert>
         
         <div className="col-md-12">
-            <button hidden={favorData.status === 'Paid'} className="btn btn-primary right  btn-forward-main" disabled={claimDisable} onClick={() => setShowCla(true)}>Close favor</button>
+            <button hidden={ favorData.status ? favorData.status === 'Paid' : true} 
+                className="btn btn-primary right  btn-forward-main" disabled={claimDisable} onClick={() => setShowCla(true)}>Close favor</button>
         </div>
 
         {/* Modal for Claim */}
