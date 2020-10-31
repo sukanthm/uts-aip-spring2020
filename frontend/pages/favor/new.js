@@ -11,7 +11,7 @@ import { useRouter } from 'next/router';
 const New = () => {
 
     const Router = useRouter();
-    const { user, logout } = useContext(UserContext);
+    const { user, sessionCheck } = useContext(UserContext);
 
     const [imgFile, setImgFile] = useState("../../images/upload-img.png");
     const [formImg, setFormImg] = useState("");
@@ -31,9 +31,7 @@ const New = () => {
     }
 
     useEffect(()=>{
-        if(!helpers.checkCookie()){
-            Router.push("/");
-        }
+        sessionCheck();
         setRadio(isIncoming);
     }, [targetEmail]);
 

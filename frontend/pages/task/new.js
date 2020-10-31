@@ -1,9 +1,10 @@
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useContext} from 'react';
 import Header from '../../template-parts/Header';
 import RewardCard from '../../elements/RewardCard';
 import helpers from '../../functions/helpers.js';
 import Alert from 'react-bootstrap/Alert';
 import { useRouter } from 'next/router';
+import UserContext from '../../functions/context';
 
 const New = () => {
 
@@ -13,16 +14,14 @@ const New = () => {
     const [taskTitle, setTaskTitle] = useState("");
     const [taskDesc, setTaskDesc] = useState("");
     const [formImg, setFormImg] = useState("");
-
+    const { sessionCheck } = useContext(UserContext);
     const [showAlert, setShowAlert] = useState(false);
     const [errMsg, setErrMsg] = useState("");
 
     let rewardJson = {};
     
     useEffect(() => {
-        if(!helpers.checkCookie()){
-            Router.push("/");
-        }
+        sessionCheck();
     }, []);
 
     function uploadImage(file){

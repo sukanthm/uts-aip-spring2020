@@ -1,11 +1,12 @@
 
-import {useEffect, useState, useRef} from 'react';
+import {useEffect, useState, useRef, useContext} from 'react';
 import { useRouter } from 'next/router';
 import Header from '../../../template-parts/Header';
 import TaskContainer from '../../../elements/TaskContainer';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import Alert from 'react-bootstrap/Alert';
 import helpers from '../../../functions/helpers.js';
+import UserContext from '../functions/context';
 
 
 
@@ -17,7 +18,7 @@ const SearchText = (props) => {
     // const searchToggle = useRef(false);
     const Router = useRouter();
     console.log(Router.query);
-
+    const { sessionCheck } = useContext(UserContext);
     const searchText = Router.query.searchText;
     const [taskRows, setTaskRows] = useState([]);
     const [moreScroll, setMoreScroll] = useState(true);
@@ -73,9 +74,7 @@ const SearchText = (props) => {
     
 
         useEffect(() => {
-            if(!helpers.checkCookie()){
-                Router.push("/");
-            }
+            sessionCheck();
             fetchTasks("All", currentPage.current, itemsPerPage, searchText)
         }, []);
 

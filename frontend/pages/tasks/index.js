@@ -5,17 +5,18 @@ import { useState, useEffect } from 'react';
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
 import helpers from '../../functions/helpers.js';
-import { useRouter } from 'next/router';
+import { useRouter, useContext } from 'next/router';
+import UserContext from '../../functions/context';
+
 
 const dashboard = (props) => {
    
     const Router = useRouter();
     const [key, setKey] = useState('home');
+    const { sessionCheck } = useContext(UserContext);
 
     useEffect(() => { 
-        if(!helpers.checkCookie()){
-            Router.push("/");
-        }
+        sessionCheck();
     }, []);
 
     return (

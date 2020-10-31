@@ -2,17 +2,17 @@ import Header from '../template-parts/Header';
 import ErrorContainer from '../elements/ErrorContainer';
 import helpers from '../functions/helpers.js';
 import { useRouter } from 'next/router';
-import {useEffect} from 'react';
+import {useEffect, useContext} from 'react';
+import UserContext from '../functions/context';
 
 
 
 const DeleteTask = (props) => {
+    const { sessionCheck } = useContext(UserContext);
 
     const Router = useRouter();
     useEffect(() => { 
-        if(!helpers.checkCookie()){
-            Router.push("/");
-        }
+        sessionCheck();
     }, []);
     return(
         <>

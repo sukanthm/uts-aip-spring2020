@@ -19,9 +19,16 @@ function MyApp({ Component, pageProps }) {
     Router.push("/logOut");
   }
 
+  const sessionCheck = () => {
+    const cookie = decodeURIComponent(document.cookie).substring(7);
+    if(cookie.trim() == ""){
+      setUser(null);
+      Router.push("/");
+    }
+  }
+
   useEffect(() => {
     const cookie = decodeURIComponent(document.cookie).substring(7);
-    // console.log("check rahe initially", cookie);
     if(cookie.trim() != ""){
       const userMail = JSON.parse(cookie).email;
       setUser(userMail);
@@ -30,7 +37,7 @@ function MyApp({ Component, pageProps }) {
 
 
   return (
-    <UserContext.Provider value={{ user: user, login: login, logout: logout }}>
+    <UserContext.Provider value={{ user: user, login: login, logout: logout, sessionCheck: sessionCheck }}>
       <Component {...pageProps} />
     </UserContext.Provider>
   );

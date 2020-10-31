@@ -5,7 +5,9 @@ import UserCard from '../../elements/UserCard';
 import helpers from '../../functions/helpers.js';
 import Alert from 'react-bootstrap/Alert';
 import { useRouter } from 'next/router';
-import { useState,useEffect } from 'react';
+import { useState,useEffect, useContext } from 'react';
+import UserContext from '../../functions/context';
+
 
 const dashboard = (props) => {
 
@@ -17,6 +19,7 @@ const dashboard = (props) => {
 
     const [users, setUsers] = useState({});
     const Router = useRouter();
+    const { sessionCheck } = useContext(UserContext);
 
     const fetchFavorData = async() => {
         try{
@@ -45,9 +48,7 @@ const dashboard = (props) => {
       }
 
       useEffect(() => {
-            if(!helpers.checkCookie()){
-                Router.push("/");
-            }
+            sessionCheck();
           fetchFavorData()
         }, []);
 

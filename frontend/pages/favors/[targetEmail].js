@@ -1,9 +1,11 @@
 import Header from '../../template-parts/Header';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useRouter } from 'next/router'
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
 import helpers from '../../functions/helpers.js';
+import UserContext from '../../functions/context';
+
 
 import FavorListContainer from '../../elements/FavorListContainer';
 
@@ -11,11 +13,10 @@ import FavorListContainer from '../../elements/FavorListContainer';
 const UserId = () => {
     const Router = useRouter();
     const [key, setKey] = useState('open');
+    const { sessionCheck } = useContext(UserContext);
     
     useEffect(() => {
-        if(!helpers.checkCookie()){
-            Router.push("/");
-        }
+        sessionCheck();
     }, []);
 
     console.log(Router.query);

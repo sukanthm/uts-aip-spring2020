@@ -15,7 +15,7 @@ const TaskId = () => {
     console.log("jeanpaul", Router.query);
     const taskId = Router.query.taskId;
     if (!taskId) return null;
-    const { user } = useContext(UserContext);
+    const { user, sessionCheck } = useContext(UserContext);
 
     // const cookie = decodeURIComponent(document.cookie).substring(7);
     const userMail = user;
@@ -204,9 +204,7 @@ const TaskId = () => {
     }
 
     useEffect(() => { 
-        if(!helpers.checkCookie()){
-            Router.push("/");
-        }
+        sessionCheck();
         fetchTaskDetails() 
     }, [])
 
