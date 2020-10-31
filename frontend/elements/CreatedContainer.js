@@ -1,6 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/router';
-import Header from '../template-parts/Header';
 import TaskContainer from './TaskContainer';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import Alert from 'react-bootstrap/Alert';

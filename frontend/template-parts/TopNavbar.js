@@ -2,7 +2,7 @@ import ActiveLink from './ActiveLink'
 import UserContext from '../functions/context';
 import { useState,useContext } from 'react';
 import Navbar from 'react-bootstrap/Navbar';
-import { useRouter } from 'next/router';
+import { Router, useRouter } from 'next/router';
 
 const TopNavbar = (props) => {
   const router = useRouter();
@@ -32,7 +32,9 @@ const TopNavbar = (props) => {
             </ActiveLink>
           </li>
           <li className="nav-item">
-            <a className="nav-link" href="#">Favours</a>
+          <ActiveLink activeClassName="active" href="/favor/dashboard">
+              <a className="nav-link" href="#">Favors</a>
+              </ActiveLink>
           </li>
           <li className="nav-item">
           <ActiveLink activeClassName="active" href="/task/dashboard">
@@ -89,7 +91,11 @@ const TopNavbar = (props) => {
           </ActiveLink>
         </form>
       </div>
+      
+        {/* router.push("/task/dashboard") */}
+      
     </nav>
+    
     )
   }
 

@@ -1,4 +1,4 @@
-import { useRouter } from 'next/router'
+;import { useRouter } from 'next/router'
 import RewardsContainer from './RewardsContainer';
 import helpers from '../functions/helpers.js';
 import UserContext from '../functions/context';
