@@ -14,30 +14,33 @@ const UserCard = (props) => {
 
     return(
         <div className="col-md-6" onClick={() => routeUser()}>
-            <div className="center">{props.userName}</div>
-            <div>
+            <div className="task-container">
+            <div className="forward-cust-title">{props.userName}</div>
+            <br/>
+            <div className="container-fluid">
+            <div className="row">
             {   
                 props.userData.outgoing ? (
-                    <div className="col-md-12">
-                    <div>Rewards to be paid</div>
+                    <div className="col-6">
+                        <b>Rewards to be paid</b>
                         <RewardsContainer rewardsData={props.userData.outgoing} />
                     </div>
                 )
                 : 
                 null
             }
-            </div>
-            <div>
             {
                 props.userData.incoming ? (
-                    <div className="col-md-12">
-                    <div>Rewards you are owed</div>
+                    <div className="col-6">
+                        <b>Rewards you are owed</b>
                         <RewardsContainer rewardsData={props.userData.incoming} />
                     </div>
                 )
                : 
                null
             }
+            </div>
+            </div>
             </div>
         </div>
     )

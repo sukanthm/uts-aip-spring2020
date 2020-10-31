@@ -60,7 +60,7 @@ const TaskContainer = (props) => {
 
                 </div>
                 <div className="col-sm-2">
-                    <p>Rewards</p>
+                    <b>Rewards</b>
                     <RewardsContainer rewardsData={props.taskVals.rewards} />
                 </div>
             </div>

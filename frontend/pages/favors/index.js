@@ -64,23 +64,21 @@ const dashboard = (props) => {
         <>
         <Header></Header>
         <div className="container">
-           <div>
+           <div className="row">
             {   
                 outgoingLen ? (
                     <div className="col-md-6">
-                    <div>Total rewards to be paid</div>
+                    <h4 className="forward-page-header">Total rewards to be paid</h4>
                         <RewardsContainer rewardsData={outgoing} />
                     </div>
                 )
                 : 
                 null
             }
-            </div>
-            <div>
             {
                 incomingLen ? (
                     <div className="col-md-6">
-                    <div>Total rewards you are owed</div>
+                    <h4 className="forward-page-header">Total rewards you are owed</h4>
                         <RewardsContainer rewardsData={incoming} />
                     </div>
                 )
@@ -88,11 +86,13 @@ const dashboard = (props) => {
                null
             }
             </div>
+            <div>
             
-        </div>
-        <div className="container">
+            </div>
             
-            <div>Favors by users</div>
+            <hr/>
+            
+            <h4 className="forward-page-header">Favors by users</h4>
             <div className="row">            {
                 users ? (
                 Object.keys(users).map((key, i) => {
