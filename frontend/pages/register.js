@@ -65,7 +65,7 @@ const Register = () => {
             setEmailFlag(true);
             setValidated(false);
         }
-        else if(!/^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[A-Za-z]+$/.test(email)){
+        else if(!/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(email)){
                     console.log("Email not valid");
                     setEmailFlag(true);
                     setValidated(false);
