@@ -133,6 +133,7 @@ const favorId = () => {
                     </tr>
                 </tbody>
             </table>
+            <button hidden={ favorData.status ? favorData.status === 'Paid' : true} className="btn btn-primary right  btn-forward-main" disabled={claimDisable} onClick={() => setShowCla(true)}>Close favor</button>
         </div>
         <Alert show={showAlert} variant="danger" onClose={() => setShowAlert(false)} dismissible>
             <Alert.Heading>Oh snap! Error in displaying favor!</Alert.Heading>
@@ -140,11 +141,6 @@ const favorId = () => {
                     {errMsg}
                 </p>
         </Alert>
-        
-        <div className="col-md-12">
-            <button hidden={ favorData.status ? favorData.status === 'Paid' : true} 
-                className="btn btn-primary right  btn-forward-main" disabled={claimDisable} onClick={() => setShowCla(true)}>Close favor</button>
-        </div>
 
         {/* Modal for Claim */}
         <Modal show={showCla} onHide={handleCloseCla} dialogClassName="modal-90w" centered>
@@ -153,9 +149,11 @@ const favorId = () => {
             </Modal.Header>
             <Modal.Body>
                 <div className="container">
+                    <p>You are about to close this favor. Are you sure?</p>
                     <div className="container-fluid">
                         <div className="row">
                             <div hidden={user == favorData.payerEmail} className="col-md-3 task-image-holder">
+                                <b>Upload Proof Image</b>
                                 <img src={imgFile} alt="Upload Image" className="task-image container"></img>
                                 <div className="task-image-upload container-fluid center">
                                     <label htmlFor="task-image-edit">
@@ -171,7 +169,7 @@ const favorId = () => {
             </Modal.Body>
             <Modal.Footer>
                 <Button variant="secondary" onClick={handleCloseCla}>Cancel</Button>
-                <Button variant="primary" onClick={() => payFavor()}>Claim</Button>
+                <Button variant="primary" onClick={() => payFavor()}>Sure</Button>
             </Modal.Footer>
         </Modal>
         </>
