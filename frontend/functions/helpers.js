@@ -1,6 +1,7 @@
 
 
 const helpers = {
+    emptyRewardsDict: {1:0 ,2:0, 3:0, 4:0, 5:0},
     //Helper functions to be used in multiple modules
     rewardID : (name) => {  // return ID corresponding to Reward Name
         let id = null;

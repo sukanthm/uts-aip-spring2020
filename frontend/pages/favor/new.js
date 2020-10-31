@@ -29,11 +29,13 @@ const New = () => {
         document.getElementById('radioForm1').checked = radioFlag;
         document.getElementById('radioForm2').checked = !radioFlag;
     }
+
     useEffect(()=>{
         if(!helpers.checkCookie()){
             Router.push("/");
         }
-        setRadio(isIncoming)}, [targetEmail]);
+        setRadio(isIncoming);
+    }, [targetEmail]);
 
     function uploadImage(file){
         setShowAlert(false);

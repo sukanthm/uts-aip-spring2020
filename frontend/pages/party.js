@@ -50,7 +50,7 @@ const Party = (props) => {
                                                         return (
                                                             <div>
                                                                 <b>People for Party No: {index + 1}</b>
-                                                                <p>{row.join()}</p>
+                                                                <p>{row.join('; ')}</p>
                                                             </div>
                                                         )
                                                     })

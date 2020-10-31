@@ -10,6 +10,8 @@ import FavorContainer from './FavorContainer';
 
 const SettledFavorsContainer = (props) => {
 
+    if (!props.user.targetEmail) return null;
+
     const itemsPerPage = 10;
     const currentPage = useRef(0);
     const router = useRouter();
