@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import Header from '../../template-parts/Header';
 import RewardCard from '../../elements/RewardCard';
 import helpers from '../../functions/helpers.js';
@@ -7,7 +7,7 @@ import { useRouter } from 'next/router';
 
 const New = () => {
 
-    const router = useRouter();
+    const Router = useRouter();
 
     const [imgFile, setImgFile] = useState("../../images/upload-img.png");
     const [taskTitle, setTaskTitle] = useState("");
@@ -19,6 +19,11 @@ const New = () => {
 
     let rewardJson = {};
     
+    useEffect(() => {
+        if(!helpers.checkCookie()){
+            Router.push("/");
+        }
+    }, []);
 
     function uploadImage(file){
         setImgFile(URL.createObjectURL(file));
@@ -68,7 +73,7 @@ const New = () => {
             let json = await result.json();
             console.log("kya?", json);
             if(json.success == true)
-                router.push(`/task/${json.newRequestID}`);
+                Router.push(`/task/${json.newRequestID}`);
             else{
             setErrMsg(json.message);
             setShowAlert(true);

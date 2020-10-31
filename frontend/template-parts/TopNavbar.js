@@ -1,6 +1,6 @@
 import ActiveLink from './ActiveLink'
 import UserContext from '../functions/context';
-import { useState,useContext } from 'react';
+import { useEffect,useContext } from 'react';
 import Navbar from 'react-bootstrap/Navbar';
 import { Router, useRouter } from 'next/router';
 
@@ -14,9 +14,12 @@ const TopNavbar = (props) => {
     logout();
   }
 
+  
+
 // console.log("oyooooo", user);
 
   if(user != null){
+    
     return(
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark navbar-forward">
       <a className="navbar-brand" href="#"><img src="../images/logo.png" alt="IOU Logo" className="img-responsive logo-forward"/> Forward Pay</a>
@@ -60,6 +63,7 @@ const TopNavbar = (props) => {
     </nav>
     
     )
+    
   }
 
   else{

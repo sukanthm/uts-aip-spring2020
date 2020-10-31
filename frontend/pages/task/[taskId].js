@@ -11,9 +11,9 @@ import { Button, ButtonToolbar } from 'react-bootstrap';
 import Alert from 'react-bootstrap/Alert';
 
 const TaskId = () => {
-    const router = useRouter();
-    console.log("jeanpaul", router.query);
-    const taskId = router.query.taskId;
+    const Router = useRouter();
+    console.log("jeanpaul", Router.query);
+    const taskId = Router.query.taskId;
     if (!taskId) return null;
     const { user } = useContext(UserContext);
 
@@ -51,8 +51,8 @@ const TaskId = () => {
 
     let claimTask = () => {
         if (claimDisable == false) {
-            //console.log(router.query);
-            //router.push(`/task/${taskId}/claim`);
+            //console.log(Router.query);
+            //Router.push(`/task/${taskId}/claim`);
             handleShowCla();
         }
         else {
@@ -104,7 +104,7 @@ const TaskId = () => {
                 handleCloseRew();
                 if(json.deletedRequestID){
                     setErrMsg(json.message);
-                    router.push(`/deleteTask`);
+                    Router.push(`/deleteTask`);
                 }
                 else{
                     fetchTaskDetails();
@@ -203,7 +203,12 @@ const TaskId = () => {
         }
     }
 
-    useEffect(() => { fetchTaskDetails() }, [])
+    useEffect(() => { 
+        if(!helpers.checkCookie()){
+            Router.push("/");
+        }
+        fetchTaskDetails() 
+    }, [])
 
     // useEffect(() => { console.log("We are testing here:", showCompletor) }, [showCompletor])
 

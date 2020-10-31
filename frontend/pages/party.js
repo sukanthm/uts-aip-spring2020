@@ -3,12 +3,15 @@ import Header from '../template-parts/Header';
 import helpers from '../functions/helpers.js';
 import ActiveLink from '../template-parts/ActiveLink';
 import ErrorContainer from '../elements/ErrorContainer';
+import { useRouter } from 'next/router';
 
 
 const Party = (props) => {
     const itemsPerPage = 5;
     const currentPage = useRef(0);
     const [partyData, setPartyData] = useState({});
+
+    const Router = useRouter();
 
     const fetchTasks = async () => {
         let result = await fetch("/api/party", { method: "GET" });
@@ -17,7 +20,12 @@ const Party = (props) => {
             setPartyData(json.output);
     }
 
-    useEffect(() => { fetchTasks("All", currentPage.current, itemsPerPage, "") }, []);
+    useEffect(() => { 
+        if(!helpers.checkCookie()){
+            Router.push("/");
+        }
+        fetchTasks("All", currentPage.current, itemsPerPage, "") 
+    }, []);
 
        return (
             <>

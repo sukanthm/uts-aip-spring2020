@@ -10,7 +10,7 @@ import { useRouter } from 'next/router';
 
 const New = () => {
 
-    const router = useRouter();
+    const Router = useRouter();
     const { user, logout } = useContext(UserContext);
 
     const [imgFile, setImgFile] = useState("../../images/upload-img.png");
@@ -29,7 +29,11 @@ const New = () => {
         document.getElementById('radioForm1').checked = radioFlag;
         document.getElementById('radioForm2').checked = !radioFlag;
     }
-    useEffect(()=>{setRadio(isIncoming)}, [targetEmail]);
+    useEffect(()=>{
+        if(!helpers.checkCookie()){
+            Router.push("/");
+        }
+        setRadio(isIncoming)}, [targetEmail]);
 
     function uploadImage(file){
         setShowAlert(false);
@@ -64,7 +68,7 @@ const New = () => {
         let json = await result.json();
 
         if(json.success == true)
-            router.push(`/favor/${json.newFavorID}`);
+            Router.push(`/favor/${json.newFavorID}`);
         else {
             setErrMsg(json.message);
             setShowAlert(true);

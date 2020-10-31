@@ -1,8 +1,19 @@
 import Header from '../template-parts/Header';
 import ErrorContainer from '../elements/ErrorContainer';
+import helpers from '../functions/helpers.js';
+import { useRouter } from 'next/router';
+import {useEffect} from 'react';
+
 
 
 const DeleteTask = (props) => {
+
+    const Router = useRouter();
+    useEffect(() => { 
+        if(!helpers.checkCookie()){
+            Router.push("/");
+        }
+    }, []);
     return(
         <>
             <Header />

@@ -1,11 +1,14 @@
 import { useEffect, useState, useRef } from 'react';
 import Header from '../template-parts/Header';
 import ErrorContainer from '../elements/ErrorContainer';
+import helpers from '../functions/helpers.js';
+import { useRouter } from 'next/router';
 
 const leaderboard = (props) => {
     const itemsPerPage = 5;
     const currentPage = useRef(0);
     const [leaderData, setLeaderData] = useState({});
+    const Router = useRouter();
     
     const fetchTasks = async () => {
         let result = await fetch("/api/leaderboard/1", { method: "GET" });
@@ -14,7 +17,12 @@ const leaderboard = (props) => {
             setLeaderData(json.output);
     }
 
-    useEffect(() => { fetchTasks("All", currentPage.current, itemsPerPage, "") }, [leaderData]);
+    useEffect(() => { 
+        if(!helpers.checkCookie()){
+            Router.push("/");
+        }
+        fetchTasks("All", currentPage.current, itemsPerPage, "") 
+    }, [leaderData]);
     // If leaders are detected
 
         return (

@@ -5,6 +5,7 @@ import Header from '../../../template-parts/Header';
 import TaskContainer from '../../../elements/TaskContainer';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import Alert from 'react-bootstrap/Alert';
+import helpers from '../../../functions/helpers.js';
 
 
 
@@ -14,10 +15,10 @@ const SearchText = (props) => {
     const itemsPerPage = 5;
     const currentPage = useRef(0);
     // const searchToggle = useRef(false);
-    const router = useRouter();
-    console.log(router.query);
+    const Router = useRouter();
+    console.log(Router.query);
 
-    const searchText = router.query.searchText;
+    const searchText = Router.query.searchText;
     const [taskRows, setTaskRows] = useState([]);
     const [moreScroll, setMoreScroll] = useState(true);
 
@@ -71,7 +72,12 @@ const SearchText = (props) => {
 
     
 
-        useEffect(() => {fetchTasks("All", currentPage.current, itemsPerPage, searchText)}, []);
+        useEffect(() => {
+            if(!helpers.checkCookie()){
+                Router.push("/");
+            }
+            fetchTasks("All", currentPage.current, itemsPerPage, searchText)
+        }, []);
 
        
     return (

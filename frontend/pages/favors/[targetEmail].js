@@ -1,8 +1,10 @@
 import Header from '../../template-parts/Header';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router'
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
+import helpers from '../../functions/helpers.js';
+
 import OpenFavorsContainer from '../../elements/OpenFavorsContainer';
 import SettledFavorsContainer from '../../elements/SettledFavorsContainer';
 
@@ -10,6 +12,12 @@ import SettledFavorsContainer from '../../elements/SettledFavorsContainer';
 const UserId = () => {
     const Router = useRouter();
     const [key, setKey] = useState('open');
+    
+    useEffect(() => {
+        if(!helpers.checkCookie()){
+            Router.push("/");
+        }
+    }, []);
 
     console.log(Router.query);
     return(

@@ -1,4 +1,5 @@
 
+
 const helpers = {
     //Helper functions to be used in multiple modules
     rewardID : (name) => {  // return ID corresponding to Reward Name
@@ -79,6 +80,17 @@ readableDate : (s) => {
                 return false;
         }
         return true;
+    },
+
+    // Check cookie
+    checkCookie : () => {
+            const cookie = decodeURIComponent(document.cookie).substring(7);
+            if(cookie.trim() == ""){
+                return 0;
+            }
+            else{
+                return 1;
+            }
     }
 }
 

@@ -3,16 +3,22 @@ import CreatedContainer from '../../elements/CreatedContainer';
 import SponsoredContainer from '../../elements/SponsoredContainer';
 import CompletedContainer from '../../elements/CompletedContainer';
 import ActiveLink from '../../template-parts/ActiveLink'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
+import helpers from '../../functions/helpers.js';
+import { useRouter } from 'next/router';
 
 const dashboard = (props) => {
    
-
+    const Router = useRouter();
     const [key, setKey] = useState('home');
 
-    
+    useEffect(() => { 
+        if(!helpers.checkCookie()){
+            Router.push("/");
+        }
+    }, []);
 
     return (
         <>

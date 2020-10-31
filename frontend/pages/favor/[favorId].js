@@ -11,8 +11,8 @@ import { Button, ButtonToolbar } from 'react-bootstrap';
 import Alert from 'react-bootstrap/Alert';
 
 const favorId = () => {
-    const router = useRouter();
-    const favorId = router.query.favorId;
+    const Router = useRouter();
+    const favorId = Router.query.favorId;
     if (!favorId) return null;
     const { user } = useContext(UserContext);
 
@@ -76,7 +76,12 @@ const favorId = () => {
         }
     }
 
-    useEffect(()=>{getFavor()}, []);
+    useEffect(()=>{
+        if(!helpers.checkCookie()){
+            Router.push("/");
+        }
+        getFavor()
+    }, []);
 
     return(
         <>

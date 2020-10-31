@@ -82,7 +82,7 @@ const Dashboard = (props) => {
     const sendSearch = () => {
         console.log("search text", searchText);
         if (searchText.trim() != "") {
-            router.push("/task/search/" + searchText);
+            router.push("/tasks/search/" + searchText);
             // setSearchToggle(true);
             // setTaskRows([]);
             // currentPage.current = 0;

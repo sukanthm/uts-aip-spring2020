@@ -2,7 +2,9 @@ import Header from '../../template-parts/Header';
 // import ActiveLink from '../../template-parts/ActiveLink';
 import RewardsContainer from '../../elements/RewardsContainer';
 import UserCard from '../../elements/UserCard';
+import helpers from '../../functions/helpers.js';
 import Alert from 'react-bootstrap/Alert';
+import { useRouter } from 'next/router';
 import { useState,useEffect } from 'react';
 
 const dashboard = (props) => {
@@ -16,6 +18,7 @@ const dashboard = (props) => {
     const [outgoingLen, setOutgoingLen] = useState(0);
 
     const [users, setUsers] = useState();
+    const Router = useRouter();
 
     const fetchFavorData = async() => {
         try{
@@ -50,7 +53,12 @@ const dashboard = (props) => {
         }
       }
 
-      useEffect(() => {fetchFavorData()}, []);
+      useEffect(() => {
+            if(!helpers.checkCookie()){
+                Router.push("/");
+            }
+          fetchFavorData()
+        }, []);
 
     return(
         <>
