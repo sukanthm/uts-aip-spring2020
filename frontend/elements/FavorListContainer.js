@@ -1,35 +1,29 @@
 import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/router';
-import TaskContainer from './TaskContainer';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import Alert from 'react-bootstrap/Alert';
-import ErrorContainer from '../elements/ErrorContainer';
+import ErrorContainer from './ErrorContainer';
+import FavorContainer from './FavorContainer';
 
 
 
 
-const CompletedContainer = (props) => {
+const SettledFavorsContainer = (props) => {
 
-    const itemsPerPage = 5;
+    const itemsPerPage = 10;
     const currentPage = useRef(0);
     const router = useRouter();
 
-    const [taskRows, setTaskRows] = useState([]);
+    const [favorRows, setFavorRows] = useState([]);
     const [moreScroll, setMoreScroll] = useState(true);
 
     const [showAlert, setShowAlert] = useState(false);
     const [errMsg, setErrMsg] = useState("");
 
-    const fetchTasks = async (status, currentPage, itemsPerPage, search) => {
+    const fetchFavors = async ( currentPage, itemsPerPage) => {
         try {
-            let fetchJson = {
-                dashboardFilter: "Completor",
-                requestStatus: status,
-                currentPage: currentPage,
-                itemsPerPage: itemsPerPage,
-                searchData: search
-            }
-            let result = await fetch("/api/requests", { method: "GET", headers: fetchJson });
+            
+            let result = await fetch(`/api/favors/${props.user.targetEmail}?currentPage=${currentPage}&itemsPerPage=${itemsPerPage}`, { method: "GET", headers: {statusFilter: props.type} });
             let json = await result.json();
             console.log("kya?", json);
             if (json.success == true) {
@@ -38,13 +32,13 @@ const CompletedContainer = (props) => {
                     setMoreScroll(false);
                 }
                 // let arr = taskRows;
-                const arr = [...taskRows];
+                const arr = [...favorRows];
                 json.output.rows.map((row) => {
                     arr.push(row);
                 })
                 console.log("arro", arr);
                 console.log("rumba", currentPage);
-                setTaskRows(arr);
+                setFavorRows(arr);
             }
             else if (json.success == false) {
                 setErrMsg(json.message);
@@ -64,14 +58,14 @@ const CompletedContainer = (props) => {
         console.log("abhi", currentPage.current);
         currentPage.current = currentPage.current + 1;
         console.log("abhi bhi", currentPage.current);
-        fetchTasks("All", currentPage.current, itemsPerPage, "");
+        fetchFavors(currentPage.current, itemsPerPage);
     }
 
 
-    useEffect(() => { fetchTasks("All", currentPage.current, itemsPerPage, "") }, []);
+    useEffect(() => { fetchFavors(currentPage.current, itemsPerPage) }, []);
 
 
-    if (taskRows.length > 0) {
+    if (favorRows.length > 0) {
         return (
 
             <div className="dashboard-page">
@@ -86,7 +80,7 @@ const CompletedContainer = (props) => {
                     </Alert>
 
                     <InfiniteScroll
-                        dataLength={taskRows.length} //This is important field to render the next data
+                        dataLength={favorRows.length} //This is important field to render the next data
                         next={fetchNext}
                         hasMore={moreScroll}
                         hasChildren={moreScroll}
@@ -100,9 +94,9 @@ const CompletedContainer = (props) => {
 
                     >
                         {
-                            taskRows.map((key) => {
-                                console.log("enter");
-                                return <TaskContainer taskVals={key} key={key.id}></TaskContainer>
+                            favorRows.map((key) => {
+                                console.log("enter", key);
+                                return <FavorContainer favorVals={key} key={key.id}></FavorContainer>
                             })
                         }
                     </InfiniteScroll>
@@ -114,10 +108,10 @@ const CompletedContainer = (props) => {
     else {
         return (
             <>
-                <ErrorContainer imgSrc="../images/error_container/error.png" errTitle="No Tasks Detected!" errMsg="You haven't completed any task yet." />
+                <ErrorContainer imgSrc="../images/error_container/error.png" errTitle="No Favors Detected!" errMsg="You haven't given any favors yet." />
             </>
         )
     }
 }
 
-export default CompletedContainer;
+export default SettledFavorsContainer;

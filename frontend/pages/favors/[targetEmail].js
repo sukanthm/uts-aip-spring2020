@@ -5,8 +5,7 @@ import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
 import helpers from '../../functions/helpers.js';
 
-import OpenFavorsContainer from '../../elements/OpenFavorsContainer';
-import SettledFavorsContainer from '../../elements/SettledFavorsContainer';
+import FavorListContainer from '../../elements/FavorListContainer';
 
 
 const UserId = () => {
@@ -31,12 +30,12 @@ const UserId = () => {
                 >
                     <Tab eventKey="open" title="Open Favors">
                         <div>
-                            <OpenFavorsContainer user={Router.query}></OpenFavorsContainer>
+                            <FavorListContainer user={Router.query} type="Pending"></FavorListContainer>
                         </div>
                     </Tab>
                     <Tab eventKey="settled" title="Settled Favors">
                         <div>
-                        <SettledFavorsContainer user={Router.query}></SettledFavorsContainer>
+                        <FavorListContainer user={Router.query} type="Paid"></FavorListContainer>
                         </div>
                     </Tab>
                 </Tabs>

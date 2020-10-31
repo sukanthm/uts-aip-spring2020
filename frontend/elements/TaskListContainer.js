@@ -8,7 +8,7 @@ import ErrorContainer from '../elements/ErrorContainer';
 
 
 
-const CreatedContainer = (props) => {
+const TaskListContainer = (props) => {
 
     const itemsPerPage = 5;
     const currentPage = useRef(0);
@@ -20,10 +20,11 @@ const CreatedContainer = (props) => {
     const [showAlert, setShowAlert] = useState(false);
     const [errMsg, setErrMsg] = useState("");
 
+    console.log(props);
     const fetchTasks = async (status, currentPage, itemsPerPage, search) => {
         try {
             let fetchJson = {
-                dashboardFilter: "Creator",
+                dashboardFilter: props.type,
                 requestStatus: status,
                 currentPage: currentPage,
                 itemsPerPage: itemsPerPage,
@@ -31,8 +32,8 @@ const CreatedContainer = (props) => {
             }
             let result = await fetch("/api/requests", { method: "GET", headers: fetchJson });
             let json = await result.json();
+            console.log("kya?", json);
             if (json.success == true) {
-                console.log("kya?", json);
                 if (json.output.currentPage == (json.output.totalPages - 1)) {
                     console.log("ruk gaya");
                     setMoreScroll(false);
@@ -70,16 +71,15 @@ const CreatedContainer = (props) => {
 
     useEffect(() => { fetchTasks("All", currentPage.current, itemsPerPage, "") }, []);
 
-
+    
     if (taskRows.length > 0) {
-
+        console.log("checkiya", taskRows);
         return (
 
             <div className="dashboard-page">
                 <div className="container">
 
                     <hr />
-
                     <Alert show={showAlert} variant="danger" onClose={() => setShowAlert(false)} dismissible>
                         <Alert.Heading>Oh snap! Error processing the request!</Alert.Heading>
                         <p>
@@ -116,10 +116,10 @@ const CreatedContainer = (props) => {
     else {
         return (
             <>
-                <ErrorContainer imgSrc="../images/error_container/error.png" errTitle="No Tasks Detected!" errMsg="You haven't created any task yet." />
+                <ErrorContainer imgSrc="../images/error_container/error.png" errTitle="No Tasks Detected!" errMsg="You haven't completed any task yet." />
             </>
         )
     }
 }
 
-export default CreatedContainer;
+export default TaskListContainer;

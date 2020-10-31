@@ -1,7 +1,5 @@
 import Header from '../../template-parts/Header';
-import CreatedContainer from '../../elements/CreatedContainer';
-import SponsoredContainer from '../../elements/SponsoredContainer';
-import CompletedContainer from '../../elements/CompletedContainer';
+import TaskListContainer from '../../elements/TaskListContainer';
 import ActiveLink from '../../template-parts/ActiveLink'
 import { useState, useEffect } from 'react';
 import Tabs from 'react-bootstrap/Tabs';
@@ -32,17 +30,17 @@ const dashboard = (props) => {
                 >
                     <Tab eventKey="home" title="Created by Me">
                         <div>
-                            <CreatedContainer></CreatedContainer>
+                            <TaskListContainer type="Creator"></TaskListContainer>
                         </div>
                     </Tab>
                     <Tab eventKey="profile" title="Sponsored by Me">
                         <div>
-                            <SponsoredContainer></SponsoredContainer>   
+                            <TaskListContainer type="Sponsor"></TaskListContainer>  
                         </div>
                     </Tab>
                     <Tab eventKey="contact" title="Completed by Me">
                         <div>
-                            <CompletedContainer></CompletedContainer>    
+                            <TaskListContainer type="Completor"></TaskListContainer>    
                         </div>
                     </Tab>
                 </Tabs>
