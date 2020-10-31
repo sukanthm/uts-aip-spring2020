@@ -49,7 +49,7 @@ const Party = (props) => {
                                                     partyData[key].map((row, index) => {
                                                         return (
                                                             <div>
-                                                                <b>People for Party No: {index + 1}</b>
+                                                                <b>Party No: {index + 1}</b>
                                                                 <p>{row.join('; ')}</p>
                                                             </div>
                                                         )
