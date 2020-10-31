@@ -88,8 +88,8 @@ const favorId = () => {
                 </thead>
                 <tbody>
                     <tr>
-                        <td>Comment:</td>
-                        <td><strong>{favorData.comment}</strong></td>
+                        <td>Status:</td>
+                        <td><h4><strong><span className={"status-"+favorData.status}>{favorData.status}</span></strong></h4></td>
                     </tr>
                     <tr>
                         <td>Payee Email:</td>
@@ -97,31 +97,23 @@ const favorId = () => {
                     </tr>
                     <tr>
                         <td>Payee &rArr; Payer</td>
-                        <td></td>
+                        <td>&dArr;</td>
                     </tr>
                     <tr>
                         <td>Payer Email:</td>
                         <td><strong>{favorData.payerEmail}</strong></td>
                     </tr>
                     <tr>
-                        <td>Status:</td>
-                        <td><strong>{favorData.status}</strong></td>
-                    </tr>
-                    <tr>
-                        <td>Reward ID:</td>
-                        <td><strong>{favorData.rewardID}</strong></td>
-                    </tr>
-                    <tr>
-                        <td>Reward Title:</td>
+                        <td>Reward:</td>
                         <td><strong>{rewardTitle}</strong><br/><img src={'../../images/reward/'+rewardTitle+'.png'}></img></td>
                     </tr>
                     <tr>
                         <td>Created at:</td>
-                        <td><strong>{favorData.createdAt}</strong></td>
+                        <td>{helpers.readableDate(favorData.createdAt)}</td>
                     </tr>
                     <tr hidden={favorData.status == 'Pending'}>
                         <td>Paid at:</td>
-                        <td><strong>{favorData.paidAt}</strong></td>
+                        <td>{helpers.readableDate(favorData.paidAt)}</td>
                     </tr>
                     <tr hidden={creationImage==''}>
                         <td>Creation Image:</td>
@@ -130,6 +122,10 @@ const favorId = () => {
                     <tr hidden={completionImage==''}>
                         <td>Completion Image:</td>
                         <td><img src={`/api/image/${completionImage}`} alt="completion Image" className="img-size-maintain"></img></td>
+                    </tr>
+                    <tr>
+                        <td>Comment:</td>
+                        <td>{favorData.comment}</td>
                     </tr>
                 </tbody>
             </table>

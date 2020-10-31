@@ -205,6 +205,15 @@
       font-weight: bolder;
   }
 
+  .status-Pending{
+    color: $red;
+    font-weight: bolder;
+}
+
+.status-Paid{
+    color: $green;
+    font-weight: bolder;
+}
   .cust-fab{
     position: fixed;
     bottom: 20px;
