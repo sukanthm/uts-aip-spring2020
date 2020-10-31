@@ -464,7 +464,7 @@ module.exports = function(app){
                     payeeID: user.id,
                     payerID: favors[i]['sponsorID'],
                     rewardID: favors[i]['rewardID'],
-                    comment: 'automagically created for requestID: '+oneRequest.id+' completion',
+                    comment: 'automagically created for requestID: '+oneRequest.id+' completion; ',
                     creationProofPath: req.file.filename,
                 });
                 favorTrace.push(favor);

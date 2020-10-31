@@ -98,7 +98,7 @@ const New = () => {
                                 <hr/>
                                 <input id='radioForm1' name='radioForm' type="radio" className="reward-num-btn1" onClick={() => setRadio(true)} />
                                 <span> </span>
-                                <label htmlFor="radioForm1"><b>{targetEmail || 'they'}</b> owe me</label>
+                                <label htmlFor="radioForm1"><b>{targetEmail || 'they'}</b> owe{targetEmail?'s':''} me</label>
                             </div>
                     </div>
 

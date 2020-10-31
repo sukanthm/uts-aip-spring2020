@@ -93,8 +93,8 @@ const favorId = () => {
                 </thead>
                 <tbody>
                     <tr>
-                        <td>Comment:</td>
-                        <td><strong>{favorData.comment}</strong></td>
+                        <td>Status:</td>
+                        <td><h4><strong><span className={"status-"+favorData.status}>{favorData.status}</span></strong></h4></td>
                     </tr>
                     <tr>
                         <td>Payee Email:</td>
@@ -102,31 +102,23 @@ const favorId = () => {
                     </tr>
                     <tr>
                         <td>Payee &rArr; Payer</td>
-                        <td></td>
+                        <td>&dArr;</td>
                     </tr>
                     <tr>
                         <td>Payer Email:</td>
                         <td><strong>{favorData.payerEmail}</strong></td>
                     </tr>
                     <tr>
-                        <td>Status:</td>
-                        <td><strong>{favorData.status}</strong></td>
-                    </tr>
-                    <tr>
-                        <td>Reward ID:</td>
-                        <td><strong>{favorData.rewardID}</strong></td>
-                    </tr>
-                    <tr>
-                        <td>Reward Title:</td>
+                        <td>Reward:</td>
                         <td><strong>{rewardTitle}</strong><br/><img src={'../../images/reward/'+rewardTitle+'.png'}></img></td>
                     </tr>
                     <tr>
                         <td>Created at:</td>
-                        <td><strong>{favorData.createdAt}</strong></td>
+                        <td>{helpers.readableDate(favorData.createdAt)}</td>
                     </tr>
                     <tr hidden={favorData.status == 'Pending'}>
                         <td>Paid at:</td>
-                        <td><strong>{favorData.paidAt}</strong></td>
+                        <td>{helpers.readableDate(favorData.paidAt)}</td>
                     </tr>
                     <tr hidden={creationImage==''}>
                         <td>Creation Image:</td>
@@ -136,8 +128,13 @@ const favorId = () => {
                         <td>Completion Image:</td>
                         <td><img src={`/api/image/${completionImage}`} alt="completion Image" className="img-size-maintain"></img></td>
                     </tr>
+                    <tr>
+                        <td>Comment:</td>
+                        <td>{favorData.comment}</td>
+                    </tr>
                 </tbody>
             </table>
+            <button hidden={ favorData.status ? favorData.status === 'Paid' : true} className="btn btn-primary right  btn-forward-main" disabled={claimDisable} onClick={() => setShowCla(true)}>Close favor</button>
         </div>
         <Alert show={showAlert} variant="danger" onClose={() => setShowAlert(false)} dismissible>
             <Alert.Heading>Oh snap! Error in displaying favor!</Alert.Heading>
@@ -145,11 +142,6 @@ const favorId = () => {
                     {errMsg}
                 </p>
         </Alert>
-        
-        <div className="col-md-12">
-            <button hidden={ favorData.status ? favorData.status === 'Paid' : true} 
-                className="btn btn-primary right  btn-forward-main" disabled={claimDisable} onClick={() => setShowCla(true)}>Close favor</button>
-        </div>
 
         {/* Modal for Claim */}
         <Modal show={showCla} onHide={handleCloseCla} dialogClassName="modal-90w" centered>
@@ -158,9 +150,11 @@ const favorId = () => {
             </Modal.Header>
             <Modal.Body>
                 <div className="container">
+                    <p>You are about to close this favor. Are you sure?</p>
                     <div className="container-fluid">
                         <div className="row">
                             <div hidden={user == favorData.payerEmail} className="col-md-3 task-image-holder">
+                                <b>Upload Proof Image</b>
                                 <img src={imgFile} alt="Upload Image" className="task-image container"></img>
                                 <div className="task-image-upload container-fluid center">
                                     <label htmlFor="task-image-edit">
@@ -176,7 +170,7 @@ const favorId = () => {
             </Modal.Body>
             <Modal.Footer>
                 <Button variant="secondary" onClick={handleCloseCla}>Cancel</Button>
-                <Button variant="primary" onClick={() => payFavor()}>Claim</Button>
+                <Button variant="primary" onClick={() => payFavor()}>Sure</Button>
             </Modal.Footer>
         </Modal>
         </>
