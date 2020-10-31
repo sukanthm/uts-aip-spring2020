@@ -66,10 +66,10 @@ const AllRewardsRadio = (props) => {
                             <div className={`favor-reward-card ${dynamicClass2}`}>
                                 <label>
                                     <div className="container center reward-title">
-                                        <h5>{'Candy'}</h5>
+                                        <h5>{'Meal'}</h5>
                                     </div>
                                     <div className="container reward-icon">
-                                        <img src='../images/reward/candy.png' className="col-lg-12"></img>
+                                        <img src='../images/reward/meal.png' className="col-lg-12"></img>
                                     </div>
                                     <div className="container">
                                         <div className="row reward-update">
@@ -84,10 +84,10 @@ const AllRewardsRadio = (props) => {
                             <div className={`favor-reward-card ${dynamicClass3}`}>
                                 <label>
                                     <div className="container center reward-title">
-                                        <h5>{'Meal'}</h5>
+                                        <h5>{'Snacks'}</h5>
                                     </div>
                                     <div className="container reward-icon">
-                                        <img src='../images/reward/meal.png' className="col-lg-12"></img>
+                                        <img src='../images/reward/snacks.png' className="col-lg-12"></img>
                                     </div>
                                     <div className="container">
                                         <div className="row reward-update">
@@ -102,10 +102,10 @@ const AllRewardsRadio = (props) => {
                             <div className={`favor-reward-card ${dynamicClass4}`}>
                                 <label>
                                     <div className="container center reward-title">
-                                        <h5>{'Snacks'}</h5>
+                                        <h5>{'Candy'}</h5>
                                     </div>
                                     <div className="container reward-icon">
-                                        <img src='../images/reward/snacks.png' className="col-lg-12"></img>
+                                        <img src='../images/reward/candy.png' className="col-lg-12"></img>
                                     </div>
                                     <div className="container">
                                         <div className="row reward-update">
