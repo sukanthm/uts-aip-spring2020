@@ -22,7 +22,7 @@ const UserCard = (props) => {
             {   
                 props.userData.outgoing ? (
                     <div className="col-6">
-                        <b>Rewards to be paid</b>
+                        <b>{props.type==='Pending' ? 'Rewards to be paid' : 'Rewards you paid'}</b>
                         <RewardsContainer rewardsData={props.userData.outgoing} />
                     </div>
                 )
@@ -32,7 +32,7 @@ const UserCard = (props) => {
             {
                 props.userData.incoming ? (
                     <div className="col-6">
-                        <b>Rewards you are owed</b>
+                        <b>{props.type==='Pending' ? 'Rewards you are owed' : 'Rewards you were owed'}</b>
                         <RewardsContainer rewardsData={props.userData.incoming} />
                     </div>
                 )
