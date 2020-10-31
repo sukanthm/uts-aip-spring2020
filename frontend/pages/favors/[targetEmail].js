@@ -28,12 +28,12 @@ const UserId = () => {
                     activeKey={key}
                     onSelect={(k) => setKey(k)}
                 >
-                    <Tab eventKey="open" title="Open Favors">
+                    <Tab eventKey="open" title="Pending Favors">
                         <div>
                             <FavorListContainer user={Router.query} type="Pending"></FavorListContainer>
                         </div>
                     </Tab>
-                    <Tab eventKey="settled" title="Settled Favors">
+                    <Tab eventKey="settled" title="Paid Favors">
                         <div>
                         <FavorListContainer user={Router.query} type="Paid"></FavorListContainer>
                         </div>

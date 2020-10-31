@@ -170,7 +170,7 @@ const favorId = () => {
             </Modal.Body>
             <Modal.Footer>
                 <Button variant="secondary" onClick={handleCloseCla}>Cancel</Button>
-                <Button variant="primary" onClick={() => payFavor()}>Sure</Button>
+                <Button variant="primary" onClick={() => payFavor()}>CLOSE</Button>
             </Modal.Footer>
         </Modal>
         </>
