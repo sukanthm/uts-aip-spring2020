@@ -29,7 +29,7 @@ const New = () => {
         document.getElementById('radioForm1').checked = radioFlag;
         document.getElementById('radioForm2').checked = !radioFlag;
     }
-    useEffect(()=>{setRadio(isIncoming)}, []);
+    useEffect(()=>{setRadio(isIncoming)}, [targetEmail]);
 
     function uploadImage(file){
         setShowAlert(false);
@@ -41,6 +41,11 @@ const New = () => {
         setShowAlert(false);
         if (targetEmail === ''){
             setErrMsg('Please enter Target Email');
+            setShowAlert(true);
+            return;
+        }
+        if (rewardID === ''){
+            setErrMsg('Please select a reward');
             setShowAlert(true);
             return;
         }
@@ -75,23 +80,22 @@ const New = () => {
                 <div className="row">
 
                     <div className="col-md-9">
-                        <div className="row">
                             <div className="form-group forward-cust-title">
-                                <label htmlFor="task-title">Favor Target Email</label>
-                                <input type="text" className="form-control" id="task-title" placeholder="Target Email" value={targetEmail} onChange={(e) => setTargetEmail(e.target.value)}/>
+                                <label htmlFor="task-title">Type the Email you want to create this favor for:</label>
+                                <input type="text" className="form-control" id="task-title" placeholder="Favor Target Email" value={targetEmail} onChange={(e) => setTargetEmail(e.target.value)}/>
                             </div>
-                        </div>
-                        <div className="row">
-                            <div className="form-group forward-cust-title">
-                                <label htmlFor="radioForm2">Outgoing?</label>
-                                <span> </span>
+                            <br/>
+                            <br/>
+                            <div className="form-group">
+                                {/* <p htmlFor="task-title" className="forward-cust-title">Is this email payer or payee?</p> */}
                                 <input id='radioForm2' name='radioForm' type="radio" className="reward-num-btn2" onClick={() => setRadio(false)} />
-                                <hr/>
-                                <label htmlFor="radioForm1">Incoming?</label>
                                 <span> </span>
+                                <label htmlFor="radioForm2">I owe <b>{targetEmail || 'them'}</b></label>
+                                <hr/>
                                 <input id='radioForm1' name='radioForm' type="radio" className="reward-num-btn1" onClick={() => setRadio(true)} />
+                                <span> </span>
+                                <label htmlFor="radioForm1"><b>{targetEmail || 'they'}</b> owe me</label>
                             </div>
-                        </div>
                     </div>
 
                     <div hidden={!isIncoming} className="col-md-3 task-image-holder">                        
@@ -117,7 +121,7 @@ const New = () => {
                         {errMsg}
                     </p>
             </Alert>
-            <Button variant="primary" onClick={() => createFavor()}>Submit</Button>
+            <button className="btn btn-primary mr-3 right btn-forward-main" onClick={() => createFavor()}>Create New Favor</button>
         </div>
     </>
     )

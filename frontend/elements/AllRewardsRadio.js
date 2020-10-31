@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react';
 
 const AllRewardsRadio = (props) => {
-    const [selectedRewardID, setSelectedRewardID] = useState(1);
+    const [selectedRewardID, setSelectedRewardID] = useState('');
 
-    function setRadio(input, targetDOM){
-        setSelectedRewardID(input);
-        targetDOM.checked;
-    }
+    // function setRadio(input, targetDOM){
+    //     setSelectedRewardID(input);
+    //     targetDOM.checked;
+    // }
 
     useEffect(() => {
-        setRadio(selectedRewardID, document.getElementById('radio1')); //this should work, but doesnt set coffee checked on load
+        // setRadio(1, document.getElementById('radio1')); //this should work, but doesnt set coffee checked on load
         props.id(selectedRewardID);
     }, [selectedRewardID]);
 
@@ -21,86 +21,97 @@ const AllRewardsRadio = (props) => {
 
                         <div className="col-md-2">
                             <div className="reward-card">
-                                <div className="container center reward-title">
-                                    <h5>{'Coffee'}</h5>
-                                </div>
-                                <div className="container reward-icon">
-                                    <img src='../images/reward/coffee.png' className="col-lg-12"></img>
-                                </div>
-                                <hr />
-                                <div className="container">
-                                    <div className="row reward-update">
-                                        <input id='radio1' name='radioForm' type="radio" className="reward-num-btn" onClick={(e) => setRadio(1,e.target)} />
+                                <label>
+                                    <div className="container center reward-title">
+                                        <h5>{'Coffee'}</h5>
                                     </div>
-                                </div>
+                                
+                                    <div className="container reward-icon">
+                                        <img src='../images/reward/coffee.png' className="col-lg-12"></img>
+                                    </div>
+                                    <hr />
+                                    <div className="container">
+                                        <div className="row reward-update">
+                                            <input id='radio1' name='radioForm' type="radio" className="reward-num-btn" onClick={(e) => setSelectedRewardID(1)} />
+                                        </div>
+                                    </div>
+                                </label>
                             </div>
                         </div>
 
                         <div className="col-md-2">
                             <div className="reward-card">
-                                <div className="container center reward-title">
-                                    <h5>{'Candy'}</h5>
-                                </div>
-                                <div className="container reward-icon">
-                                    <img src='../images/reward/candy.png' className="col-lg-12"></img>
-                                </div>
-                                <hr />
-                                <div className="container">
-                                    <div className="row reward-update">
-                                        <input name='radioForm' type="radio" className="reward-num-btn" onClick={(e) => setRadio(2,e.target)} />
+                                <label>
+                                    <div className="container center reward-title">
+                                        <h5>{'Candy'}</h5>
                                     </div>
-                                </div>
+                                    <div className="container reward-icon">
+                                        <img src='../images/reward/candy.png' className="col-lg-12"></img>
+                                    </div>
+                                    <hr />
+                                    <div className="container">
+                                        <div className="row reward-update">
+                                            <input name='radioForm' type="radio" className="reward-num-btn" onClick={(e) => setSelectedRewardID(2)} />
+                                        </div>
+                                    </div>
+                                </label>
                             </div>
                         </div>
                         
                         <div className="col-md-2">
                             <div className="reward-card">
-                                <div className="container center reward-title">
-                                    <h5>{'Meal'}</h5>
-                                </div>
-                                <div className="container reward-icon">
-                                    <img src='../images/reward/meal.png' className="col-lg-12"></img>
-                                </div>
-                                <hr />
-                                <div className="container">
-                                    <div className="row reward-update">
-                                        <input name='radioForm' type="radio" className="reward-num-btn" onClick={(e) => setRadio(3,e.target)} />
+                                <label>
+                                    <div className="container center reward-title">
+                                        <h5>{'Meal'}</h5>
                                     </div>
-                                </div>
+                                    <div className="container reward-icon">
+                                        <img src='../images/reward/meal.png' className="col-lg-12"></img>
+                                    </div>
+                                    <hr />
+                                    <div className="container">
+                                        <div className="row reward-update">
+                                            <input name='radioForm' type="radio" className="reward-num-btn" onClick={(e) => setSelectedRewardID(3)} />
+                                        </div>
+                                    </div>
+                                </label>
                             </div>
                         </div>
 
                         <div className="col-md-2">
                             <div className="reward-card">
-                                <div className="container center reward-title">
-                                    <h5>{'Snacks'}</h5>
-                                </div>
-                                <div className="container reward-icon">
-                                    <img src='../images/reward/snacks.png' className="col-lg-12"></img>
-                                </div>
-                                <hr />
-                                <div className="container">
-                                    <div className="row reward-update">
-                                        <input name='radioForm' type="radio" className="reward-num-btn" onClick={(e) => setRadio(4,e.target)} />
+                                <label>
+                                    <div className="container center reward-title">
+                                        <h5>{'Snacks'}</h5>
                                     </div>
-                                </div>
+                                    <div className="container reward-icon">
+                                        <img src='../images/reward/snacks.png' className="col-lg-12"></img>
+                                    </div>
+                                    <hr />
+                                    <div className="container">
+                                        <div className="row reward-update">
+                                            <input name='radioForm' type="radio" className="reward-num-btn" onClick={(e) => setSelectedRewardID(4)} />
+                                        </div>
+                                    </div>
+                                </label>
                             </div>
                         </div>
 
                         <div className="col-md-2">
                             <div className="reward-card">
-                                <div className="container center reward-title">
-                                    <h5>{'Drink'}</h5>
-                                </div>
-                                <div className="container reward-icon">
-                                    <img src='../images/reward/drink.png' className="col-lg-12"></img>
-                                </div>
-                                <hr />
-                                <div className="container">
-                                    <div className="row reward-update">
-                                        <input name='radioForm' type="radio" className="reward-num-btn" onClick={(e) => setRadio(5,e.target)} />
+                                <label>
+                                    <div className="container center reward-title">
+                                        <h5>{'Drink'}</h5>
                                     </div>
-                                </div>
+                                    <div className="container reward-icon">
+                                        <img src='../images/reward/drink.png' className="col-lg-12"></img>
+                                    </div>
+                                    <hr />
+                                    <div className="container">
+                                        <div className="row reward-update">
+                                            <input name='radioForm' type="radio" className="reward-num-btn" onClick={(e) => setSelectedRewardID(5)} />
+                                        </div>
+                                    </div>
+                                </label>
                             </div>
                         </div>
 
