@@ -184,7 +184,7 @@ module.exports = function(app){
             rewardID: rewardID,
             payeeID: payeeUser.id,
             payerID: payerUser.id,
-            comment: 'manually created by: '+user.email+' ',
+            comment: 'manually created by: '+user.email+'; ',
         });
 
         if (user.email === payerEmail){
@@ -378,7 +378,7 @@ module.exports = function(app){
 
         favor.paidAt = Date.now();
         favor.status = 'Paid';
-        favor.comment += 'manually closed by '+user.email+' ';
+        favor.comment += 'manually closed by '+user.email+'; ';
         try{
             await favor.save();
             helperModule.manipulate_response_and_send(req, res, {
