@@ -234,3 +234,19 @@
 .img-size-maintain{
     width: 200px;
 }
+
+.reward-selector{
+    display: none;
+}
+
+.select-me{
+    background-color: #dfccfc;
+    -webkit-box-shadow: 0px 3px 4px 0px rgba(181,181,181,1);
+    -moz-box-shadow: 0px 3px 4px 0px rgba(181,181,181,1);
+    box-shadow: 0px 3px 4px 0px rgba(181,181,181,1);
+    border-radius: 5px;
+}
+
+.favor-reward-card *:hover{
+    cursor: pointer;
+}
