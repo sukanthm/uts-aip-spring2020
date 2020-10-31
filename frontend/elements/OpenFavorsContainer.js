@@ -24,7 +24,7 @@ const OpenFavorsContainer = (props) => {
     const fetchFavors = async ( currentPage, itemsPerPage) => {
         try {
             
-            let result = await fetch(`/api/favors/${props.user.userId}?currentPage=${currentPage}&itemsPerPage=${itemsPerPage}`, { method: "GET", headers: {statusFilter: "Pending"} });
+            let result = await fetch(`/api/favors/${props.user.targetEmail}?currentPage=${currentPage}&itemsPerPage=${itemsPerPage}`, { method: "GET", headers: {statusFilter: "Pending"} });
             let json = await result.json();
             console.log("kya?", json);
             if (json.success == true) {

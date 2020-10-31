@@ -1,10 +1,10 @@
-import Header from '../../../template-parts/Header';
+import Header from '../../template-parts/Header';
 import { useState } from 'react';
 import { useRouter } from 'next/router'
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
-import OpenFavorsContainer from '../../../elements/OpenFavorsContainer';
-import SettledFavorsContainer from '../../../elements/SettledFavorsContainer';
+import OpenFavorsContainer from '../../elements/OpenFavorsContainer';
+import SettledFavorsContainer from '../../elements/SettledFavorsContainer';
 
 
 const UserId = () => {

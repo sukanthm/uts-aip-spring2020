@@ -32,12 +32,12 @@ const TopNavbar = (props) => {
             </ActiveLink>
           </li>
           <li className="nav-item">
-          <ActiveLink activeClassName="active" href="/favor/dashboard">
+          <ActiveLink activeClassName="active" href="/favors">
               <a className="nav-link" href="#">Favors</a>
               </ActiveLink>
           </li>
           <li className="nav-item">
-          <ActiveLink activeClassName="active" href="/task/dashboard">
+          <ActiveLink activeClassName="active" href="/tasks">
               <a className="nav-link" href="#">Tasks</a>
               </ActiveLink>
           </li>

@@ -1,6 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
 import Header from '../template-parts/Header';
-import { useRouter } from 'next/router';
 import helpers from '../functions/helpers.js';
 import ActiveLink from '../template-parts/ActiveLink';
 import ErrorContainer from '../elements/ErrorContainer';
@@ -9,19 +8,13 @@ import ErrorContainer from '../elements/ErrorContainer';
 const Party = (props) => {
     const itemsPerPage = 5;
     const currentPage = useRef(0);
-    const router = useRouter();
     const [partyData, setPartyData] = useState({});
 
     const fetchTasks = async () => {
-        try {
-            let result = await fetch("/api/party", { method: "GET" });
-            let json = await result.json();
-            console.log("kya?", json);
+        let result = await fetch("/api/party", { method: "GET" });
+        let json = await result.json();
+        if (json.success)
             setPartyData(json.output);
-        }
-        catch (err) {
-            console.log(err);
-        }
     }
 
     useEffect(() => { fetchTasks("All", currentPage.current, itemsPerPage, "") }, []);
@@ -29,6 +22,7 @@ const Party = (props) => {
        return (
             <>
                 <Header />
+                
                 <div hidden={!Object.keys(partyData).length} className="container">
                     <div className="row">
                         {
@@ -62,23 +56,12 @@ const Party = (props) => {
                     </div>
                 </div>
                 
-                <ErrorContainer hidden={Object.keys(partyData).length} imgSrc="../images/error_container/error.png" errTitle="No Party Detected!" 
-                    errMsg="You are not involved in any parties yet. Keep giving and receiving favours to have a party." 
-                    needBtn={true} btnMsg="Go to Home" destin="/"/>
-
-                <div className="cust-fab">
-                    <div>
-                        <ActiveLink activeClassName="active" href="/task/new">
-                            <button type="submit" className="btn btn-primary cust-float-new">Add Task</button>
-                        </ActiveLink>    
-                    </div>
-                    <hr/> {/* //need to put makeup here */}
-                    <div>
-                        <ActiveLink activeClassName="active" href="/favor/new">
-                            <button type="submit" className="btn btn-primary cust-float-new">Add Favor</button>
-                        </ActiveLink>    
-                    </div>
+                <div hidden={Object.keys(partyData).length} className="container">
+                    <ErrorContainer imgSrc="../images/error_container/error.png" errTitle="No Party Detected!" 
+                        errMsg="You are not involved in any parties yet. Parties are formed when reward loops occur." 
+                        needBtn={true} btnMsg="Go to Home" destin="/"/>
                 </div>
+
             </>
         )
 }

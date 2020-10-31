@@ -1,11 +1,11 @@
 import { useRouter } from 'next/router';
 import { useState, useEffect, useContext } from 'react';
 
-import Header from '../../../template-parts/Header';
-import IndividualRewardCard from '../../../elements/IndividualRewardCard';
-import RewardCard from '../../../elements/RewardCard';
-import helpers from '../../../functions/helpers.js';
-import UserContext from '../../../functions/context';
+import Header from '../../template-parts/Header';
+import IndividualRewardCard from '../../elements/IndividualRewardCard';
+import RewardCard from '../../elements/RewardCard';
+import helpers from '../../functions/helpers.js';
+import UserContext from '../../functions/context';
 import Modal from 'react-bootstrap/Modal';
 import { Button, ButtonToolbar } from 'react-bootstrap';
 import Alert from 'react-bootstrap/Alert';
