@@ -32,11 +32,9 @@ const Dashboard = (props) => {
         try {
             let fetchJson = {
                 requestStatus: status,
-                currentPage: currentPage,
-                itemsPerPage: itemsPerPage,
                 searchData: search
             }
-            let result = await fetch("/api/requests", { method: "GET", headers: fetchJson });
+            let result = await fetch(`/api/requests?currentPage=${currentPage}&itemsPerPage=${itemsPerPage}`, { method: "GET", headers: fetchJson });
             let json = await result.json();
             console.log("kya?", json);
             setTaskData(json.output);
@@ -106,7 +104,9 @@ const Dashboard = (props) => {
                     <div className="row">
                         <div className="col-md-12">
                             <div className="input-group">
-                                <input type="text" className="form-control" placeholder="Search tasks by reward, title, description" value={searchText} onChange={(e) => setSearchText(e.target.value)} />
+                                <input type="text" className="form-control" placeholder="Search tasks by reward, title, description" 
+                                    value={searchText} onChange={(e) => setSearchText(e.target.value)} 
+                                    onKeyDown={(e) => {if(e.key === "Enter") sendSearch();}}/>
                                 <button type="submit" className="btn btn-primary" onClick={() => sendSearch()}>Search</button>
                             </div>
                         </div>

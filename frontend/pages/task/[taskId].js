@@ -67,7 +67,7 @@ const TaskId = () => {
     const [rewardJson, setRewardJson] = useState({});
 
     let rewardData = (category, count) => {
-        let id = helpers.rewardID(category); // fetch id for the selected reward
+        let id = helpers.rewardID(category); // get id for the selected reward
         let temp_json = rewardJson;
         temp_json[id] = count;
         setRewardJson(temp_json);

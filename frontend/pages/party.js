@@ -1,20 +1,15 @@
 import { useEffect, useState, useRef,useContext } from 'react';
 import Header from '../template-parts/Header';
 import helpers from '../functions/helpers.js';
-import ActiveLink from '../template-parts/ActiveLink';
 import ErrorContainer from '../elements/ErrorContainer';
-import { useRouter } from 'next/router';
 import UserContext from '../functions/context';
 import LoadingComponent from '../elements/LoadingComponent';
 
 
 const Party = (props) => {
-    const itemsPerPage = 5;
-    const currentPage = useRef(0);
     const [partyData, setPartyData] = useState({});
     const [isLoading, setIsLoading] = useState(true);
 
-    const Router = useRouter();
     const { sessionCheck } = useContext(UserContext);
 
     const fetchTasks = async () => {
@@ -27,7 +22,7 @@ const Party = (props) => {
 
     useEffect(() => { 
         sessionCheck();
-        fetchTasks("All", currentPage.current, itemsPerPage, "") 
+        fetchTasks() 
     }, []);
 
        return (

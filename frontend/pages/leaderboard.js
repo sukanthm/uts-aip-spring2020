@@ -1,8 +1,6 @@
 import { useEffect, useState, useRef, useContext } from 'react';
 import Header from '../template-parts/Header';
 import ErrorContainer from '../elements/ErrorContainer';
-import helpers from '../functions/helpers.js';
-import { useRouter } from 'next/router';
 import UserContext from '../functions/context';
 import LoadingComponent from '../elements/LoadingComponent';
 
@@ -12,14 +10,13 @@ import LoadingComponent from '../elements/LoadingComponent';
 
 const leaderboard = (props) => {
     const itemsPerPage = 10;
-    const currentPage = useRef(0);
+    const currentPage = 0;
     const [leaderData, setLeaderData] = useState({});
-    const Router = useRouter();
     const { sessionCheck } = useContext(UserContext);
     const [isLoading, setIsLoading] = useState(true);
 
     const fetchTasks = async () => {
-        let result = await fetch("/api/leaderboard/1", { method: "GET" });
+        let result = await fetch(`/api/leaderboard/1?currentPage=${currentPage}&itemsPerPage=${itemsPerPage}`, { method: "GET" });
         let json = await result.json();
         if (json.success)
             setLeaderData(json.output);
