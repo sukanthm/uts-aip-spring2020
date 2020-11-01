@@ -1,5 +1,4 @@
 const express = require('express');
-// const bodyParser = require('body-parser');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
@@ -18,9 +17,9 @@ import { sequelize } from './persistence/initORM.js';
 const app = express();
 app.use(cookieParser());
 app.use(helmet());
-// app.use(bodyParser.json());
 app.use(cors());
 app.use(morgan('combined'));
+//app.use(function(req,res,next){setTimeout(next,2000)});  //global api delay ms
 
 require('./api/signupLogin.js')(app);
 require('./api/favor.js')(app);
@@ -31,11 +30,8 @@ require('./api/image.js')(app);
 
 const port = process.argv[2] ? process.argv[2] : 4000;
 
-// ------------------------------------------------
-// Initialize database and create sample data
-// ------------------------------------------------
+// Alter the database tables' schema (not drop and create)
 async function initialize() {
-    // Create the database tables (force them to be created from scratch)
     await sequelize.sync({alter: true}).catch(function (err) {
         if(err.constructor.name == 'ConnectionRefusedError'){
             console.log('Connection refused, have you run `npm run postgres` ?')

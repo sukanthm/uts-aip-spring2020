@@ -1,5 +1,5 @@
 
-import {useEffect, useState, useRef, useContext} from 'react';
+import { useEffect, useState, useRef, useContext } from 'react';
 import { useRouter } from 'next/router';
 import Header from '../../../template-parts/Header';
 import TaskContainer from '../../../elements/TaskContainer';
@@ -13,82 +13,78 @@ import LoadingComponent from '../../../elements/LoadingComponent';
 
 
 const SearchText = (props) => {
+    const Router = useRouter();
+    const searchText = Router.query.searchText;
+    if (!searchText) return null;
 
     const itemsPerPage = 5;
     const currentPage = useRef(0);
-    // const searchToggle = useRef(false);
-    const Router = useRouter();
-    console.log(Router.query);
+
     const { sessionCheck } = useContext(UserContext);
-    const searchText = Router.query.searchText;
+
     const [taskRows, setTaskRows] = useState([]);
     const [moreScroll, setMoreScroll] = useState(true);
     const [isLoading, setIsLoading] = useState(true);
     const [showAlert, setShowAlert] = useState(false);
     const [errMsg, setErrMsg] = useState("");
 
-    const fetchTasks = async(status, currentPage, itemsPerPage, search) => {
-        try{
+    const fetchTasks = async (status, currentPage, itemsPerPage, search) => {
+        try {
             let fetchJson = {
                 requestStatus: status,
                 searchData: search
             }
 
-            let result = await fetch(`/api/requests?currentPage=${currentPage}&itemsPerPage=${itemsPerPage}`, {method: "GET", headers: fetchJson});
+            let result = await fetch(`/api/requests?currentPage=${currentPage}&itemsPerPage=${itemsPerPage}`, { method: "GET", headers: fetchJson });
             let json = await result.json();
             console.log("kya?", json);
-            if(json.success == true){
-            if(json.output.currentPage == (json.output.totalPages-1)){
-                console.log("ruk gaya");
-                setMoreScroll(false);
+            if (json.success == true) {
+                if (json.output.currentPage == (json.output.totalPages - 1)) {
+                    console.log("ruk gaya");
+                    setMoreScroll(false);
+                }
+                // let arr = taskRows;
+                const arr = [...taskRows];
+                json.output.rows.map((row) => {
+                    arr.push(row);
+                })
+                console.log("arro", arr);
+                console.log("rumba", currentPage);
+                setTaskRows(arr);
+                setIsLoading(false);
             }
-            // let arr = taskRows;
-            const arr = [...taskRows];
-            json.output.rows.map((row) => {
-                arr.push(row);
-            })
-            console.log("arro", arr);
-            console.log("rumba", currentPage);
-            setTaskRows(arr);
-            setIsLoading(false);
+            else if (json.success == false) {
+                setErrMsg(json.message);
+                setIsLoading(false);
+                setShowAlert(true);
+            }
         }
-        else if(json.success == false){
-            setErrMsg(json.message);
+        catch (err) {
+            console.log(err);
+            setErrMsg("Server Error");
             setIsLoading(false);
             setShowAlert(true);
         }
     }
-    catch(err){
-        console.log(err);
-        setErrMsg("Server Error");
-        setIsLoading(false);
-        setShowAlert(true);
+
+
+
+    const fetchNext = () => {
+        console.log("abhi", currentPage.current);
+        currentPage.current = currentPage.current + 1;
+        console.log("abhi bhi", currentPage.current);
+        fetchTasks("All", currentPage.current, itemsPerPage, searchText);
     }
-        }
 
-        
 
-        const fetchNext = () => {
-            console.log("abhi", currentPage.current);
-            currentPage.current = currentPage.current + 1;
-            console.log("abhi bhi", currentPage.current);
-            fetchTasks("All", currentPage.current, itemsPerPage, searchText);
-        }
 
-    
+    useEffect(() => {
+        sessionCheck();
+        fetchTasks("All", currentPage.current, itemsPerPage, searchText)
+    }, []);
 
-        useEffect(() => {
-            sessionCheck();
-            fetchTasks("All", currentPage.current, itemsPerPage, searchText)
-        }, []);
 
-       
     return (
-    <>
-        {
-            isLoading ? (
-            <LoadingComponent></LoadingComponent>
-        ) : (
         <>
             <Header />
             <div className="dashboard-page">
@@ -99,39 +95,38 @@ const SearchText = (props) => {
                         </div>
                     </div>
                     <hr />
+                    {isLoading ? <LoadingComponent></LoadingComponent> : null}
                     <Alert show={showAlert} variant="danger" onClose={() => setShowAlert(false)} dismissible>
                         <Alert.Heading>Oh snap! Error in loading task!</Alert.Heading>
                         <p>
-                        {errMsg}
+                            {errMsg}
                         </p>
                     </Alert>
-                    
+
 
                     <InfiniteScroll
-                    dataLength={taskRows.length} //This is important field to render the next data
-                    next={fetchNext}
-                    hasMore={moreScroll}
-                    hasChildren={moreScroll}
-                    loader={<h4>Loading...</h4>}
-                    height={700}
-                    endMessage={
-                        <p style={{ textAlign: 'center' }}>
-                        <b>Yay! You have seen it all</b>
-                        </p>
-                    }
-                    
+                        dataLength={taskRows.length} //This is important field to render the next data
+                        next={fetchNext}
+                        hasMore={moreScroll}
+                        hasChildren={moreScroll}
+                        loader={<h4>Loading...</h4>}
+                        height={700}
+                        endMessage={
+                            <p style={{ textAlign: 'center' }}>
+                                <b>Yay! You have seen it all</b>
+                            </p>
+                        }
+
                     >
-                    {
-                    taskRows.map((key) => {
-                        console.log("enter");
-                        return <TaskContainer taskVals={key} key={key.id}></TaskContainer>
-                    })
-                    }
+                        {
+                            taskRows.map((key) => {
+                                console.log("enter");
+                                return <TaskContainer taskVals={key} key={key.id}></TaskContainer>
+                            })
+                        }
                     </InfiniteScroll>
                 </div>
             </div>
-        </>
-        )}
         </>
     );
 }

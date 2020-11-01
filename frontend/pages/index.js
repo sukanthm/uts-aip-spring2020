@@ -14,12 +14,12 @@ const Dashboard = (props) => {
 
     const itemsPerPage = 5;
     const currentPage = useRef(0);
-    // const searchToggle = useRef(false);
+
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(true);
     const [taskRows, setTaskRows] = useState([]);
     const [searchText, setSearchText] = useState("");
-    const [searchToggle, setSearchToggle] = useState(false);
+
     const [moreScroll, setMoreScroll] = useState(true);
     const [taskData, setTaskData] = useState({});
 
@@ -97,107 +97,65 @@ const Dashboard = (props) => {
         // fetchTasks("All", currentPage.current, itemsPerPage, searchText);
     }
 
-
-    // useEffect(() => {
-
-    //     setTaskRows([]);
-    //     currentPage.current = 0;
-    //     console.log("uzeAffect", taskRows);
-    //     fetchTasks("All", currentPage.current, itemsPerPage, searchText)
-    // }, [searchToggle]);
-
-    // useEffect(() => {
-
-    //    console.log("hoying?");
-    // }, [taskRows]);
-
     useEffect(() => { fetchTasks("All", currentPage.current, itemsPerPage, searchText) }, []);
-      if(taskRows.length>0){  
-        return (
-            <>
-            {
-                isLoading ? (
-                <LoadingComponent></LoadingComponent>
-            ) : (
-            <>
-                <Header />
-                <div className="dashboard-page">
-                    <div className="container">
-                        <div className="row">
-                            <div className="col-md-12">
-                                <div className="input-group">
-                                    <input type="text" className="form-control" placeholder="Search tasks by reward, title, description" value={searchText} onChange={(e) => setSearchText(e.target.value)} />
-                                    <button type="submit" className="btn btn-primary" onClick={() => sendSearch()}>Search</button>
-                                </div>
+    return (
+        <>
+            <Header />
+            <div className="dashboard-page">
+                <div className="container">
+                    <div className="row">
+                        <div className="col-md-12">
+                            <div className="input-group">
+                                <input type="text" className="form-control" placeholder="Search tasks by reward, title, description" value={searchText} onChange={(e) => setSearchText(e.target.value)} />
+                                <button type="submit" className="btn btn-primary" onClick={() => sendSearch()}>Search</button>
                             </div>
                         </div>
-                        <hr />
-
-                        <Alert show={showAlert} variant="danger" onClose={() => setShowAlert(false)} dismissible>
-                            <Alert.Heading>Oh snap! Error in loading task!</Alert.Heading>
-                            <p>
-                                {errMsg}
-                            </p>
-                        </Alert>
-                        <InfiniteScroll
-                            dataLength={taskRows.length} //This is important field to render the next data
-                            next={fetchNext}
-                            hasMore={moreScroll}
-                            hasChildren={moreScroll}
-                            loader={<h4>Loading...</h4>}
-                            height={700}
-                            endMessage={
-                                <p style={{ textAlign: 'center' }}>
-                                    <b>Yay! You have seen it all</b>
-                                </p>
-                            }
-
-                        >
-                            {
-                                taskRows.map((key) => {
-                                    console.log("enter");
-                                    return <TaskContainer taskVals={key} key={key.id} alert={alert}></TaskContainer>
-                                })
-                            }
-                        </InfiniteScroll>
                     </div>
-                    {
-                        user ? (
-                            <FABComponent type="All"></FABComponent>
-                        ) : (
-                                null
-                            )
-                    }
-                    
+                    <hr />
 
+                    {isLoading ? <LoadingComponent></LoadingComponent> : null}
+                    <div hidden={isLoading || taskRows.length > 0}>
+                        <ErrorContainer imgSrc="../images/error_container/error.png" errTitle="No Tasks Detected!" errMsg="There are currently no tasks available. Create a new task to get started." />
+                    </div>
 
+                    <Alert show={showAlert} variant="danger" onClose={() => setShowAlert(false)} dismissible>
+                        <Alert.Heading>Oh snap! Error in loading task!</Alert.Heading>
+                        <p>
+                            {errMsg}
+                        </p>
+                    </Alert>
+                    <InfiniteScroll
+                        dataLength={taskRows.length} //This is important field to render the next data
+                        next={fetchNext}
+                        hasMore={moreScroll}
+                        hasChildren={moreScroll}
+                        loader={<h4>Loading...</h4>}
+                        height={700}
+                        endMessage={
+                            <p style={{ textAlign: 'center' }}>
+                                <b>Yay! You have seen it all</b>
+                            </p>
+                        }
+                    >
+                        {
+                            taskRows.map((key) => {
+                                console.log("enter");
+                                return <TaskContainer taskVals={key} key={key.id} alert={alert}></TaskContainer>
+                            })
+                        }
+                    </InfiniteScroll>
                 </div>
-            </>
-             )}
-             </>
-        )
-    }
-    else {
-        return (
-            <>
-            {
-                isLoading ? (
-                <LoadingComponent></LoadingComponent>
-            ) : (
-            <>
-                <Header />
-                <ErrorContainer imgSrc="../images/error_container/error.png" errTitle="No Tasks Detected!" errMsg="There are currently no tasks available. Create a new task to get started."/>
-                {user ? (
-                    <FABComponent type="All"></FABComponent>
+                {
+                    user ? (
+                        <FABComponent type="All"></FABComponent>
                     ) : (
                             null
                         )
-                    }
-            </>
-             )}
-             </>
-        )
-    }
+                }
+            </div>
+        </>
+    )
+
 }
 
 export default Dashboard;

@@ -10,10 +10,11 @@ import Alert from 'react-bootstrap/Alert';
 import LoadingComponent from '../../elements/LoadingComponent';
 
 
-const favorId = () => {
+const favorIdPage = () => {
     const Router = useRouter();
-    const favorId = Router.query.favorId;
-    if (!favorId) return null;
+    if (!Router.query.favorId) return null;
+    
+    let favorId = Router.query.favorId;
 
     const { user, sessionCheck } = useContext(UserContext);
     const [isLoading, setIsLoading] = useState(true);
@@ -91,18 +92,18 @@ const favorId = () => {
 
     return(
         <>
-        {
-            isLoading ? (
-            <LoadingComponent></LoadingComponent>
-        ) : (
-        <>
         <Header></Header>
-        <div hidden={!fetchSuccess} className="container">      
+        <div className="container">      
             <table className="table">
                 <thead>
-                    <th colSpan="2"><h2>Favor ID: {favorData.id}</h2></th>
+                    <th colSpan="2"><h2>Favor ID: {favorId}</h2></th>
                 </thead>
-                <tbody>
+                
+                <div hidden={!isLoading} className="container">
+                    <LoadingComponent></LoadingComponent>
+                </div>
+                
+                <tbody hidden={!fetchSuccess}>
                     <tr>
                         <td>Status:</td>
                         <td><h4><strong><span className={"status-"+favorData.status}>{favorData.status}</span></strong></h4></td>
@@ -152,7 +153,7 @@ const favorId = () => {
                         {errMsg}
                     </p>
             </Alert>
-            <button disabled={ favorData.status ? favorData.status === 'Paid' : true} 
+            <button hidden={isLoading} disabled={ favorData.status ? favorData.status === 'Paid' : true} 
                 className="btn btn-primary right  btn-forward-main" onClick={() => setShowClaim(true)}>Close favor</button>
         </div>
 
@@ -187,8 +188,6 @@ const favorId = () => {
             </Modal.Footer>
         </Modal>
         </>
-         )}
-         </>
     )
 }
-export default favorId;
+export default favorIdPage;

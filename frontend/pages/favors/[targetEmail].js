@@ -36,7 +36,7 @@ const UserId = () => {
                     </Tab>
                     <Tab eventKey="settled" title="Paid Favors">
                         <div>
-                        <FavorListContainer user={Router.query} type="Paid"></FavorListContainer>
+                            <FavorListContainer user={Router.query} type="Paid"></FavorListContainer>
                         </div>
                     </Tab>
                 </Tabs>
