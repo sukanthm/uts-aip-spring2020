@@ -32,31 +32,24 @@ const New = () => {
     }
 
     const submitTask = async() => {
+        setShowAlert(false);
         
-        const formData = new FormData();
-        formData.append('proofImage', formImg);
-         
-        // let rewardFlag = 0;
-        // let keys = Object.keys(rewardJson);
-        // // Check if rewards have not been left empty
-        // keys.map((key) => { 
-        //     if(rewardJson[key] > 0){
-        //         rewardFlag = 1;
-        //     }
-        // })
-
-        // Title and Rewards are compulsory
-
         if(taskTitle.trim() == ""){
             setErrMsg("Title cannot be left blank");
             setShowAlert(true);
             return;
         }
-        // else if(rewardFlag == 0){
-        //     setErrMsg("Nothing in this world is free. Please add rewards to the task");
-        //     setShowAlert(true);
-        //     return;
-        // }
+        if (Math.min.apply(null, Object.values(rewardJson)) <= 0 && 
+            Math.max.apply(null, Object.values(rewardJson)) <= 0) {
+                setShowAlert(true);
+                setErrMsg('creator must sponsor some rewards to create a task');
+                return;
+        }
+
+        const formData = new FormData();
+        formData.append('proofImage', formImg);
+
+        // Title and Rewards are compulsory
 
         try{
             formData.append('title', taskTitle);
