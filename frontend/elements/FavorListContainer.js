@@ -27,10 +27,8 @@ const SettledFavorsContainer = (props) => {
             
             let result = await fetch(`/api/favors/${props.user.targetEmail}?currentPage=${currentPage}&itemsPerPage=${itemsPerPage}`, { method: "GET", headers: {statusFilter: props.type} });
             let json = await result.json();
-            console.log("kya?", json);
             if (json.success == true) {
                 if (json.output.currentPage == (json.output.totalPages - 1)) {
-                    console.log("ruk gaya");
                     setMoreScroll(false);
                 }
                 // let arr = taskRows;
@@ -38,8 +36,6 @@ const SettledFavorsContainer = (props) => {
                 json.output.rows.map((row) => {
                     arr.push(row);
                 })
-                console.log("arro", arr);
-                console.log("rumba", currentPage);
                 setFavorRows(arr);
             }
             else if (json.success == false) {
@@ -48,7 +44,6 @@ const SettledFavorsContainer = (props) => {
             }
         }
         catch (err) {
-            console.log(err);
             setErrMsg("Server Error");
             setShowAlert(true);
         }
@@ -57,9 +52,7 @@ const SettledFavorsContainer = (props) => {
 
 
     const fetchNext = () => {
-        console.log("abhi", currentPage.current);
         currentPage.current = currentPage.current + 1;
-        console.log("abhi bhi", currentPage.current);
         fetchFavors(currentPage.current, itemsPerPage);
     }
 
@@ -97,7 +90,6 @@ const SettledFavorsContainer = (props) => {
                     >
                         {
                             favorRows.map((key) => {
-                                console.log("enter", key);
                                 return <FavorContainer favorVals={key} key={key.id}></FavorContainer>
                             })
                         }
