@@ -2,8 +2,6 @@ import { useRouter } from 'next/router';
 import { useState, useEffect, useContext } from 'react';
 
 import Header from '../../template-parts/Header';
-import IndividualRewardCard from '../../elements/IndividualRewardCard';
-import RewardCard from '../../elements/RewardCard';
 import helpers from '../../functions/helpers.js';
 import UserContext from '../../functions/context';
 import Modal from 'react-bootstrap/Modal';
@@ -16,17 +14,15 @@ const favorId = () => {
     const Router = useRouter();
     const favorId = Router.query.favorId;
     if (!favorId) return null;
+
     const { user, sessionCheck } = useContext(UserContext);
     const [isLoading, setIsLoading] = useState(true);
 
     //Variables for Claim Modal
-    const [showCla, setShowCla] = useState(false);
-    const handleCloseCla = () => setShowCla(false);
-    const handleShowCla = () => setShowCla(true);
-    const [claimDisable, setClaimDisable] = useState(false);
+    const [showClaim, setShowClaim] = useState(false);
 
     const [imgFile, setImgFile] = useState("../../../images/upload-img.png");
-    const [formImg, setFormImg] = useState();
+    const [formImg, setFormImg] = useState('');
     const [showAlert, setShowAlert] = useState(false);
     const [errMsg, setErrMsg] = useState("");
 
@@ -43,6 +39,9 @@ const favorId = () => {
     }
 
     async function getFavor(){
+        setShowClaim(false);
+        setShowAlert(false);
+
         let result = await fetch(`/api/favor/${favorId}`, {credentials: 'include', method: "GET"});
         let json = await result.json();
 
@@ -64,18 +63,22 @@ const favorId = () => {
     async function payFavor(){
         const formData = new FormData();
         formData.append('favorID', favorId);
-        if(user == favorData.payeeEmail)
-            formData.append('proofImage', formImg);
+
+        if(user === favorData.payeeEmail && formImg === ''){
+            setShowClaim(false);
+            setErrMsg('payee must give image proof to close favor');
+            setShowAlert(true);
+            return;
+        }
+        formData.append('proofImage', formImg);
         
         let result = await fetch(`/api/favor/`, {credentials: 'include', method: "PUT", body: formData});
         let json = await result.json();
 
-        if(json.success == true){
-            //router.push(`/favor/${favorId}`);
-            window.location.reload();
-        }
+        if(json.success == true)
+            getFavor();
         else {
-            setShowCla(false);
+            setShowClaim(false);
             setErrMsg(json.message);
             setShowAlert(true);
         }
@@ -142,17 +145,19 @@ const favorId = () => {
                     </tr>
                 </tbody>
             </table>
-            <button hidden={ favorData.status ? favorData.status === 'Paid' : true} className="btn btn-primary right  btn-forward-main" disabled={claimDisable} onClick={() => setShowCla(true)}>Close favor</button>
+            
+            <Alert show={showAlert} variant="danger" onClose={() => setShowAlert(false)} dismissible>
+                <Alert.Heading>Oh snap! Error in displaying favor!</Alert.Heading>
+                    <p>
+                        {errMsg}
+                    </p>
+            </Alert>
+            <button disabled={ favorData.status ? favorData.status === 'Paid' : true} 
+                className="btn btn-primary right  btn-forward-main" onClick={() => setShowClaim(true)}>Close favor</button>
         </div>
-        <Alert show={showAlert} variant="danger" onClose={() => setShowAlert(false)} dismissible>
-            <Alert.Heading>Oh snap! Error in displaying favor!</Alert.Heading>
-                <p>
-                    {errMsg}
-                </p>
-        </Alert>
 
         {/* Modal for Claim */}
-        <Modal show={showCla} onHide={handleCloseCla} dialogClassName="modal-90w" centered>
+        <Modal show={showClaim} onHide={() => setShowClaim(false)} dialogClassName="modal-90w" centered>
             <Modal.Header>
                 <Modal.Title>Pay this favor</Modal.Title>
             </Modal.Header>
@@ -177,8 +182,8 @@ const favorId = () => {
                 </div>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={handleCloseCla}>Cancel</Button>
-                <Button variant="primary" onClick={() => payFavor()}>CLOSE</Button>
+                <Button variant="secondary" onClick={() => setShowClaim(false)}>Cancel</Button>
+                <Button variant="primary" onClick={() => payFavor()}>Close Favor</Button>
             </Modal.Footer>
         </Modal>
         </>
