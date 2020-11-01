@@ -14,7 +14,7 @@ const favorId = () => {
     const Router = useRouter();
     const favorId = Router.query.favorId;
     if (!favorId) return null;
-    const { user } = useContext(UserContext);
+    const { user, sessionCheck } = useContext(UserContext);
 
     //Variables for Claim Modal
     const [showCla, setShowCla] = useState(false);
@@ -77,9 +77,7 @@ const favorId = () => {
     }
 
     useEffect(()=>{
-        if(!helpers.checkCookie()){
-            Router.push("/");
-        }
+        sessionCheck();
         getFavor()
     }, []);
 

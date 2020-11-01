@@ -7,7 +7,10 @@ import UserCard from '../../elements/UserCard';
 import helpers from '../../functions/helpers.js';
 import Alert from 'react-bootstrap/Alert';
 import { useRouter } from 'next/router';
-import { useState,useEffect } from 'react';
+import { useState,useEffect, useContext } from 'react';
+import UserContext from '../../functions/context';
+import FABComponent from '../../elements/FABComponent';
+
 
 const dashboard = (props) => {
 
@@ -25,6 +28,7 @@ const dashboard = (props) => {
     const [usersPaid, setUsersPaid] = useState({});
 
     const Router = useRouter();
+    const { sessionCheck } = useContext(UserContext);
 
     const fetchFavorData = async() => {
         try{
@@ -60,10 +64,8 @@ const dashboard = (props) => {
       }
 
       useEffect(() => {
-            if(!helpers.checkCookie()){
-                Router.push("/");
-            }
-          fetchFavorData();
+            sessionCheck();
+          fetchFavorData()
         }, []);
 
     return(
@@ -141,19 +143,9 @@ const dashboard = (props) => {
             </p>
         </Alert>
             
-        <div className="cust-fab">
-            <div>
-                <ActiveLink activeClassName="active" href="/task/new">
-                    <button type="submit" className="btn btn-primary cust-float-new">Add Task</button>
-                </ActiveLink>    
-            </div>
-            <hr/> {/* //need to put makeup here */}
-            <div>
-                <ActiveLink activeClassName="active" href="/favor/new">
-                    <button type="submit" className="btn btn-primary cust-float-new">Add Favor</button>
-                </ActiveLink>    
-            </div>
-        </div>
+        
+        <FABComponent type="Favor"></FABComponent>
+
     </>
     )
 }

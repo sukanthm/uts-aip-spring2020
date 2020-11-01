@@ -16,7 +16,7 @@ const TopNavbar = (props) => {
 
   
 
-// console.log("oyooooo", user);
+console.log("oyooooo", user);
 
   if(user != null){
     

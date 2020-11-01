@@ -1,9 +1,10 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef,useContext } from 'react';
 import Header from '../template-parts/Header';
 import helpers from '../functions/helpers.js';
 import ActiveLink from '../template-parts/ActiveLink';
 import ErrorContainer from '../elements/ErrorContainer';
 import { useRouter } from 'next/router';
+import UserContext from '../functions/context';
 
 
 const Party = (props) => {
@@ -12,6 +13,7 @@ const Party = (props) => {
     const [partyData, setPartyData] = useState({});
 
     const Router = useRouter();
+    const { sessionCheck } = useContext(UserContext);
 
     const fetchTasks = async () => {
         let result = await fetch("/api/party", { method: "GET" });
@@ -21,9 +23,7 @@ const Party = (props) => {
     }
 
     useEffect(() => { 
-        if(!helpers.checkCookie()){
-            Router.push("/");
-        }
+        sessionCheck();
         fetchTasks("All", currentPage.current, itemsPerPage, "") 
     }, []);
 
