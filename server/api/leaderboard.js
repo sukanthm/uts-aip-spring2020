@@ -36,12 +36,12 @@ module.exports = function(app){
 
         let output = await sequelize.query(
             `
-            SELECT "fp_users"."email", COUNT(*) as "pendingIncomingFavorCount"
+            SELECT "fp_users"."email", COUNT(*) as "pendingIncomingFavorCount", DENSE_RANK() OVER(ORDER BY COUNT(*) DESC) as "rank"
             FROM "fp_users"
             LEFT JOIN "fp_favors" ON "fp_users"."id" = "fp_favors"."payeeID"
             where "fp_favors"."status" = 'Pending'
             GROUP BY "fp_users"."email"
-            ORDER BY "pendingIncomingFavorCount" DESC
+            ORDER BY "rank"
             LIMIT :itemsPerPage OFFSET :offset
             ;`,
             {
@@ -54,13 +54,16 @@ module.exports = function(app){
         );
 
         //output json clean up
-        let new_output = {}
-        for (let i=0; i<output.length; i++)
-            new_output[output[i]['email']] = Number(output[i]['pendingIncomingFavorCount']);
+        let new_output = {};
+        for (let i=0; i<output.length; i++){
+            if (!(output[i]['rank'] in new_output))
+                new_output[output[i]['rank']] = [[], Number(output[i]['pendingIncomingFavorCount'])]
+            new_output[output[i]['rank']][0].push(output[i]['email']);
+        }
 
         helperModule.manipulate_response_and_send(req, res, {
             'success': true, 
-            'message': 'sent leaderboard 1 as queried //{email: pendingIncomingFavorCount, ...}',
+            'message': 'sent leaderboard 1 as queried //{rank: [[email1, email2, ...], pendingIncomingFavorCount], ...}',
             'output': new_output,
             }, 200);
         return;

@@ -5,7 +5,7 @@ import helpers from '../functions/helpers.js';
 import { useRouter } from 'next/router';
 
 const leaderboard = (props) => {
-    const itemsPerPage = 5;
+    const itemsPerPage = 10;
     const currentPage = useRef(0);
     const [leaderData, setLeaderData] = useState({});
     const Router = useRouter();
@@ -22,7 +22,7 @@ const leaderboard = (props) => {
             Router.push("/");
         }
         fetchTasks("All", currentPage.current, itemsPerPage, "") 
-    }, [leaderData]);
+    }, []);
     // If leaders are detected
 
         return (
@@ -30,16 +30,16 @@ const leaderboard = (props) => {
                 <Header />
                 
                 <div hidden={!Object.keys(leaderData).length} className="container">
-                    <h4>Most Active Incoming Favors:</h4>
+                    <h4>Top {itemsPerPage} Most Pending Incoming Favors:</h4>
                     {
-                        Object.keys(leaderData).map((key, index) => {
+                        Object.keys(leaderData).map((rank, value) => {
                             return (
                                 <div className="row">
                                     <div className="col-md-6">
                                         <div className="party-container">
                                             <div className="task-des">
                                                 {/* Email address */}
-                                                <h4><span>{index + 1}:</span> {key}: <small class="count badge badge-primary">{leaderData[key]}</small></h4>
+                                                <h4><span>{rank}:</span> {leaderData[rank][0].join('; ')}: <small class="count badge badge-primary">{leaderData[rank][1]}</small></h4>
                                             </div>
                                         </div>
                                     </div>
