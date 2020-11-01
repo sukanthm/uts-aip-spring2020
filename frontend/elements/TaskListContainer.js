@@ -3,7 +3,8 @@ import { useRouter } from 'next/router';
 import TaskContainer from './TaskContainer';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import Alert from 'react-bootstrap/Alert';
-import ErrorContainer from '../elements/ErrorContainer';
+import ErrorContainer from './ErrorContainer';
+import LoadingComponent from './LoadingComponent';
 
 
 
@@ -19,6 +20,7 @@ const TaskListContainer = (props) => {
 
     const [showAlert, setShowAlert] = useState(false);
     const [errMsg, setErrMsg] = useState("");
+    const [isLoading, setIsLoading] = useState(true);
 
     console.log(props);
     const fetchTasks = async (status, currentPage, itemsPerPage, search) => {
@@ -46,15 +48,18 @@ const TaskListContainer = (props) => {
                 console.log("arro", arr);
                 console.log("rumba", currentPage);
                 setTaskRows(arr);
+                setIsLoading(false);
             }
             else if (json.success == false) {
                 setErrMsg(json.message);
+                setIsLoading(false);
                 setShowAlert(true);
             }
         }
         catch (err) {
             console.log(err);
             setErrMsg("Server Error");
+            setIsLoading(false);
             setShowAlert(true);
         }
     }
@@ -75,7 +80,11 @@ const TaskListContainer = (props) => {
     if (taskRows.length > 0) {
         console.log("checkiya", taskRows);
         return (
-
+            <>
+            {
+                isLoading ? (
+                <LoadingComponent></LoadingComponent>
+            ) : (
             <div className="dashboard-page">
                 <div className="container">
 
@@ -110,14 +119,23 @@ const TaskListContainer = (props) => {
                     </InfiniteScroll>
                 </div>
             </div>
+             )}
+             </>
 
         );
     }
     else {
         return (
             <>
+            {
+                isLoading ? (
+                <LoadingComponent></LoadingComponent>
+            ) : (
+            <>
                 <ErrorContainer imgSrc="../images/error_container/error.png" errTitle="No Tasks Detected!" errMsg="You haven't completed any task yet." />
             </>
+             )}
+             </>
         )
     }
 }

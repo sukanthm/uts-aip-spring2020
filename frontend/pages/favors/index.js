@@ -10,6 +10,8 @@ import { useRouter } from 'next/router';
 import { useState,useEffect, useContext } from 'react';
 import UserContext from '../../functions/context';
 import FABComponent from '../../elements/FABComponent';
+import LoadingComponent from '../../elements/LoadingComponent';
+
 
 
 const dashboard = (props) => {
@@ -26,7 +28,7 @@ const dashboard = (props) => {
     const [incomingPaid, setIncomingPaid] = useState([]);
     const [outgoingPaid, setOutgoingPaid] = useState([]);
     const [usersPaid, setUsersPaid] = useState({});
-
+    const [isLoading, setIsLoading] = useState(true);
     const Router = useRouter();
     const { sessionCheck } = useContext(UserContext);
 
@@ -38,6 +40,7 @@ const dashboard = (props) => {
                 setOutgoingPending(json1.output.consolidated.outgoing || helpers.emptyRewardsDict);
                 setIncomingPending(json1.output.consolidated.incoming || helpers.emptyRewardsDict);
                 setUsersPending(json1.output.byUser);
+                setIsLoading(false);
             }
             
             let result2 = await fetch("/api/dashboard/favors", {method: "GET", headers: {statusFilter:"Paid"}});
@@ -46,19 +49,23 @@ const dashboard = (props) => {
                 setOutgoingPaid(json2.output.consolidated.outgoing || helpers.emptyRewardsDict);
                 setIncomingPaid(json2.output.consolidated.incoming || helpers.emptyRewardsDict);
                 setUsersPaid(json2.output.byUser);
+                setIsLoading(false);
             }
             
             
             if(!json1.success){
                 setErrMsg(errMsg + json1.message);
+                setIsLoading(false);
                 setShowAlert(true);
             }
             if(!json2.success){
                 setErrMsg(errMsg + json2.message);
+                setIsLoading(false);
                 setShowAlert(true);
             }
         } catch(err){
             setErrMsg(err);
+            setIsLoading(false);
             setShowAlert(true);
         }
       }
@@ -69,6 +76,11 @@ const dashboard = (props) => {
         }, []);
 
     return(
+        <>
+        {
+            isLoading ? (
+            <LoadingComponent></LoadingComponent>
+        ) : (
     <>
         <Header></Header>
         <div className="container">
@@ -146,6 +158,8 @@ const dashboard = (props) => {
         
         <FABComponent type="Favor"></FABComponent>
 
+    </>
+    )}
     </>
     )
 }

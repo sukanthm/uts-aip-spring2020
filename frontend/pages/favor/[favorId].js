@@ -9,12 +9,15 @@ import UserContext from '../../functions/context';
 import Modal from 'react-bootstrap/Modal';
 import { Button, ButtonToolbar } from 'react-bootstrap';
 import Alert from 'react-bootstrap/Alert';
+import LoadingComponent from '../../elements/LoadingComponent';
+
 
 const favorId = () => {
     const Router = useRouter();
     const favorId = Router.query.favorId;
     if (!favorId) return null;
     const { user, sessionCheck } = useContext(UserContext);
+    const [isLoading, setIsLoading] = useState(true);
 
     //Variables for Claim Modal
     const [showCla, setShowCla] = useState(false);
@@ -45,6 +48,7 @@ const favorId = () => {
 
         if(json.success == false){
             setErrMsg(json.message);
+            setIsLoading(false);
             setShowAlert(true);
             return;
         } else {
@@ -53,6 +57,7 @@ const favorId = () => {
             setRewardTitle(helpers.rewardTitle(json.output.rewardID));
             setCreationImage(json.output.creationProofPath);
             setCompletionImage(json.output.completionProofPath);
+            setIsLoading(false);
         }
     }
 
@@ -82,6 +87,11 @@ const favorId = () => {
     }, []);
 
     return(
+        <>
+        {
+            isLoading ? (
+            <LoadingComponent></LoadingComponent>
+        ) : (
         <>
         <Header></Header>
         <div hidden={!fetchSuccess} className="container">      
@@ -172,6 +182,8 @@ const favorId = () => {
             </Modal.Footer>
         </Modal>
         </>
+         )}
+         </>
     )
 }
 export default favorId;

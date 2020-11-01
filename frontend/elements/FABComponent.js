@@ -7,8 +7,6 @@ import { useRouter } from 'next/router';
 
 const FABComponent = (props) => {
 
-    console.log("ghusede", props.type);
-
     const Router = useRouter();
     const secondaryStyle = {
         color: "#fff",
@@ -22,9 +20,7 @@ const FABComponent = (props) => {
     }
 
     const actionBtns = () => {
-        console.log("ghuse", props.type);
         if(props.type == "All"){
-            console.log("Jee");
             return (
                     <Fab
                     mainButtonStyles={mainStyle}
@@ -48,7 +44,6 @@ const FABComponent = (props) => {
                     )
         }
         else if(props.type == "Task"){
-            console.log("Haan");
             return(
                     <Fab
                     mainButtonStyles={mainStyle}
@@ -66,7 +61,6 @@ const FABComponent = (props) => {
                 )
         }
         else if(props.type == "Favor"){
-            console.log("Kyaa");
             return(
                     <Fab
                     mainButtonStyles={mainStyle}

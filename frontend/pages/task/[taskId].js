@@ -4,6 +4,7 @@ import { useState, useEffect, useContext } from 'react';
 import Header from '../../template-parts/Header';
 import IndividualRewardCard from '../../elements/IndividualRewardCard';
 import RewardCard from '../../elements/RewardCard';
+import LoadingComponent from '../../elements/LoadingComponent';
 import helpers from '../../functions/helpers.js';
 import UserContext from '../../functions/context';
 import Modal from 'react-bootstrap/Modal';
@@ -12,16 +13,18 @@ import Alert from 'react-bootstrap/Alert';
 
 const TaskId = () => {
     const Router = useRouter();
+    console.log("jeanpaul", Router.query);
     const taskId = Router.query.taskId;
     if (!taskId) return null;
     const { user, sessionCheck } = useContext(UserContext);
 
     const [taskImagePath, setTaskImagePath] = useState('');
+    const [isLoading, setIsLoading] = useState(true);
+    const userMail = user;
 
     const [showAlert, setShowAlert] = useState(false);
     const [errMsg, setErrMsg] = useState("");
     const [showModalWarning, setShowModalWarning] = useState(false);
-
     const [taskData, setTaskData] = useState({});
     const [users, setUsers] = useState([]);
 
@@ -44,10 +47,11 @@ const TaskId = () => {
 
     //Variables for completed tasks
     const [isCompleted, setIsCompleted] = useState(false);
-
+    
 
     let claimTask = () => {
         if (claimDisable == false) {
+           
             handleShowCla();
         }
         else {
@@ -57,6 +61,7 @@ const TaskId = () => {
     }
 
     let upTaskReward = () => {
+        
         handleShowRew();
     }
 
@@ -79,6 +84,7 @@ const TaskId = () => {
 
         let rewardFlag = 0;
         let keys = Object.keys(rewardJson);
+       
 
         try {
             let formData = new FormData();
@@ -87,10 +93,11 @@ const TaskId = () => {
 
             let result = await fetch("/api/request/sponsor", { method: "PUT", body: formData });
             let json = await result.json();
+           
             if (json.success == true) {
                 setUsers([]);
                 handleCloseRew();
-                if (json.deletedRequestID) {
+                if (json.deletedRequestID){
                     setErrMsg(json.message);
                     Router.push(`/deleteTask`);
                 }
@@ -98,16 +105,17 @@ const TaskId = () => {
                     fetchTaskDetails();
                 }
             }
-            else if (json.success == false) {
+            else if (json.success == false){
                 setErrMsg(json.message);
                 setShowAlert(true);
                 handleCloseRew();
             }
         }
         catch (err) {
+           
             setErrMsg("Error in updating rewards");
-            setShowAlert(true);
-            handleCloseRew();
+                setShowAlert(true);
+                handleCloseRew();
         }
 
     }
@@ -118,6 +126,7 @@ const TaskId = () => {
     }
 
     const completeTask = async () => {
+        
         const formData = new FormData();
         formData.append('proofImage', formImg);
         formData.append('completorComment', taskComment);
@@ -127,16 +136,17 @@ const TaskId = () => {
 
             let result = await fetch("/api/request", { credentials: 'include', method: "PUT", body: formData });
             let json = await result.json();
+            
             if (json.success == true) {
                 handleCloseCla();
                 fetchTaskDetails();
             }
-            else if (json.success == false) {
+            else if (json.success == false){
                 setErrMsg(json.message);
                 setShowAlert(true);
                 handleCloseCla();
             }
-
+            
         }
         catch (err) {
             setErrMsg(err);
@@ -144,22 +154,23 @@ const TaskId = () => {
         }
     }
 
-
+    
 
     const fetchTaskDetails = async () => {
         try {
+            
             let result = await fetch("/api/request/" + taskId, { method: "GET" });
             let json = await result.json();
-            if (json.success == true) {
-
-                if (json.output.taskImagePath === '') {
+            if(json.success == true){
+                
+                if (json.output.taskImagePath === ''){
                     setTaskImagePath('/images/no_image.png');
                 } else setTaskImagePath(`/api/image/${json.output.taskImagePath}`);
 
                 json.output.createdAt = helpers.readableDate(json.output.createdAt);
                 if (json.output.completedAt != null)
                     json.output.completedAt = helpers.readableDate(json.output.completedAt);
-
+                
                 setTaskData(json.output);
                 let sponsors = Object.keys(json.output.rewards);
                 setUsers(sponsors);
@@ -173,24 +184,28 @@ const TaskId = () => {
                 if (json.output.status == "Completed") {
                     setIsCompleted(true);
                 }
+
+                setIsLoading(false);
             }
             else if (json.success == false) {
+                setIsLoading(false);
                 setErrMsg(json.message);
                 setShowAlert(true);
+                
             }
 
         }
         catch (err) {
+            setIsLoading(false);
             setErrMsg("err");
             setShowAlert(true);
         }
     }
 
-    useEffect(() => {
+    useEffect(() => { 
         sessionCheck();
-        fetchTaskDetails()
+        fetchTaskDetails() 
     }, [])
-
     function testTaskDeletion() {
         setShowModalWarning(false);
         if (taskData.rewards && user in taskData.rewards && Object.keys(taskData.rewards).length === 1) {
@@ -205,9 +220,13 @@ const TaskId = () => {
                 setShowModalWarning('if u proceed, task will be deleted as no sponsored rewards are left');
         }
     }
-
     return (
         <>
+        {
+            isLoading ? (
+            <LoadingComponent></LoadingComponent>
+        ) : (
+            <>
             <Header></Header>
             <div className="task-new-class">
                 <div className="container">
@@ -233,7 +252,7 @@ const TaskId = () => {
 
                     <div className="row">
                         <div className="col-md-12 contributors">
-                            <h4>Sponsors for this Task</h4>
+                        <h4>Sponsors for this Task</h4>
                         </div>
                     </div>
                     <div className="row">
@@ -260,17 +279,16 @@ const TaskId = () => {
                             <div className="col-md-12">
                                 <button className="btn btn-primary right  btn-forward-main" disabled={claimDisable} onClick={() => claimTask()}>Claim Task</button>
                                 <button className="btn btn-outline-primary mr-3 right btn-forward-main" onClick={() => upTaskReward()}>
-                                    { 
-                                        (taskData.rewards && user in taskData.rewards) ? 'UPDATE your sponsored rewards' : 'ADD rewards to sponsor this task'
-                                    }
-                                </button>
-                            </div>
+                                { 
+                                    (taskData.rewards && user in taskData.rewards) ? 'UPDATE your sponsored rewards' : 'ADD rewards to sponsor this task'
+                                }
+                            </button>                            </div>
                         ) : (
-                                <div className="col-md-12">
+                            <div className="col-md-12">
                                     <p><b>Completed by </b>{taskData.completorEmail} at {taskData.completedAt}</p>
-                                </div>
-                            )}
-
+                            </div>
+                        )}
+                        
 
                     </div>
                 </div>
@@ -298,9 +316,9 @@ const TaskId = () => {
                                 <div className="col-md-2">
                                     <RewardCard img="../../../images/reward/drink.png" category="Drink" amount={rewardData} originalValue={taskData.rewards ? taskData.rewards[user] || 0 : 0}></RewardCard>
                                 </div>
+                                </div>
                             </div>
-                        </div>
-                        <div hidden={!showModalWarning}>
+                            <div hidden={!showModalWarning}>
                             <hr/>
                             <Alert variant="danger">
                                 <Alert.Heading>{showModalWarning}</Alert.Heading>
@@ -340,6 +358,7 @@ const TaskId = () => {
                                         </div>
                                     </div>
                                 </div>
+                               
                             </div>
                         </div>
                     </Modal.Body>
@@ -353,6 +372,8 @@ const TaskId = () => {
 
             </div>
 
+        </>
+        )}
         </>
     )
 

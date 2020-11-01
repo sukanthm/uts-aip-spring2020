@@ -4,6 +4,11 @@ import ErrorContainer from '../elements/ErrorContainer';
 import helpers from '../functions/helpers.js';
 import { useRouter } from 'next/router';
 import UserContext from '../functions/context';
+import LoadingComponent from '../elements/LoadingComponent';
+
+
+
+    
 
 const leaderboard = (props) => {
     const itemsPerPage = 10;
@@ -11,12 +16,14 @@ const leaderboard = (props) => {
     const [leaderData, setLeaderData] = useState({});
     const Router = useRouter();
     const { sessionCheck } = useContext(UserContext);
+    const [isLoading, setIsLoading] = useState(true);
 
     const fetchTasks = async () => {
         let result = await fetch("/api/leaderboard/1", { method: "GET" });
         let json = await result.json();
         if (json.success)
             setLeaderData(json.output);
+            setIsLoading(false);
     }
 
     useEffect(() => { 
@@ -25,7 +32,12 @@ const leaderboard = (props) => {
     }, []);
     // If leaders are detected
 
-        return (
+        return ( 
+        <>
+            {
+                isLoading ? (
+                <LoadingComponent></LoadingComponent>
+            ) : (
             <>
                 <Header />
                 
@@ -54,6 +66,8 @@ const leaderboard = (props) => {
                         errTitle="No Leaders Detected!" errMsg="Oh no. There are no active leaders currently." needBtn={true} btnMsg="Go to Home" destin="/" />
                 </div>
 
+            </>
+            )}
             </>
         )
     

@@ -8,7 +8,7 @@ import Alert from 'react-bootstrap/Alert';
 import UserContext from '../functions/context';
 import ErrorContainer from '../elements/ErrorContainer';
 import FABComponent from '../elements/FABComponent';
-
+import LoadingComponent from '../elements/LoadingComponent';
 
 const Dashboard = (props) => {
 
@@ -16,7 +16,7 @@ const Dashboard = (props) => {
     const currentPage = useRef(0);
     // const searchToggle = useRef(false);
     const router = useRouter();
-
+    const [isLoading, setIsLoading] = useState(true);
     const [taskRows, setTaskRows] = useState([]);
     const [searchText, setSearchText] = useState("");
     const [searchToggle, setSearchToggle] = useState(false);
@@ -53,15 +53,18 @@ const Dashboard = (props) => {
                 console.log("arro", arr);
                 console.log("rumba", currentPage);
                 setTaskRows(arr);
+                setIsLoading(false);
             }
             else if (json.success == false) {
                 setErrMsg(json.message);
+                setIsLoading(false);
                 setShowAlert(true);
             }
         }
         catch (err) {
             console.log(err);
             setErrMsg("Server Error");
+            setIsLoading(false);
             setShowAlert(true);
         }
     }
@@ -111,6 +114,11 @@ const Dashboard = (props) => {
     useEffect(() => { fetchTasks("All", currentPage.current, itemsPerPage, searchText) }, []);
       if(taskRows.length>0){  
         return (
+            <>
+            {
+                isLoading ? (
+                <LoadingComponent></LoadingComponent>
+            ) : (
             <>
                 <Header />
                 <div className="dashboard-page">
@@ -165,10 +173,17 @@ const Dashboard = (props) => {
 
                 </div>
             </>
+             )}
+             </>
         )
     }
     else {
         return (
+            <>
+            {
+                isLoading ? (
+                <LoadingComponent></LoadingComponent>
+            ) : (
             <>
                 <Header />
                 <ErrorContainer imgSrc="../images/error_container/error.png" errTitle="No Tasks Detected!" errMsg="There are currently no tasks available. Create a new task to get started."/>
@@ -179,6 +194,8 @@ const Dashboard = (props) => {
                         )
                     }
             </>
+             )}
+             </>
         )
     }
 }

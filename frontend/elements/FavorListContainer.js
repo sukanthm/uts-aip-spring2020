@@ -4,7 +4,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import Alert from 'react-bootstrap/Alert';
 import ErrorContainer from './ErrorContainer';
 import FavorContainer from './FavorContainer';
-
+import LoadingComponent from './LoadingComponent';
 
 
 
@@ -18,6 +18,7 @@ const SettledFavorsContainer = (props) => {
 
     const [favorRows, setFavorRows] = useState([]);
     const [moreScroll, setMoreScroll] = useState(true);
+    const [isLoading, setIsLoading] = useState(true);
 
     const [showAlert, setShowAlert] = useState(false);
     const [errMsg, setErrMsg] = useState("");
@@ -37,14 +38,17 @@ const SettledFavorsContainer = (props) => {
                     arr.push(row);
                 })
                 setFavorRows(arr);
+                setIsLoading(false);
             }
             else if (json.success == false) {
                 setErrMsg(json.message);
+                setIsLoading(false);
                 setShowAlert(true);
             }
         }
         catch (err) {
             setErrMsg("Server Error");
+            setIsLoading(false);
             setShowAlert(true);
         }
     }
@@ -62,7 +66,11 @@ const SettledFavorsContainer = (props) => {
 
     if (favorRows.length > 0) {
         return (
-
+            <>
+        {
+            isLoading ? (
+            <LoadingComponent></LoadingComponent>
+        ) : (
             <div className="dashboard-page">
                 <div className="container">
 
@@ -96,14 +104,23 @@ const SettledFavorsContainer = (props) => {
                     </InfiniteScroll>
                 </div>
             </div>
+             )}
+             </>
 
         );
     }
     else {
         return (
             <>
+        {
+            isLoading ? (
+            <LoadingComponent></LoadingComponent>
+        ) : (
+            <>
                 <ErrorContainer imgSrc="../images/error_container/error.png" errTitle="No Favors Detected!" errMsg="You haven't given any favors yet." />
             </>
+             )}
+             </>
         )
     }
 }

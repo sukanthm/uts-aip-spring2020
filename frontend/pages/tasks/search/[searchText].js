@@ -7,6 +7,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import Alert from 'react-bootstrap/Alert';
 import helpers from '../../../functions/helpers.js';
 import UserContext from '../../../functions/context';
+import LoadingComponent from '../../../elements/LoadingComponent';
 
 
 
@@ -22,7 +23,7 @@ const SearchText = (props) => {
     const searchText = Router.query.searchText;
     const [taskRows, setTaskRows] = useState([]);
     const [moreScroll, setMoreScroll] = useState(true);
-
+    const [isLoading, setIsLoading] = useState(true);
     const [showAlert, setShowAlert] = useState(false);
     const [errMsg, setErrMsg] = useState("");
 
@@ -49,15 +50,18 @@ const SearchText = (props) => {
             console.log("arro", arr);
             console.log("rumba", currentPage);
             setTaskRows(arr);
+            setIsLoading(false);
         }
         else if(json.success == false){
             setErrMsg(json.message);
+            setIsLoading(false);
             setShowAlert(true);
         }
     }
     catch(err){
         console.log(err);
         setErrMsg("Server Error");
+        setIsLoading(false);
         setShowAlert(true);
     }
         }
@@ -80,6 +84,11 @@ const SearchText = (props) => {
 
        
     return (
+    <>
+        {
+            isLoading ? (
+            <LoadingComponent></LoadingComponent>
+        ) : (
         <>
             <Header />
             <div className="dashboard-page">
@@ -121,6 +130,8 @@ const SearchText = (props) => {
                     </InfiniteScroll>
                 </div>
             </div>
+        </>
+        )}
         </>
     );
 }

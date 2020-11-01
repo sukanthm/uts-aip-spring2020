@@ -5,12 +5,14 @@ import ActiveLink from '../template-parts/ActiveLink';
 import ErrorContainer from '../elements/ErrorContainer';
 import { useRouter } from 'next/router';
 import UserContext from '../functions/context';
+import LoadingComponent from '../elements/LoadingComponent';
 
 
 const Party = (props) => {
     const itemsPerPage = 5;
     const currentPage = useRef(0);
     const [partyData, setPartyData] = useState({});
+    const [isLoading, setIsLoading] = useState(true);
 
     const Router = useRouter();
     const { sessionCheck } = useContext(UserContext);
@@ -20,6 +22,7 @@ const Party = (props) => {
         let json = await result.json();
         if (json.success)
             setPartyData(json.output);
+            setIsLoading(false);
     }
 
     useEffect(() => { 
@@ -28,6 +31,11 @@ const Party = (props) => {
     }, []);
 
        return (
+        <>
+        {
+            isLoading ? (
+            <LoadingComponent></LoadingComponent>
+        ) : (
             <>
                 <Header />
                 
@@ -71,6 +79,8 @@ const Party = (props) => {
                 </div>
 
             </>
+             )}
+             </>
         )
 }
 
