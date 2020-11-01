@@ -17,7 +17,7 @@ const New = () => {
     const [showAlert, setShowAlert] = useState(false);
     const [errMsg, setErrMsg] = useState("");
 
-    let rewardJson = {};
+    const [rewardJson, setRewardJson] = useState({});
     
     useEffect(() => {
         if(!helpers.checkCookie()){
@@ -34,11 +34,6 @@ const New = () => {
 
     const submitTask = async() => {
         
-        console.log(taskTitle);
-        console.log(taskDesc);
-        console.log(imgFile);
-        console.log(rewardJson);
-        console.log("mama",formImg);
         const formData = new FormData();
         formData.append('proofImage', formImg);
          
@@ -90,7 +85,9 @@ const New = () => {
 
     function rewardData(category, count){
         let id = helpers.rewardID(category); // fetch id for the selected reward
-        rewardJson[id] = count;
+        let temp_json = rewardJson;
+        temp_json[id] = count;
+        setRewardJson(temp_json);
     }
 
     return(
