@@ -52,6 +52,11 @@ const TopNavbar = (props) => {
             <a className="nav-link" href="#">Party</a>
               </ActiveLink>
           </li>
+          <li className="nav-item">
+          <ActiveLink activeClassName="active" href="/help">
+            <a className="nav-link" href="#">HELP</a>
+              </ActiveLink>
+          </li>
         </ul>
               <Navbar.Text className="text-light mr-4"><i>Logged in as: <b>{user}</b></i></Navbar.Text>
               <button className="btn btn-outline-light mr-sm-2" type="submit" onClick={() => logOut()}>Logout</button>
@@ -78,6 +83,11 @@ const TopNavbar = (props) => {
             <ActiveLink activeClassName="active" href="/">
               <a className="nav-link" href="#">Home <span className="sr-only">(current)</span></a>
             </ActiveLink>
+          </li>
+          <li className="nav-item">
+          <ActiveLink activeClassName="active" href="/help">
+            <a className="nav-link" href="#">HELP</a>
+              </ActiveLink>
           </li>
         </ul>
         <form className="form-inline my-2 my-lg-0">
