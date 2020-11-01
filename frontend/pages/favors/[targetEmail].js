@@ -5,6 +5,7 @@ import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
 import helpers from '../../functions/helpers.js';
 import UserContext from '../../functions/context';
+import FABComponent from '../../elements/FABComponent';
 
 
 import FavorListContainer from '../../elements/FavorListContainer';
@@ -40,6 +41,7 @@ const UserId = () => {
                         </div>
                     </Tab>
                 </Tabs>
+                <FABComponent type="Favor"></FABComponent>
         </div>
         </>
     )
