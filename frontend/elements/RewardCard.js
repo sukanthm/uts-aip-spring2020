@@ -1,7 +1,9 @@
 import {useState, useEffect} from 'react';
+import helpers from '../functions/helpers';
 
 const RewardCard = (props) => {
-    const [count, setCount] = useState(0);
+    
+    const [count, setCount] = useState(props.originalValue[helpers.rewardID(props.category)] || 0);
     
     function updateCount(operator){
 
@@ -10,15 +12,15 @@ const RewardCard = (props) => {
             setCount(val + 1);
         }
         else if(operator == "-"){
-            // if(count > 0){
+            if(count > 0){
                 setCount(val - 1);
-            // }
+            }
         }
     }
 
     useEffect(() => {
         // useEffect was used here as the count variable was being updated in the HTML, but value could not be used in the JS
-        props.amount(props.category, count);
+        props.amount(props.category, count - (props.originalValue[helpers.rewardID(props.category)] || 0));
     }, [count])
 
     return(
