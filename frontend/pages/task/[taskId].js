@@ -71,8 +71,8 @@ const TaskId = () => {
     }
 
     const addReward = async () => {
-        if (Math.min.apply(null, Object.values(rewardJson)) <= 0 && 
-            Math.max.apply(null, Object.values(rewardJson)) <= 0) {
+        if (Math.min.apply(null, Object.values(rewardJson)) == 0 && 
+            Math.max.apply(null, Object.values(rewardJson)) == 0) {
                 handleCloseRew();
                 return;
         }
@@ -309,7 +309,7 @@ const TaskId = () => {
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={handleCloseRew}>Cancel</Button>
-                        <Button variant="primary" onClick={() => addReward()}>Update Reward</Button>
+                        <Button variant="primary" onClick={() => addReward()}>Update Rewards</Button>
                     </Modal.Footer>
                 </Modal>
 
