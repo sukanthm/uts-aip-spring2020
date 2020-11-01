@@ -17,6 +17,8 @@ const TaskId = () => {
     if (!taskId) return null;
     const { user, sessionCheck } = useContext(UserContext);
 
+    const [taskImagePath, setTaskImagePath] = useState('');
+
     // const cookie = decodeURIComponent(document.cookie).substring(7);
     const userMail = user;
 
@@ -66,11 +68,13 @@ const TaskId = () => {
         handleShowRew();
     }
 
-    let rewardJson = {};
+    const [rewardJson, setRewardJson] = useState({});
 
     let rewardData = (category, count) => {
         let id = helpers.rewardID(category); // fetch id for the selected reward
-        rewardJson[id] = count;
+        let temp_json = rewardJson;
+        temp_json[id] = count;
+        setRewardJson(temp_json);
     }
 
     const addReward = async () => {
@@ -171,6 +175,11 @@ const TaskId = () => {
             let result = await fetch("/api/request/" + taskId, { method: "GET" });
             let json = await result.json();
             if(json.success == true){
+
+                if (json.output.taskImagePath===''){
+                    setTaskImagePath('/images/no_image.png');
+                } else setTaskImagePath(`/api/image/${json.output.taskImagePath}`);
+
                 json.output.createdAt = helpers.readableDate(json.output.createdAt);
                 if(json.output.completedAt != null)
                     json.output.completedAt = helpers.readableDate(json.output.completedAt);
@@ -225,7 +234,7 @@ const TaskId = () => {
                     <div className="row">
                         <div className="col-md-3 task-image-holder">
 
-                            <img src={`/api/image/${taskData.taskImagePath}`} alt="Task Image" className="task-image container"></img>
+                            <img src={taskImagePath} alt="Task Image" className="task-image container"></img>
 
                         </div>
                         <div className="col-md-9">
@@ -292,19 +301,19 @@ const TaskId = () => {
                         <div className="container text-center">
                             <div className="row reward-cont">
                                 <div className="col-md-2">
-                                    <RewardCard img="../../../images/reward/coffee.png" category="Coffee" amount={rewardData}></RewardCard>
+                                    <RewardCard img="../../../images/reward/coffee.png" category="Coffee" amount={rewardData} originalValue={taskData.rewards ? taskData.rewards[user] || 0 : 0}></RewardCard>
                                 </div>
                                 <div className="col-md-2">
-                                    <RewardCard img="../../../images/reward/candy.png" category="Candy" amount={rewardData}></RewardCard>
+                                    <RewardCard img="../../../images/reward/meal.png" category="Meal" amount={rewardData} originalValue={taskData.rewards ? taskData.rewards[user] || 0 : 0}></RewardCard>
                                 </div>
                                 <div className="col-md-2">
-                                    <RewardCard img="../../../images/reward/meal.png" category="Meal" amount={rewardData}></RewardCard>
+                                    <RewardCard img="../../../images/reward/snacks.png" category="Snacks" amount={rewardData} originalValue={taskData.rewards ? taskData.rewards[user] || 0 : 0}></RewardCard>
                                 </div>
                                 <div className="col-md-2">
-                                    <RewardCard img="../../../images/reward/snacks.png" category="Snacks" amount={rewardData}></RewardCard>
+                                    <RewardCard img="../../../images/reward/candy.png" category="Candy" amount={rewardData} originalValue={taskData.rewards ? taskData.rewards[user] || 0 : 0}></RewardCard>
                                 </div>
                                 <div className="col-md-2">
-                                    <RewardCard img="../../../images/reward/drink.png" category="Drink" amount={rewardData}></RewardCard>
+                                    <RewardCard img="../../../images/reward/drink.png" category="Drink" amount={rewardData} originalValue={taskData.rewards ? taskData.rewards[user] || 0 : 0}></RewardCard>
                                 </div>
 
                             </div>

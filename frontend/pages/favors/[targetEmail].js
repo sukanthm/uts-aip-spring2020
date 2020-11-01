@@ -20,7 +20,6 @@ const UserId = () => {
         sessionCheck();
     }, []);
 
-    console.log(Router.query);
     return(
         <>
         <Header></Header>

@@ -18,7 +18,7 @@ const New = () => {
     const [showAlert, setShowAlert] = useState(false);
     const [errMsg, setErrMsg] = useState("");
 
-    let rewardJson = {};
+    const [rewardJson, setRewardJson] = useState({});
     
     useEffect(() => {
         sessionCheck();
@@ -33,11 +33,6 @@ const New = () => {
 
     const submitTask = async() => {
         
-        console.log(taskTitle);
-        console.log(taskDesc);
-        console.log(imgFile);
-        console.log(rewardJson);
-        console.log("mama",formImg);
         const formData = new FormData();
         formData.append('proofImage', formImg);
          
@@ -89,7 +84,9 @@ const New = () => {
 
     function rewardData(category, count){
         let id = helpers.rewardID(category); // fetch id for the selected reward
-        rewardJson[id] = count;
+        let temp_json = rewardJson;
+        temp_json[id] = count;
+        setRewardJson(temp_json);
     }
 
     return(
@@ -134,19 +131,19 @@ const New = () => {
                 <h4 className="mb-5">Choose rewards you want to offer along with this task</h4>
                 <div className="row reward-cont">
                     <div className="col-md-2">
-                        <RewardCard img="../images/reward/coffee.png" category="Coffee" amount={rewardData}></RewardCard>
+                        <RewardCard img="../images/reward/coffee.png" category="Coffee" amount={rewardData} originalValue={{}}></RewardCard>
                     </div>
                     <div className="col-md-2">
-                        <RewardCard img="../images/reward/candy.png" category="Candy" amount={rewardData}></RewardCard>
+                        <RewardCard img="../images/reward/meal.png" category="Meal" amount={rewardData} originalValue={{}}></RewardCard>
                     </div>
                     <div className="col-md-2">
-                        <RewardCard img="../images/reward/meal.png" category="Meal" amount={rewardData}></RewardCard>
+                        <RewardCard img="../images/reward/snacks.png" category="Snacks" amount={rewardData} originalValue={{}}></RewardCard>
                     </div>
                     <div className="col-md-2">
-                        <RewardCard img="../images/reward/snacks.png" category="Snacks" amount={rewardData}></RewardCard>
+                        <RewardCard img="../images/reward/candy.png" category="Candy" amount={rewardData} originalValue={{}}></RewardCard>
                     </div>
                     <div className="col-md-2">
-                        <RewardCard img="../images/reward/drink.png" category="Drink" amount={rewardData}></RewardCard>
+                        <RewardCard img="../images/reward/drink.png" category="Drink" amount={rewardData} originalValue={{}}></RewardCard>
                     </div>
                     
                 </div>

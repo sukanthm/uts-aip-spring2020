@@ -10,11 +10,8 @@ const FavorContainer = (props) => {
     const Router = useRouter();
     
     const openFavor = () => {
-        console.log("konsa?", props.favorVals.id);
         Router.push(`/favor/${props.favorVals.id}`);
     }
-
-    console.log(props);
 
     let stringData = "";
     let stringDate = "";
@@ -32,15 +29,14 @@ const FavorContainer = (props) => {
     }
     else if(props.favorVals.status == "Paid"){
         if(user == props.favorVals.payerEmail){
-                stringData =  ` ${props.favorVals.payeeEmail} returned your ${helpers.rewardTitle(props.favorVals.rewardID)}`;
-                stringDate =  `Created on ${helpers.readableDate(props.favorVals.paidAt)}`;
+                stringData =  `${props.favorVals.payeeEmail} returned your ${helpers.rewardTitle(props.favorVals.rewardID)}`;
+                stringDate =  `Paid on ${helpers.readableDate(props.favorVals.paidAt)}`;
         }
-        else if(user == props.favorVals.payerEmail){
-                stringData =  ` You returned ${props.favorVals.payeeEmail}'s ${helpers.rewardTitle(props.favorVals.rewardID)}`;
+        else if(user == props.favorVals.payeeEmail){
+                stringData =  `You returned ${props.favorVals.payerEmail}'s ${helpers.rewardTitle(props.favorVals.rewardID)}`;
+                stringDate =  `Paid on ${helpers.readableDate(props.favorVals.paidAt)}`;
         }
     }
-
-    console.log("ka?", stringData);
 
     return (
         <div className="task-container" onClick={() => openFavor()}>
