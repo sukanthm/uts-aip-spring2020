@@ -10,6 +10,7 @@ const TaskContainer = (props) => {
     // console.log(props.taskVals.rewards);
 
     const router = useRouter();
+    let taskImagePath;
 
     const { user } = useContext(UserContext);
 
@@ -26,8 +27,8 @@ const TaskContainer = (props) => {
     }
 
     if(props.taskVals.taskImagePath.trim() == ""){
-        props.taskVals.taskImagePath = "placeholder.jpg"
-    }
+        taskImagePath = '/images/no_image.png';
+    } else taskImagePath = `/api/image/${props.taskVals.taskImagePath}`;
 
     props.taskVals.createdAt = helpers.readableDate(props.taskVals.createdAt);
     if(props.taskVals.completedAt){
@@ -39,7 +40,7 @@ const TaskContainer = (props) => {
         <div className="task-container container-fluid" onClick={() => detailedTask(props.taskVals.id)}>
             <div className="row">
                 <div className="col-sm-2">
-                    <img className="task-img" src={`/api/image/${props.taskVals.taskImagePath}`} alt="Task image" width="100%" />
+                    <img className="task-img" src={taskImagePath} alt="Task image" width="100%" />
                 </div>
                 <div className="col-sm-8 task-des">
                     <b>{props.taskVals.title}</b>

@@ -17,6 +17,8 @@ const TaskId = () => {
     if (!taskId) return null;
     const { user } = useContext(UserContext);
 
+    const [taskImagePath, setTaskImagePath] = useState('');
+
     // const cookie = decodeURIComponent(document.cookie).substring(7);
     const userMail = user;
 
@@ -171,6 +173,11 @@ const TaskId = () => {
             let result = await fetch("/api/request/" + taskId, { method: "GET" });
             let json = await result.json();
             if(json.success == true){
+
+                if (json.output.taskImagePath===''){
+                    setTaskImagePath('/images/no_image.png');
+                } else setTaskImagePath(`/api/image/${json.output.taskImagePath}`);
+
                 json.output.createdAt = helpers.readableDate(json.output.createdAt);
                 if(json.output.completedAt != null)
                     json.output.completedAt = helpers.readableDate(json.output.completedAt);
@@ -227,7 +234,7 @@ const TaskId = () => {
                     <div className="row">
                         <div className="col-md-3 task-image-holder">
 
-                            <img src={`/api/image/${taskData.taskImagePath}`} alt="Task Image" className="task-image container"></img>
+                            <img src={taskImagePath} alt="Task Image" className="task-image container"></img>
 
                         </div>
                         <div className="col-md-9">
