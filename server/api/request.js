@@ -584,7 +584,7 @@ module.exports = function(app){
             }
         }
 
-        //find total rewards present for this request post update
+        //find total rewards present for this request after update
         let totalRewardsCount = await sequelize.query(
             `
             SELECT SUM(a."rewardCount") as "sum"

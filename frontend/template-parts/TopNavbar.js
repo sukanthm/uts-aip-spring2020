@@ -14,10 +14,6 @@ const TopNavbar = (props) => {
     logout();
   }
 
-  
-
-console.log("oyooooo", user);
-
   if(user != null){
     
     return(

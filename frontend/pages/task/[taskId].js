@@ -12,20 +12,15 @@ import Alert from 'react-bootstrap/Alert';
 
 const TaskId = () => {
     const Router = useRouter();
-    console.log("jeanpaul", Router.query);
     const taskId = Router.query.taskId;
     if (!taskId) return null;
     const { user, sessionCheck } = useContext(UserContext);
 
     const [taskImagePath, setTaskImagePath] = useState('');
 
-    // const cookie = decodeURIComponent(document.cookie).substring(7);
-    const userMail = user;
-
-    console.log("mailo", userMail);
-
     const [showAlert, setShowAlert] = useState(false);
     const [errMsg, setErrMsg] = useState("");
+    const [showModalWarning, setShowModalWarning] = useState(false);
 
     const [taskData, setTaskData] = useState({});
     const [users, setUsers] = useState([]);
@@ -49,12 +44,10 @@ const TaskId = () => {
 
     //Variables for completed tasks
     const [isCompleted, setIsCompleted] = useState(false);
-    
+
 
     let claimTask = () => {
         if (claimDisable == false) {
-            //console.log(Router.query);
-            //Router.push(`/task/${taskId}/claim`);
             handleShowCla();
         }
         else {
@@ -64,7 +57,6 @@ const TaskId = () => {
     }
 
     let upTaskReward = () => {
-        console.log("Upping it!");
         handleShowRew();
     }
 
@@ -75,26 +67,18 @@ const TaskId = () => {
         let temp_json = rewardJson;
         temp_json[id] = count;
         setRewardJson(temp_json);
+        testTaskDeletion();
     }
 
     const addReward = async () => {
-        console.log(rewardJson);
+        if (Math.min.apply(null, Object.values(rewardJson)) <= 0 && 
+            Math.max.apply(null, Object.values(rewardJson)) <= 0) {
+                handleCloseRew();
+                return;
+        }
 
         let rewardFlag = 0;
         let keys = Object.keys(rewardJson);
-        // Check if rewards have not been left empty
-        // keys.map((key) => {
-        //     if (rewardJson[key] > 0) {
-        //         rewardFlag = 1;
-        //     }
-        // })
-
-        // if (rewardFlag == 0) {
-        //     setErrMsg("No rewards added!");
-        //     handleCloseRew();
-        //     setShowAlert(true);
-        //     return;
-        // }
 
         try {
             let formData = new FormData();
@@ -103,28 +87,27 @@ const TaskId = () => {
 
             let result = await fetch("/api/request/sponsor", { method: "PUT", body: formData });
             let json = await result.json();
-            console.log("kya?", json);
             if (json.success == true) {
+                setUsers([]);
                 handleCloseRew();
-                if(json.deletedRequestID){
+                if (json.deletedRequestID) {
                     setErrMsg(json.message);
                     Router.push(`/deleteTask`);
                 }
-                else{
+                else {
                     fetchTaskDetails();
                 }
             }
-            else if(json.success == false){
+            else if (json.success == false) {
                 setErrMsg(json.message);
                 setShowAlert(true);
                 handleCloseRew();
             }
         }
         catch (err) {
-            console.log(err);
             setErrMsg("Error in updating rewards");
-                setShowAlert(true);
-                handleCloseRew();
+            setShowAlert(true);
+            handleCloseRew();
         }
 
     }
@@ -135,8 +118,6 @@ const TaskId = () => {
     }
 
     const completeTask = async () => {
-        console.log(imgFile);
-        console.log(taskComment);
         const formData = new FormData();
         formData.append('proofImage', formImg);
         formData.append('completorComment', taskComment);
@@ -146,85 +127,84 @@ const TaskId = () => {
 
             let result = await fetch("/api/request", { credentials: 'include', method: "PUT", body: formData });
             let json = await result.json();
-            console.log("kya?", json);
             if (json.success == true) {
                 handleCloseCla();
                 fetchTaskDetails();
             }
-            else if(json.success == false){
+            else if (json.success == false) {
                 setErrMsg(json.message);
                 setShowAlert(true);
                 handleCloseCla();
             }
-            
+
         }
         catch (err) {
-            console.log(err);
-
+            setErrMsg(err);
+            setShowAlert(true);
         }
     }
 
-    
+
 
     const fetchTaskDetails = async () => {
         try {
-            // let fetchJson = {
-            //     loginToken: "$2b$10$hcT7aC5xrGVVBPhwtjQWBOQWPnXvr4OIRm9A1AcOOGfAPJJeY6PCa",
-            //     requestId: taskId
-            // }
             let result = await fetch("/api/request/" + taskId, { method: "GET" });
             let json = await result.json();
-            if(json.success == true){
+            if (json.success == true) {
 
-                if (json.output.taskImagePath===''){
+                if (json.output.taskImagePath === '') {
                     setTaskImagePath('/images/no_image.png');
                 } else setTaskImagePath(`/api/image/${json.output.taskImagePath}`);
 
                 json.output.createdAt = helpers.readableDate(json.output.createdAt);
-                if(json.output.completedAt != null)
+                if (json.output.completedAt != null)
                     json.output.completedAt = helpers.readableDate(json.output.completedAt);
-                console.log("kya?", json);
+
                 setTaskData(json.output);
                 let sponsors = Object.keys(json.output.rewards);
                 setUsers(sponsors);
-                sponsors.map((user) => {
-                    console.log("ujer", user);
+                sponsors.map((userSponsor) => {
 
-                    if (user == userMail || taskData.status == "Completed")
+                    if (userSponsor == user || taskData.status == "Completed")
                         setClaimDisable(true);
 
                 })
-                
-                if(json.output.status == "Completed"){
+
+                if (json.output.status == "Completed") {
                     setIsCompleted(true);
                 }
             }
-            else if(json.success == false){
+            else if (json.success == false) {
                 setErrMsg(json.message);
                 setShowAlert(true);
             }
 
         }
         catch (err) {
-            console.log(err);
-            setErrMsg("Server Error");
+            setErrMsg("err");
             setShowAlert(true);
         }
     }
 
-    useEffect(() => { 
+    useEffect(() => {
         sessionCheck();
-        fetchTaskDetails() 
+        fetchTaskDetails()
     }, [])
 
-    // useEffect(() => { console.log("We are testing here:", showCompletor) }, [showCompletor])
-
-    // const Completor = () => (
-    //     <div>
-    //         <p>Completed by <strong>{taskData.completorEmail}</strong> at <i>{(taskData.completedAt)}</i></p>
-    //     </div>
-    // )
-
+    function testTaskDeletion() {
+        setShowModalWarning(false);
+        if (taskData.rewards && user in taskData.rewards && Object.keys(taskData.rewards).length === 1) {
+            let mapEqualFlag = true;
+            for (let rewardID in taskData.rewards[user]) {
+                if (taskData.rewards[user][rewardID] != -1 * rewardJson[rewardID]) {
+                    mapEqualFlag = false;
+                    break;
+                }
+            }
+            if (mapEqualFlag)
+                setShowModalWarning('if u proceed, task will be deleted as no sponsored rewards are left');
+        }
+    }
 
     return (
         <>
@@ -242,7 +222,7 @@ const TaskId = () => {
                             <h2 className="forward-page-header">{taskData.title}</h2>
                             <p>{taskData.description}</p>
                             <p>Created by <strong>{taskData.creatorEmail}</strong> at <i>{(taskData.createdAt)}</i></p>
-                            <b>Status:</b> <span className={"status-"+taskData.status}>{taskData.status}</span>
+                            <b>Status:</b> <span className={"status-" + taskData.status}>{taskData.status}</span>
 
                             {/* show information of completor if the task has been completed */}
                             {/* {showCompletor ? <Completor /> : null} */}
@@ -253,14 +233,13 @@ const TaskId = () => {
 
                     <div className="row">
                         <div className="col-md-12 contributors">
-                            <h4>Contributors for this Task</h4>
+                            <h4>Sponsors for this Task</h4>
                         </div>
                     </div>
                     <div className="row">
                         {/* {individualUser} */}
                         {
-                            users.map((key,i) => {
-                                console.log("albela", key);
+                            users.map((key, i) => {
                                 return <IndividualRewardCard user={key} key={i} rewards={taskData.rewards[key]}></IndividualRewardCard>
                             })
 
@@ -280,14 +259,18 @@ const TaskId = () => {
                         {!isCompleted ? (
                             <div className="col-md-12">
                                 <button className="btn btn-primary right  btn-forward-main" disabled={claimDisable} onClick={() => claimTask()}>Claim Task</button>
-                                <button className="btn btn-outline-primary mr-3 right btn-forward-main" onClick={() => upTaskReward()}>Update Reward Task</button>
+                                <button className="btn btn-outline-primary mr-3 right btn-forward-main" onClick={() => upTaskReward()}>
+                                    { 
+                                        (taskData.rewards && user in taskData.rewards) ? 'UPDATE your sponsored rewards' : 'ADD rewards to sponsor this task'
+                                    }
+                                </button>
                             </div>
                         ) : (
-                            <div className="col-md-12">
+                                <div className="col-md-12">
                                     <p><b>Completed by </b>{taskData.completorEmail} at {taskData.completedAt}</p>
-                            </div>
-                        )}
-                        
+                                </div>
+                            )}
+
 
                     </div>
                 </div>
@@ -315,8 +298,13 @@ const TaskId = () => {
                                 <div className="col-md-2">
                                     <RewardCard img="../../../images/reward/drink.png" category="Drink" amount={rewardData} originalValue={taskData.rewards ? taskData.rewards[user] || 0 : 0}></RewardCard>
                                 </div>
-
                             </div>
+                        </div>
+                        <div hidden={!showModalWarning}>
+                            <hr/>
+                            <Alert variant="danger">
+                                <Alert.Heading>{showModalWarning}</Alert.Heading>
+                            </Alert>
                         </div>
                     </Modal.Body>
                     <Modal.Footer>
@@ -352,7 +340,6 @@ const TaskId = () => {
                                         </div>
                                     </div>
                                 </div>
-                                {/* <button className="btn btn-primary right" onClick={() => completeTask()}>Task Completed</button> */}
                             </div>
                         </div>
                     </Modal.Body>
