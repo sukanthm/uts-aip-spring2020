@@ -24,32 +24,32 @@ const TopNavbar = (props) => {
         <ul className="navbar-nav mr-auto">
           <li className="nav-item">
             <ActiveLink activeClassName="active" href="/">
-              <a className="nav-link" href="#">Home <span className="sr-only">(current)</span></a>
+              <a className="nav-link" href="/">Home <span className="sr-only">(current)</span></a>
             </ActiveLink>
           </li>
           <li hidden={!isLoggedIn} className="nav-item">
             <ActiveLink activeClassName="active" href="/favors">
-              <a className="nav-link" href="#">Favors</a>
+              <a className="nav-link" href="/favors">Favors</a>
             </ActiveLink>
           </li>
           <li hidden={!isLoggedIn} className="nav-item">
             <ActiveLink activeClassName="active" href="/tasks">
-              <a className="nav-link" href="#">Tasks</a>
+              <a className="nav-link" href="/tasks">Tasks</a>
             </ActiveLink>
           </li>
           <li hidden={!isLoggedIn} className="nav-item">
             <ActiveLink activeClassName="active" href="/leaderboard">
-              <a className="nav-link" href="#">Leaderboard</a>
+              <a className="nav-link" href="/leaderboard">Leaderboard</a>
             </ActiveLink>
           </li>
           <li hidden={!isLoggedIn} className="nav-item">
             <ActiveLink activeClassName="active" href="/party">
-              <a className="nav-link" href="#">Party</a>
+              <a className="nav-link" href="/party">Party</a>
             </ActiveLink>
           </li>
           <li className="nav-item">
             <ActiveLink activeClassName="active" href="/help">
-              <a className="nav-link" href="#">Help</a>
+              <a className="nav-link" href="/help">Help</a>
             </ActiveLink>
           </li>
         </ul>
