@@ -2,7 +2,7 @@
 import { Fab, Action } from 'react-tiny-fab';
 import 'react-tiny-fab/dist/styles.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faTasks, faHandHoldingHeart } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faTasks, faHeart } from '@fortawesome/free-solid-svg-icons';
 import { useRouter } from 'next/router';
 
 const FABComponent = (props) => {
@@ -10,7 +10,7 @@ const FABComponent = (props) => {
     const Router = useRouter();
     const secondaryStyle = {
         color: "#fff",
-        backgroundColor: "#764ABC",
+        backgroundColor: "#dfccfc",
         borderColor: "#764ABC"
     }
     const mainStyle = {
@@ -38,7 +38,7 @@ const FABComponent = (props) => {
                             text="Add Favor"
                             onClick={()=>{Router.push("/favor/new")}}
                         >
-                            <FontAwesomeIcon icon={faHandHoldingHeart} />
+                            <FontAwesomeIcon icon={faHeart} />
                         </Action>
                     </Fab>
                     )
@@ -46,7 +46,7 @@ const FABComponent = (props) => {
         else if(props.type == "Task"){
             return(
                     <Fab
-                    mainButtonStyles={mainStyle}
+                    mainButtonStyles={secondaryStyle}
                     icon={<FontAwesomeIcon icon={faPlus} />}
                     alwaysShowTitle={true}
                     onClick={()=>console.log("yeeeehaaa")}
@@ -63,7 +63,7 @@ const FABComponent = (props) => {
         else if(props.type == "Favor"){
             return(
                     <Fab
-                    mainButtonStyles={mainStyle}
+                    mainButtonStyles={secondaryStyle}
                     icon={<FontAwesomeIcon icon={faPlus} />}
                     alwaysShowTitle={true}
                     onClick={()=>console.log("yeeeehaaa")}
@@ -72,7 +72,7 @@ const FABComponent = (props) => {
                             text="Add Favor"
                             onClick={()=>{Router.push("/favor/new")}}
                         >
-                            <FontAwesomeIcon icon={faHandHoldingHeart} />
+                            <FontAwesomeIcon icon={faHeart} />
                         </Action>
                     </Fab>
             )
