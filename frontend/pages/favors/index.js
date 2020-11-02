@@ -37,29 +37,26 @@ const dashboard = (props) => {
             let result2 = await fetch("/api/dashboard/favors", { method: "GET", headers: { statusFilter: "Paid" } });
             let json1 = await result1.json();
             let json2 = await result2.json();
-            
+            setIsLoading(false);
+
             if (json1.success) {
                 setOutgoingPending(json1.output.consolidated.outgoing || helpers.emptyRewardsDict);
                 setIncomingPending(json1.output.consolidated.incoming || helpers.emptyRewardsDict);
                 setUsersPending(json1.output.byUser);
-                setIsLoading(false);
             }
             if (json2.success) {
                 setOutgoingPaid(json2.output.consolidated.outgoing || helpers.emptyRewardsDict);
                 setIncomingPaid(json2.output.consolidated.incoming || helpers.emptyRewardsDict);
                 setUsersPaid(json2.output.byUser);
-                setIsLoading(false);
             }
 
 
             if (!json1.success) {
                 setErrMsg(errMsg + json1.message);
-                setIsLoading(false);
                 setShowAlert(true);
             }
             if (!json2.success) {
                 setErrMsg(errMsg + json2.message);
-                setIsLoading(false);
                 setShowAlert(true);
             }
         } catch (err) {
