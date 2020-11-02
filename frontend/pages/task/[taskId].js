@@ -284,6 +284,9 @@ const TaskId = () => {
                         ) : (
                                 <div className="col-md-12">
                                     <p><b>Completed by </b>{taskData.completorEmail} at {taskData.completedAt}</p>
+                                    <b>Completion Image:</b>
+                                    <br/>
+                                    <img src={`/api/image/${taskData.completionProofPath}`} alt="completion Image" className="img-size-maintain"></img>
                                 </div>
                             )}
 
