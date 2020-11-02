@@ -34,16 +34,16 @@ const dashboard = (props) => {
     const fetchFavorData = async () => {
         try {
             let result1 = await fetch("/api/dashboard/favors", { method: "GET", headers: { statusFilter: "Pending" } });
+            let result2 = await fetch("/api/dashboard/favors", { method: "GET", headers: { statusFilter: "Paid" } });
             let json1 = await result1.json();
+            let json2 = await result2.json();
+            
             if (json1.success) {
                 setOutgoingPending(json1.output.consolidated.outgoing || helpers.emptyRewardsDict);
                 setIncomingPending(json1.output.consolidated.incoming || helpers.emptyRewardsDict);
                 setUsersPending(json1.output.byUser);
                 setIsLoading(false);
             }
-
-            let result2 = await fetch("/api/dashboard/favors", { method: "GET", headers: { statusFilter: "Paid" } });
-            let json2 = await result2.json();
             if (json2.success) {
                 setOutgoingPaid(json2.output.consolidated.outgoing || helpers.emptyRewardsDict);
                 setIncomingPaid(json2.output.consolidated.incoming || helpers.emptyRewardsDict);
