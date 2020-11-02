@@ -280,22 +280,34 @@ const TaskId = () => {
                                     {
                                         (taskData.rewards && user in taskData.rewards) ? 'UPDATE your sponsored rewards' : 'ADD rewards to sponsor this task'
                                     }
-                                </button>                            </div>
+                                </button>
+                            </div>
                         ) : (
                                 <div className="col-md-12">
-                                    <div className='container'>
-                                        <p><b>Completed by </b>{taskData.completorEmail} at {taskData.completedAt}</p>
-                                        <b>Completion Image:</b>
-                                        <br />
-
-                                        <img src={`/api/image/${taskData.completionProofPath}`} alt="completion Image" className="img-size-maintain"></img>
-                                        <br />
-                                        {/* CSS HERE PLEASE DILAK*/}
-                                        <p><b>Completor Comment:</b>
-                                            <br />
-                                            {taskData.completorComment}
-                                        </p>
-                                    </div>
+                                    <br/>
+                                    <table className="table">
+                                        <thead>
+                                            <h4>Completion Information</h4>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Completed by:</td>
+                                                <td><b>{taskData.completorEmail}</b></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Completed at:</td>
+                                                <td>{taskData.completedAt}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Completion Image:</td>
+                                                <td><img src={`/api/image/${taskData.completionProofPath}`} alt="completion Image" className="img-size-maintain"></img></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Completor Comment:</td>
+                                                <td>{taskData.completorComment}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             )}
 

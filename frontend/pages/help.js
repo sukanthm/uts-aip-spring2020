@@ -49,7 +49,7 @@ const help = () => {
                         <h5>The Leaderboard page shows the top users by most Active Incoming Favors.</h5>
                     </li>
                     <li className="list-group-item">
-                        <h5>When you visit the party page, we will detect any and all reward loops avaiable that you can particiapte in.</h5>
+                        <h5>When you visit the party page, we will detect &#38; display any and all reward loops avaiable that you can particiapte in.</h5>
                         <table>
                             <tr><h6>For example:</h6></tr>
                             <tr>Alice owes Bobby a coffee, Bobby owes Carol a coffee, Carol owes Greg a coffee and Greg owes Alice a coffee.</tr>
