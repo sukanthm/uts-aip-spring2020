@@ -18,13 +18,14 @@ const help = () => {
 
                         <p>If Alice and Bobby go for coffee together, either of them can create a favor to record the transaction. Each Favor is assigned a reward.</p>
                         <h6>Currently supported rewards are:</h6>
-                        <table><tr>
-                            <td>Coffee</td><td></td><td></td><td></td><td></td><td></td><td></td>
-                            <td>Meal</td><td></td><td></td><td></td><td></td><td></td><td></td>
-                            <td>Snacks</td><td></td><td></td><td></td><td></td><td></td><td></td>
-                            <td>Candy</td><td></td><td></td><td></td><td></td><td></td><td></td>
-                            <td>Drink</td><td></td><td></td><td></td><td></td><td></td><td></td>
-                        </tr></table>
+                        <div className="help-list">
+                                <span>Coffee</span>
+                                <span>Meal</span>
+                                <span>Snacks</span>
+                                <span>Candy</span>
+                                <span>Drink</span>
+                        </div>
+                        <br/>
                         <h6>However, to prevent cheating, a photo must be uploaded as proof when performing an action that would disadvantage another user. For example:</h6>
 
                         <ul>
