@@ -19,7 +19,7 @@ app.use(cookieParser());
 app.use(helmet());
 app.use(cors());
 app.use(morgan('combined'));
-//app.use(function(req,res,next){setTimeout(next,2000)});  //global api delay ms
+app.use(function(req,res,next){setTimeout(next,2000)});  //global api delay ms
 
 require('./api/signupLogin.js')(app);
 require('./api/favor.js')(app);

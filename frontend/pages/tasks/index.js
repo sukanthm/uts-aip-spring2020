@@ -17,7 +17,7 @@ const dashboard = (props) => {
     const { sessionCheck } = useContext(UserContext);
 
     useEffect(() => { 
-        sessionCheck();
+        if (!sessionCheck()) return;
     }, []);
 
     return (

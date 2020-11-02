@@ -21,8 +21,8 @@ const Party = (props) => {
     }
 
     useEffect(() => { 
-        sessionCheck();
-        fetchTasks() 
+        if (!sessionCheck()) return;
+        fetchTasks();
     }, []);
 
        return (
@@ -50,7 +50,7 @@ const Party = (props) => {
                                                     partyData[key].map((row, index) => {
                                                         return (
                                                             <div>
-                                                                <b>Party No: {index + 1}</b>
+                                                                <b>Party: {index + 1}</b>
                                                                 <p>{row.join('; ')}</p>
                                                             </div>
                                                         )

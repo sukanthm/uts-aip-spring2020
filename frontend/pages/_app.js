@@ -24,7 +24,9 @@ function MyApp({ Component, pageProps }) {
     if(cookie.trim() == ""){
       setUser(null);
       Router.push("/");
+      return false;
     }
+    return true;
   }
 
   useEffect(() => {

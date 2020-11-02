@@ -88,8 +88,8 @@ const favorIdPage = () => {
     }
 
     useEffect(()=>{
-        sessionCheck();
-        getFavor()
+        if (!sessionCheck()) return;
+        getFavor();
     }, []);
 
     return(
@@ -98,7 +98,7 @@ const favorIdPage = () => {
         <div className="container">      
             <table className="table">
                 <thead>
-                    <th colSpan="2"><h2>Favor ID: {favorId}</h2></th>
+                    <th colSpan="2"><h2>Favor Details</h2></th>
                 </thead>
                 
                 <div hidden={!isLoading} className="container">
@@ -156,7 +156,7 @@ const favorIdPage = () => {
                     </p>
             </Alert>
             <button hidden={isLoading} disabled={ favorData.status ? favorData.status === 'Paid' : true} 
-                className="btn btn-primary right  btn-forward-main" onClick={() => setShowClaim(true)}><FontAwesomeIcon icon={faTimesCircle}/> Close favor</button>
+                className="btn btn-primary right  btn-forward-main" onClick={() => setShowClaim(true)}><FontAwesomeIcon icon={faTimesCircle}/> Pay favor</button>
         </div>
 
         {/* Modal for Claim */}
@@ -185,8 +185,8 @@ const favorIdPage = () => {
                 </div>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={() => setShowClaim(false)}>Cancel</Button>
-                <Button variant="primary" onClick={() => payFavor()}>Close Favor</Button>
+                <Button variant="danger" onClick={() => setShowClaim(false)}>Cancel</Button>
+                <Button variant="primary" onClick={() => payFavor()}>Pay Favor</Button>
             </Modal.Footer>
         </Modal>
         </>

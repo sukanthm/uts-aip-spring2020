@@ -314,7 +314,7 @@ module.exports = function(app){
         if (oneRequest.length === 0){
             helperModule.manipulate_response_and_send(req, res, {
                 'success': false, 
-                'message': 'bad request id requested', 
+                'message': 'bad task id requested', 
                 }, 404);
             return;    
         }
@@ -348,7 +348,7 @@ module.exports = function(app){
             aip_fp
         request body keys:
             requestID (int)
-            completorComment (string)
+            completorComment (string): optional.
         taskImage (form-data): check https://github.com/expressjs/multer for frontend form
         response headers:
             success (bool)
@@ -358,13 +358,19 @@ module.exports = function(app){
             message (string)
             completedrequestID (int)
         */
-        let [successFlag, [requestID, completorComment]] = 
+        let [successFlag, [requestID]] = 
             helperModule.get_req_body_json(req, [
-                ['requestID', 'integer'], ['completorComment', 'string']
+                ['requestID', 'integer'],
             ], res);
         if (!successFlag)
             return;
-        
+
+        let [, [completorComment]] = 
+            helperModule.get_req_body_json(req, [
+                ['completorComment', 'string'],
+            ], res, true);
+        completorComment ? completorComment : '';
+
         let [validationSuccess, user] = await helperModule.validate_user_loginToken(req, res);
         if (!validationSuccess)
             return;
@@ -396,13 +402,13 @@ module.exports = function(app){
                 }, 409);
             return;
         }
-        if (oneRequest.creatorID === user.id){
+        /*  if (oneRequest.creatorID === user.id){
             helperModule.manipulate_response_and_send(req, res, {
                 'success': false, 
                 'message': 'request cannot be Completed by creator. ignoring current request',
                 }, 409);
             return;
-        }
+        } */
 
         //gets all sponsors for a request, needs hacky ORM code
         let sponsors = await fpRequestReward.findAll({

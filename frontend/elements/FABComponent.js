@@ -46,7 +46,7 @@ const FABComponent = (props) => {
         else if(props.type == "Task"){
             return(
                     <Fab
-                    mainButtonStyles={secondaryStyle}
+                    mainButtonStyles={mainStyle}
                     icon={<FontAwesomeIcon icon={faPlus} />}
                     alwaysShowTitle={true}
                     onClick={()=>console.log("yeeeehaaa")}
@@ -63,7 +63,7 @@ const FABComponent = (props) => {
         else if(props.type == "Favor"){
             return(
                     <Fab
-                    mainButtonStyles={secondaryStyle}
+                    mainButtonStyles={mainStyle}
                     icon={<FontAwesomeIcon icon={faPlus} />}
                     alwaysShowTitle={true}
                     onClick={()=>console.log("yeeeehaaa")}

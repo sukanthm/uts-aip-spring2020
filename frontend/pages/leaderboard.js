@@ -24,8 +24,8 @@ const leaderboard = (props) => {
     }
 
     useEffect(() => { 
-        sessionCheck();
-        fetchTasks("All", currentPage.current, itemsPerPage, "") 
+        if (!sessionCheck()) return;
+        fetchTasks("All", currentPage.current, itemsPerPage, "");
     }, []);
     // If leaders are detected
 
@@ -33,7 +33,6 @@ const leaderboard = (props) => {
             <>
                 <Header />
                 <div hidden={!isLoading} className="container">
-                    <h4>Top {itemsPerPage} Most Pending Incoming Favors:</h4>
                     <LoadingComponent></LoadingComponent>
                 </div>
 

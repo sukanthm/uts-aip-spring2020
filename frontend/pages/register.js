@@ -47,32 +47,25 @@ const Register = () => {
     }, [validated]);
 
     let validator = () => {
+        setNameFlag(false);
+        setEmailFlag(false);
+        setPasswordFlag(false);
+
         // function to check if all values are correct
         // will set validated hook variable as false if any value is not acceptable
-        console.log("getting in");
-        if(fullName.trim() == ""){
-            console.log("Name cannot be empty");
-            setNameFlag(true);
-            setValidated(false);
-        }
-        else if(fullName.trim().length < 5){
+
+        if(fullName.trim().length < 5){
             console.log("Name must be atleast 5 characters");
             setNameFlag(true);
             setValidated(false);
         }
-        else if(email.trim() == ""){
-            console.log("Email cannot be empty");
+        else if(!/^[\w\d\.]+@[\w\d\.]+\.[\w\d\.]+$/.test(email)){ 
+            /* 
+            allows "s..b@g.com" and others even though they are theoretically illegal
+            follow RFC 5322 if you feel fancy (official standard)
+            */
+            console.log("Email not valid");
             setEmailFlag(true);
-            setValidated(false);
-        }
-        else if(!/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(email)){
-                    console.log("Email not valid");
-                    setEmailFlag(true);
-                    setValidated(false);
-        }
-        else if(password.trim() == ""){
-            console.log("Password must be atleast 5 characters");
-            setPasswordFlag(true);
             setValidated(false);
         }
         else if(password.trim().length < 5){

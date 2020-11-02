@@ -38,7 +38,7 @@ module.exports = function(app){
             `
             SELECT "fp_users"."email", COUNT(*) as "pendingIncomingFavorCount", DENSE_RANK() OVER(ORDER BY COUNT(*) DESC) as "rank"
             FROM "fp_users"
-            LEFT JOIN "fp_favors" ON "fp_users"."id" = "fp_favors"."payeeID"
+            LEFT JOIN "fp_favors" ON "fp_users"."id" = "fp_favors"."payerID"
             where "fp_favors"."status" = 'Pending'
             GROUP BY "fp_users"."email"
             ORDER BY "rank"

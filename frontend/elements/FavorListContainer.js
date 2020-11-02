@@ -117,7 +117,7 @@ const SettledFavorsContainer = (props) => {
             <LoadingComponent></LoadingComponent>
         ) : (
             <>
-                <ErrorContainer imgSrc="/images/error_container/error.png" errTitle="No Favors Detected!" errMsg="You haven't given any favors yet." />
+                <ErrorContainer imgSrc="/images/error_container/error.png" errTitle="No Favors Detected!" />
             </>
              )}
              </>

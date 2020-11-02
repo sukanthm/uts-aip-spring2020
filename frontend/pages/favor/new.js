@@ -31,7 +31,7 @@ const New = () => {
     }
 
     useEffect(()=>{
-        sessionCheck();
+        if (!sessionCheck()) return;
         setRadio(isIncoming);
     }, [targetEmail]);
 
@@ -50,6 +50,11 @@ const New = () => {
         }
         if (rewardID === ''){
             setErrMsg('Please select a reward');
+            setShowAlert(true);
+            return;
+        }
+        if (isIncoming && formImg===''){
+            setErrMsg('proof required if target is to owe you');
             setShowAlert(true);
             return;
         }
@@ -117,7 +122,7 @@ const New = () => {
         <hr/>
         <div className="container text-center">
             <h4 className="mb-5">Choose the Reward for this favor</h4>
-            <AllRewardsRadio id={(id) => {setrewardID(id)}}></AllRewardsRadio>
+            <AllRewardsRadio id={(id) => {setrewardID(id); setShowAlert(false);;}}></AllRewardsRadio>
             <hr/>
             <Alert show={showAlert} variant="danger" onClose={() => setShowAlert(false)} dismissible>
                 <Alert.Heading>Oh snap! Error in creating task!</Alert.Heading>

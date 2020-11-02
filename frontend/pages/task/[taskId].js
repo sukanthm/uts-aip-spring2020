@@ -38,13 +38,13 @@ const TaskId = () => {
 
     //Variables for Claim Modal
     const [showCla, setShowCla] = useState(false);
-    const handleCloseCla = () => setShowCla(false);
-    const handleShowCla = () => setShowCla(true);
+    const handleCloseCla = () => {setShowCla(false); setShowAlert(false);}
+    const handleShowCla = () => {setShowCla(true); setShowAlert(false);}
 
     //Variables for CLaiming Function
     const [imgFile, setImgFile] = useState("/images/upload-img.png");
-    const [taskComment, setTaskComment] = useState();
-    const [formImg, setFormImg] = useState();
+    const [taskComment, setTaskComment] = useState('');
+    const [formImg, setFormImg] = useState('');
 
     //Variables for completed tasks
     const [isCompleted, setIsCompleted] = useState(false);
@@ -127,10 +127,17 @@ const TaskId = () => {
     }
 
     const completeTask = async () => {
+        if (formImg===''){
+            handleCloseCla();
+            setErrMsg('image proof is needed to claim a task');
+            setShowAlert(true);
+            return;
+        }
 
         const formData = new FormData();
         formData.append('proofImage', formImg);
-        formData.append('completorComment', taskComment);
+        if (taskComment!=='')
+            formData.append('completorComment', taskComment);
         formData.append('requestID', taskId);
 
         try {
@@ -158,6 +165,7 @@ const TaskId = () => {
 
 
     const fetchTaskDetails = async () => {
+        setClaimDisable(false);
         try {
 
             let result = await fetch("/api/request/" + taskId, { method: "GET" });
@@ -204,7 +212,7 @@ const TaskId = () => {
     }
 
     useEffect(() => {
-        sessionCheck();
+        if (!sessionCheck()) return;
         fetchTaskDetails()
     }, [])
     function testTaskDeletion() {
@@ -218,7 +226,7 @@ const TaskId = () => {
                 }
             }
             if (mapEqualFlag)
-                setShowModalWarning('if u proceed, task will be deleted as no sponsored rewards are left');
+                setShowModalWarning('If you proceed, this task will be deleted as no sponsored rewards will be left');
         }
     }
     return (
@@ -231,12 +239,12 @@ const TaskId = () => {
             <div hidden={isLoading} className="task-new-class">
                 <div className="container">
                     <div className="row">
-                        <div className="col-md-3 task-image-holder">
+                        <div hidden={!Object.keys(taskData).length} className="col-md-3 task-image-holder">
 
                             <img src={taskImagePath} alt="Task Image" className="task-image container"></img>
 
                         </div>
-                        <div className="col-md-9">
+                        <div hidden={!Object.keys(taskData).length} className="col-md-9">
 
                             <h2 className="forward-page-header">{taskData.title}</h2>
                             <p>{taskData.description}</p>
@@ -248,9 +256,9 @@ const TaskId = () => {
 
                         </div>
                     </div>
-                    <hr />
+                    <hr hidden={!Object.keys(taskData).length} />
 
-                    <div className="row">
+                    <div hidden={!Object.keys(taskData).length} className="row">
                         <div className="col-md-12 contributors">
                             <h4>Sponsors for this Task</h4>
                         </div>
@@ -263,10 +271,10 @@ const TaskId = () => {
                             })
 
                         }
-
                     </div>
-                    <hr />
-                    <Alert show={showAlert} variant="danger" onClose={() => setShowAlert(false)} dismissible>
+                    <hr hidden={!Object.keys(taskData).length}/>
+                    
+                    <Alert show={showAlert} variant="danger" onClose={() => setShowAlert(false)}>
                         <Alert.Heading>Oh snap! Error processing the request!</Alert.Heading>
                         <p>
                             {errMsg}
@@ -276,11 +284,11 @@ const TaskId = () => {
                     <div className="row">
 
                         {!isCompleted ? (
-                            <div className="col-md-12">
+                            <div hidden={!Object.keys(taskData).length} className="col-md-12">
                                 <button className="btn btn-primary right  btn-forward-main" disabled={claimDisable} onClick={() => claimTask()}><FontAwesomeIcon icon={faCheckCircle}/> Claim Task</button>
                                 <button className="btn btn-outline-primary mr-3 right btn-forward-main" onClick={() => upTaskReward()}><FontAwesomeIcon icon={faPlusCircle}/>
                                     {
-                                        (taskData.rewards && user in taskData.rewards) ? ' UPDATE your sponsored rewards' : ' ADD rewards to sponsor this task'
+                                        (taskData.rewards && user in taskData.rewards) ? ' Update my rewards' : ' Add rewards'
                                     }
                                 </button>
                             </div>
@@ -320,7 +328,11 @@ const TaskId = () => {
                 {/* Modal for Reward */}
                 <Modal show={showRew} onHide={handleCloseRew} dialogClassName="modal-90w" centered>
                     <Modal.Header>
-                        <Modal.Title>Choose rewards you want to add to this task</Modal.Title>
+                        <Modal.Title>
+                            {
+                                (taskData.rewards && user in taskData.rewards) ? 'Update my rewards' : 'Add rewards'
+                            }
+                        </Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <div className="container text-center">
@@ -350,8 +362,12 @@ const TaskId = () => {
                         </div>
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button variant="secondary" onClick={handleCloseRew}>Cancel</Button>
-                        <Button variant="primary" onClick={() => addReward()}>Update Rewards</Button>
+                        <Button variant="danger" onClick={handleCloseRew}>Cancel</Button>
+                        <Button variant="primary" onClick={() => addReward()}>
+                            {
+                                (taskData.rewards && user in taskData.rewards) ? 'Update my rewards' : 'Add rewards'
+                            }
+                        </Button>
                     </Modal.Footer>
                 </Modal>
 
@@ -368,7 +384,7 @@ const TaskId = () => {
                                         <img src={imgFile} alt="Upload Image" className="task-image container"></img>
                                         <div className="task-image-upload container-fluid center">
                                             <label htmlFor="task-image-edit">
-                                                <h6>Edit Image</h6>
+                                                <h6>Upload image</h6>
                                             </label>
                                             <input type="file" onChange={(e) => uploadImage(e.target.files[0])} id="task-image-edit"></input>
                                         </div>
@@ -387,7 +403,7 @@ const TaskId = () => {
                         </div>
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button variant="secondary" onClick={handleCloseCla}>Cancel</Button>
+                        <Button variant="danger" onClick={handleCloseCla}>Cancel</Button>
                         <Button variant="primary" onClick={() => completeTask()}>Claim</Button>
                     </Modal.Footer>
                 </Modal>

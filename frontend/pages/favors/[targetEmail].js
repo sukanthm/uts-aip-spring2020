@@ -17,7 +17,7 @@ const UserId = () => {
     const { sessionCheck } = useContext(UserContext);
     
     useEffect(() => {
-        sessionCheck();
+        if (!sessionCheck()) return;
     }, []);
 
     return(

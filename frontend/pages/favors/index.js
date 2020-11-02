@@ -14,6 +14,12 @@ import LoadingComponent from '../../elements/LoadingComponent';
 
 
 const dashboard = (props) => {
+    useEffect(() => {
+        if (!sessionCheck()) return;
+        fetchFavorData();
+    }, []);
+
+    const { sessionCheck } = useContext(UserContext);
 
     const [showAlert, setShowAlert] = useState(false);
     const [errMsg, setErrMsg] = useState("");
@@ -28,8 +34,6 @@ const dashboard = (props) => {
     const [outgoingPaid, setOutgoingPaid] = useState([]);
     const [usersPaid, setUsersPaid] = useState({});
     const [isLoading, setIsLoading] = useState(true);
-
-    const { sessionCheck } = useContext(UserContext);
 
     const fetchFavorData = async () => {
         try {
@@ -66,11 +70,6 @@ const dashboard = (props) => {
         }
     }
 
-    useEffect(() => {
-        sessionCheck();
-        fetchFavorData()
-    }, []);
-
     return (
         <>
             <Header></Header>
@@ -85,13 +84,13 @@ const dashboard = (props) => {
                         <div className="container">
                             <div className="row">
                                 <div className="col-md-6">
-                                    <h4 hidden={isLoading} className="forward-page-header">Total rewards to be paid</h4>
+                                    <h4 hidden={isLoading} className="forward-page-header">Total rewards you have yet to pay</h4>
                                     {isLoading ? <LoadingComponent></LoadingComponent> : null}
                                     <RewardsContainer rewardsData={outgoingPending} />
                                 </div>
 
                                 <div className="col-md-6">
-                                    <h4 hidden={isLoading} className="forward-page-header">Total rewards you are owed</h4>
+                                    <h4 hidden={isLoading} className="forward-page-header">Total rewards you are yet to receive</h4>
                                     {isLoading ? <LoadingComponent></LoadingComponent> : null}
                                     <RewardsContainer rewardsData={incomingPending} />
                                 </div>
@@ -116,13 +115,13 @@ const dashboard = (props) => {
                         <div className="container">
                             <div className="row">
                                 <div className="col-md-6">
-                                    <h4 hidden={isLoading} className="forward-page-header">Total rewards you paid</h4>
+                                    <h4 hidden={isLoading} className="forward-page-header">Total rewards you have paid</h4>
                                     {isLoading ? <LoadingComponent></LoadingComponent> : null}
                                     <RewardsContainer rewardsData={outgoingPaid} />
                                 </div>
 
                                 <div className="col-md-6">
-                                    <h4 hidden={isLoading} className="forward-page-header">Total rewards you were owed</h4>
+                                    <h4 hidden={isLoading} className="forward-page-header">Total rewards you have received</h4>
                                     {isLoading ? <LoadingComponent></LoadingComponent> : null}
                                     <RewardsContainer rewardsData={incomingPaid} />
                                 </div>

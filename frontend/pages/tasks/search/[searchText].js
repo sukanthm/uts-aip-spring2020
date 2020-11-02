@@ -1,4 +1,4 @@
-
+import ErrorContainer from '../../../elements/ErrorContainer';
 import { useEffect, useState, useRef, useContext } from 'react';
 import { useRouter } from 'next/router';
 import Header from '../../../template-parts/Header';
@@ -19,7 +19,7 @@ const SearchText = (props) => {
     const itemsPerPage = 5;
     const currentPage = useRef(0);
 
-    const { sessionCheck } = useContext(UserContext);
+    //const { sessionCheck } = useContext(UserContext);
 
     const [taskRows, setTaskRows] = useState([]);
     const [moreScroll, setMoreScroll] = useState(true);
@@ -78,7 +78,7 @@ const SearchText = (props) => {
 
 
     useEffect(() => {
-        sessionCheck();
+        //if (!sessionCheck()) return; //this page is no auth
         fetchTasks("All", currentPage.current, itemsPerPage, searchText)
     }, []);
 
@@ -95,6 +95,11 @@ const SearchText = (props) => {
                     </div>
                     <hr />
                     {isLoading ? <LoadingComponent></LoadingComponent> : null}
+
+                    <div hidden={isLoading || taskRows.length > 0}>
+                        <ErrorContainer imgSrc="/images/error_container/error.png" errTitle="No Search Results!" errMsg="There are currently no tasks available that match your seach criteria." />
+                    </div>
+
                     <Alert show={showAlert} variant="danger" onClose={() => setShowAlert(false)} dismissible>
                         <Alert.Heading>Oh snap! Error in loading task!</Alert.Heading>
                         <p>

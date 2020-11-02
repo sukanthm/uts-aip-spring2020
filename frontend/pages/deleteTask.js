@@ -13,7 +13,7 @@ const DeleteTask = (props) => {
 
     const Router = useRouter();
     useEffect(() => { 
-        sessionCheck();
+        if (!sessionCheck()) return;
     }, []);
     return(
         <>

@@ -21,7 +21,7 @@ const New = () => {
     const [rewardJson, setRewardJson] = useState({});
     
     useEffect(() => {
-        sessionCheck();
+        if (!sessionCheck()) return;
     }, []);
 
     function uploadImage(file){
