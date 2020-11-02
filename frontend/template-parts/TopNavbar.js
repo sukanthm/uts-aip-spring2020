@@ -49,7 +49,7 @@ const TopNavbar = (props) => {
           </li>
           <li className="nav-item">
             <ActiveLink activeClassName="active" href="/help">
-              <a className="nav-link" href="#">HELP</a>
+              <a className="nav-link" href="#">Help</a>
             </ActiveLink>
           </li>
         </ul>
