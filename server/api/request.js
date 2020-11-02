@@ -294,7 +294,7 @@ module.exports = function(app){
 
         let oneRequest = await sequelize.query(
             `
-            SELECT r.id, r.status, r.title, r.description, r."completedAt", r."createdAt", r."taskImagePath", r."completionProofPath",
+            SELECT r.id, r.status, r.title, r.description, r."completedAt", r."createdAt", r."taskImagePath", r."completionProofPath", r."completorComment",
                 u1.email as "creatorEmail", u2.email as "completorEmail", u3.email as "sponsorEmail", rr."rewardID", rr."rewardCount"
             FROM "fp_requests" r
             JOIN "fp_users" u1 on u1.id = r."creatorID"
@@ -327,7 +327,7 @@ module.exports = function(app){
             outputOneRequest['rewards'][oneRequest[i]['sponsorEmail']]
                 [oneRequest[i]['rewardID']] = oneRequest[i]['rewardCount'];
         }
-        let keys = ['id', 'status', 'title', 'description', 'createdAt', 'completedAt',
+        let keys = ['id', 'status', 'title', 'description', 'createdAt', 'completedAt', 'completorComment',
             'taskImagePath', 'completionProofPath', 'creatorEmail', 'completorEmail'];
         for (let i=0; i<keys.length; i++)
             outputOneRequest[keys[i]] = oneRequest[0][keys[i]];
