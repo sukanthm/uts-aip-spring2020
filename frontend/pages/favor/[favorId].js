@@ -22,7 +22,7 @@ const favorIdPage = () => {
     //Variables for Claim Modal
     const [showClaim, setShowClaim] = useState(false);
 
-    const [imgFile, setImgFile] = useState("../../../images/upload-img.png");
+    const [imgFile, setImgFile] = useState("/images/upload-img.png");
     const [formImg, setFormImg] = useState('');
     const [showAlert, setShowAlert] = useState(false);
     const [errMsg, setErrMsg] = useState("");
@@ -122,7 +122,7 @@ const favorIdPage = () => {
                     </tr>
                     <tr>
                         <td>Reward:</td>
-                        <td><strong>{rewardTitle}</strong><br/><img src={'../../images/reward/'+rewardTitle+'.png'}></img></td>
+                        <td><strong>{rewardTitle}</strong><br/><img src={'/images/reward/'+rewardTitle+'.png'}></img></td>
                     </tr>
                     <tr>
                         <td>Created at:</td>

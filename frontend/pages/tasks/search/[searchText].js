@@ -1,13 +1,12 @@
 
 import { useEffect, useState, useRef, useContext } from 'react';
 import { useRouter } from 'next/router';
-import Header from '../../template-parts/Header';
-import TaskContainer from '../../elements/TaskContainer';
+import Header from '../../../template-parts/Header';
+import TaskContainer from '../../../elements/TaskContainer';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import Alert from 'react-bootstrap/Alert';
-import helpers from '../../functions/helpers.js';
-import UserContext from '../../functions/context';
-import LoadingComponent from '../../elements/LoadingComponent';
+import UserContext from '../../../functions/context';
+import LoadingComponent from '../../../elements/LoadingComponent';
 
 
 

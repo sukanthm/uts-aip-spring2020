@@ -3,7 +3,6 @@ import { useRouter } from 'next/router';
 import Header from '../template-parts/Header';
 import TaskContainer from '../elements/TaskContainer';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import ActiveLink from '../template-parts/ActiveLink';
 import Alert from 'react-bootstrap/Alert';
 import UserContext from '../functions/context';
 import ErrorContainer from '../elements/ErrorContainer';
@@ -36,20 +35,17 @@ const Dashboard = (props) => {
             }
             let result = await fetch(`/api/requests?currentPage=${currentPage}&itemsPerPage=${itemsPerPage}`, { method: "GET", headers: fetchJson });
             let json = await result.json();
-            console.log("kya?", json);
+
             setTaskData(json.output);
             if (json.success == true) {
                 if (json.output.currentPage == (json.output.totalPages - 1)) {
-                    console.log("ruk gaya");
                     setMoreScroll(false);
                 }
-                // let arr = taskRows;
+
                 const arr = [...taskRows];
                 json.output.rows.map((row) => {
                     arr.push(row);
                 })
-                console.log("arro", arr);
-                console.log("rumba", currentPage);
                 setTaskRows(arr);
                 setIsLoading(false);
             }
@@ -60,8 +56,7 @@ const Dashboard = (props) => {
             }
         }
         catch (err) {
-            console.log(err);
-            setErrMsg("Server Error");
+            setErrMsg("err");
             setIsLoading(false);
             setShowAlert(true);
         }
@@ -75,24 +70,14 @@ const Dashboard = (props) => {
 
 
     const fetchNext = () => {
-        console.log("abhi", currentPage.current);
         currentPage.current = currentPage.current + 1;
-        console.log("abhi bhi", currentPage.current);
         fetchTasks("All", currentPage.current, itemsPerPage, searchText);
     }
 
     const sendSearch = () => {
-        console.log("search text", searchText);
         if (searchText.trim() != "") {
-            router.push("/tasks/" + searchText);
-            // setSearchToggle(true);
-            // setTaskRows([]);
-            // currentPage.current = 0;
+            router.push("/tasks/search/" + searchText);
         }
-        else {
-            // setSearchToggle(false);
-        }
-        // fetchTasks("All", currentPage.current, itemsPerPage, searchText);
     }
 
     useEffect(() => { fetchTasks("All", currentPage.current, itemsPerPage, searchText) }, []);
@@ -115,7 +100,7 @@ const Dashboard = (props) => {
 
                     {isLoading ? <LoadingComponent></LoadingComponent> : null}
                     <div hidden={isLoading || taskRows.length > 0}>
-                        <ErrorContainer imgSrc="../images/error_container/error.png" errTitle="No Tasks Detected!" errMsg="There are currently no tasks available. Create a new task to get started." />
+                        <ErrorContainer imgSrc="/images/error_container/error.png" errTitle="No Tasks Detected!" errMsg="There are currently no tasks available. Create a new task to get started." />
                     </div>
 
                     <Alert show={showAlert} variant="danger" onClose={() => setShowAlert(false)} dismissible>

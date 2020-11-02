@@ -13,7 +13,7 @@ const New = () => {
     const Router = useRouter();
     const { user, sessionCheck } = useContext(UserContext);
 
-    const [imgFile, setImgFile] = useState("../../images/upload-img.png");
+    const [imgFile, setImgFile] = useState("/images/upload-img.png");
     const [formImg, setFormImg] = useState("");
 
     const [targetEmail, setTargetEmail] = useState("");

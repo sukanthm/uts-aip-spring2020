@@ -10,7 +10,7 @@ const New = () => {
 
     const Router = useRouter();
 
-    const [imgFile, setImgFile] = useState("../../images/upload-img.png");
+    const [imgFile, setImgFile] = useState("/images/upload-img.png");
     const [taskTitle, setTaskTitle] = useState("");
     const [taskDesc, setTaskDesc] = useState("");
     const [formImg, setFormImg] = useState("");
@@ -124,19 +124,19 @@ const New = () => {
                 <h4 className="mb-5">Choose rewards you want to offer along with this task</h4>
                 <div className="row reward-cont">
                     <div className="col-md-2">
-                        <RewardCard img="../images/reward/coffee.png" category="Coffee" amount={rewardData} originalValue={{}}></RewardCard>
+                        <RewardCard img="/images/reward/coffee.png" category="Coffee" amount={rewardData} originalValue={{}}></RewardCard>
                     </div>
                     <div className="col-md-2">
-                        <RewardCard img="../images/reward/meal.png" category="Meal" amount={rewardData} originalValue={{}}></RewardCard>
+                        <RewardCard img="/images/reward/meal.png" category="Meal" amount={rewardData} originalValue={{}}></RewardCard>
                     </div>
                     <div className="col-md-2">
-                        <RewardCard img="../images/reward/snacks.png" category="Snacks" amount={rewardData} originalValue={{}}></RewardCard>
+                        <RewardCard img="/images/reward/snacks.png" category="Snacks" amount={rewardData} originalValue={{}}></RewardCard>
                     </div>
                     <div className="col-md-2">
-                        <RewardCard img="../images/reward/candy.png" category="Candy" amount={rewardData} originalValue={{}}></RewardCard>
+                        <RewardCard img="/images/reward/candy.png" category="Candy" amount={rewardData} originalValue={{}}></RewardCard>
                     </div>
                     <div className="col-md-2">
-                        <RewardCard img="../images/reward/drink.png" category="Drink" amount={rewardData} originalValue={{}}></RewardCard>
+                        <RewardCard img="/images/reward/drink.png" category="Drink" amount={rewardData} originalValue={{}}></RewardCard>
                     </div>
                     
                 </div>

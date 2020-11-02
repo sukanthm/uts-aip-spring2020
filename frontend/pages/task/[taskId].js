@@ -40,7 +40,7 @@ const TaskId = () => {
     const handleShowCla = () => setShowCla(true);
 
     //Variables for CLaiming Function
-    const [imgFile, setImgFile] = useState("../../../images/upload-img.png");
+    const [imgFile, setImgFile] = useState("/images/upload-img.png");
     const [taskComment, setTaskComment] = useState();
     const [formImg, setFormImg] = useState();
 
@@ -302,7 +302,7 @@ const TaskId = () => {
                                                 <td>Completion Image:</td>
                                                 <td><img src={`/api/image/${taskData.completionProofPath}`} alt="completion Image" className="img-size-maintain"></img></td>
                                             </tr>
-                                            <tr>
+                                            <tr hidden={!taskData.completorComment}>
                                                 <td>Completor Comment:</td>
                                                 <td>{taskData.completorComment}</td>
                                             </tr>
@@ -324,19 +324,19 @@ const TaskId = () => {
                         <div className="container text-center">
                             <div className="row reward-cont">
                                 <div className="col-md-2">
-                                    <RewardCard img="../../../images/reward/coffee.png" category="Coffee" amount={rewardData} originalValue={taskData.rewards ? taskData.rewards[user] || 0 : 0}></RewardCard>
+                                    <RewardCard img="/images/reward/coffee.png" category="Coffee" amount={rewardData} originalValue={taskData.rewards ? taskData.rewards[user] || 0 : 0}></RewardCard>
                                 </div>
                                 <div className="col-md-2">
-                                    <RewardCard img="../../../images/reward/meal.png" category="Meal" amount={rewardData} originalValue={taskData.rewards ? taskData.rewards[user] || 0 : 0}></RewardCard>
+                                    <RewardCard img="/images/reward/meal.png" category="Meal" amount={rewardData} originalValue={taskData.rewards ? taskData.rewards[user] || 0 : 0}></RewardCard>
                                 </div>
                                 <div className="col-md-2">
-                                    <RewardCard img="../../../images/reward/snacks.png" category="Snacks" amount={rewardData} originalValue={taskData.rewards ? taskData.rewards[user] || 0 : 0}></RewardCard>
+                                    <RewardCard img="/images/reward/snacks.png" category="Snacks" amount={rewardData} originalValue={taskData.rewards ? taskData.rewards[user] || 0 : 0}></RewardCard>
                                 </div>
                                 <div className="col-md-2">
-                                    <RewardCard img="../../../images/reward/candy.png" category="Candy" amount={rewardData} originalValue={taskData.rewards ? taskData.rewards[user] || 0 : 0}></RewardCard>
+                                    <RewardCard img="/images/reward/candy.png" category="Candy" amount={rewardData} originalValue={taskData.rewards ? taskData.rewards[user] || 0 : 0}></RewardCard>
                                 </div>
                                 <div className="col-md-2">
-                                    <RewardCard img="../../../images/reward/drink.png" category="Drink" amount={rewardData} originalValue={taskData.rewards ? taskData.rewards[user] || 0 : 0}></RewardCard>
+                                    <RewardCard img="/images/reward/drink.png" category="Drink" amount={rewardData} originalValue={taskData.rewards ? taskData.rewards[user] || 0 : 0}></RewardCard>
                                 </div>
                             </div>
                         </div>

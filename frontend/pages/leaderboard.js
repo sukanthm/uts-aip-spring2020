@@ -58,7 +58,7 @@ const leaderboard = (props) => {
                 </div>
 
                 <div hidden={isLoading || Object.keys(leaderData).length} className="container">
-                    <ErrorContainer imgSrc="../images/error_container/error.png" 
+                    <ErrorContainer imgSrc="/images/error_container/error.png" 
                         errTitle="No Leaders Detected!" errMsg="Oh no. There are no active leaders currently." needBtn={true} btnMsg="Go to Home" destin="/" />
                 </div>
 
