@@ -8,6 +8,8 @@ import Modal from 'react-bootstrap/Modal';
 import { Button, ButtonToolbar } from 'react-bootstrap';
 import Alert from 'react-bootstrap/Alert';
 import LoadingComponent from '../../elements/LoadingComponent';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTimesCircle} from '@fortawesome/free-solid-svg-icons';
 
 
 const favorIdPage = () => {
@@ -154,7 +156,7 @@ const favorIdPage = () => {
                     </p>
             </Alert>
             <button hidden={isLoading} disabled={ favorData.status ? favorData.status === 'Paid' : true} 
-                className="btn btn-primary right  btn-forward-main" onClick={() => setShowClaim(true)}>Close favor</button>
+                className="btn btn-primary right  btn-forward-main" onClick={() => setShowClaim(true)}><FontAwesomeIcon icon={faTimesCircle}/> Close favor</button>
         </div>
 
         {/* Modal for Claim */}

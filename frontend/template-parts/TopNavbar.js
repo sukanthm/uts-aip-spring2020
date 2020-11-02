@@ -2,6 +2,8 @@ import ActiveLink from './ActiveLink'
 import UserContext from '../functions/context';
 import { useEffect, useContext } from 'react';
 import Navbar from 'react-bootstrap/Navbar';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHome, faHeart, faTasks, faUserFriends, faGlassCheers, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
 
 const TopNavbar = (props) => {
   const { user, logout } = useContext(UserContext);
@@ -24,32 +26,32 @@ const TopNavbar = (props) => {
         <ul className="navbar-nav mr-auto">
           <li className="nav-item">
             <ActiveLink activeClassName="active" href="/">
-              <a className="nav-link" href="/">Home <span className="sr-only">(current)</span></a>
+              <a className="nav-link" href="/"><FontAwesomeIcon icon={faHome}/> Home <span className="sr-only">(current)</span></a>
             </ActiveLink>
           </li>
           <li hidden={!isLoggedIn} className="nav-item">
             <ActiveLink activeClassName="active" href="/favors">
-              <a className="nav-link" href="/favors">Favors</a>
+              <a className="nav-link" href="/favors"><FontAwesomeIcon icon={faHeart}/> Favors</a>
             </ActiveLink>
           </li>
           <li hidden={!isLoggedIn} className="nav-item">
             <ActiveLink activeClassName="active" href="/tasks">
-              <a className="nav-link" href="/tasks">Tasks</a>
+              <a className="nav-link" href="/tasks"><FontAwesomeIcon icon={faTasks}/> Tasks</a>
             </ActiveLink>
           </li>
           <li hidden={!isLoggedIn} className="nav-item">
             <ActiveLink activeClassName="active" href="/leaderboard">
-              <a className="nav-link" href="/leaderboard">Leaderboard</a>
+              <a className="nav-link" href="/leaderboard"><FontAwesomeIcon icon={faUserFriends}/> Leaderboard</a>
             </ActiveLink>
           </li>
           <li hidden={!isLoggedIn} className="nav-item">
             <ActiveLink activeClassName="active" href="/party">
-              <a className="nav-link" href="/party">Party</a>
+              <a className="nav-link" href="/party"><FontAwesomeIcon icon={faGlassCheers}/> Party</a>
             </ActiveLink>
           </li>
           <li className="nav-item">
             <ActiveLink activeClassName="active" href="/help">
-              <a className="nav-link" href="/help">Help</a>
+              <a className="nav-link" href="/help"><FontAwesomeIcon icon={faQuestionCircle}/> Help</a>
             </ActiveLink>
           </li>
         </ul>

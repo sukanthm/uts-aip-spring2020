@@ -84,6 +84,7 @@ const dashboard = (props) => {
                     onSelect={(k) => setKey(k)}
                 >
                     <Tab eventKey="home" title="Pending">
+                        <br/>
                         <div className="container">
                             <div className="row">
                                 <div className="col-md-6">
@@ -114,6 +115,7 @@ const dashboard = (props) => {
                     </Tab>
 
                     <Tab eventKey="away" title="Paid">
+                        <br/>
                         <div className="container">
                             <div className="row">
                                 <div className="col-md-6">

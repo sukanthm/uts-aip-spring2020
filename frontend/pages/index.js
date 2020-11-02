@@ -8,6 +8,8 @@ import UserContext from '../functions/context';
 import ErrorContainer from '../elements/ErrorContainer';
 import FABComponent from '../elements/FABComponent';
 import LoadingComponent from '../elements/LoadingComponent';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSearch } from '@fortawesome/free-solid-svg-icons';
 
 const Dashboard = (props) => {
 
@@ -92,7 +94,7 @@ const Dashboard = (props) => {
                                 <input type="text" className="form-control" placeholder="Search tasks by reward, title, description" 
                                     value={searchText} onChange={(e) => setSearchText(e.target.value)} 
                                     onKeyDown={(e) => {if(e.key === "Enter") sendSearch();}}/>
-                                <button type="submit" className="btn btn-primary" onClick={() => sendSearch()}>Search</button>
+                                <button type="submit" className="btn btn-primary" onClick={() => sendSearch()}><FontAwesomeIcon icon={faSearch}/> Search</button>
                             </div>
                         </div>
                     </div>

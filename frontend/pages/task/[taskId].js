@@ -10,6 +10,8 @@ import UserContext from '../../functions/context';
 import Modal from 'react-bootstrap/Modal';
 import { Button, ButtonToolbar } from 'react-bootstrap';
 import Alert from 'react-bootstrap/Alert';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlusCircle, faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 
 const TaskId = () => {
     const Router = useRouter();
@@ -275,10 +277,10 @@ const TaskId = () => {
 
                         {!isCompleted ? (
                             <div className="col-md-12">
-                                <button className="btn btn-primary right  btn-forward-main" disabled={claimDisable} onClick={() => claimTask()}>Claim Task</button>
-                                <button className="btn btn-outline-primary mr-3 right btn-forward-main" onClick={() => upTaskReward()}>
+                                <button className="btn btn-primary right  btn-forward-main" disabled={claimDisable} onClick={() => claimTask()}><FontAwesomeIcon icon={faCheckCircle}/> Claim Task</button>
+                                <button className="btn btn-outline-primary mr-3 right btn-forward-main" onClick={() => upTaskReward()}><FontAwesomeIcon icon={faPlusCircle}/>
                                     {
-                                        (taskData.rewards && user in taskData.rewards) ? 'UPDATE your sponsored rewards' : 'ADD rewards to sponsor this task'
+                                        (taskData.rewards && user in taskData.rewards) ? ' UPDATE your sponsored rewards' : ' ADD rewards to sponsor this task'
                                     }
                                 </button>
                             </div>
