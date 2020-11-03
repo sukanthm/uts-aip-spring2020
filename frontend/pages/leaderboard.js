@@ -20,7 +20,7 @@ const leaderboard = (props) => {
     }
 
     useEffect(() => { 
-        if (!sessionCheck()) return;
+        if (!sessionCheck()) return; //reroutes annonymous users
         fetchTasks("All", currentPage.current, itemsPerPage, "");
     }, []);
 

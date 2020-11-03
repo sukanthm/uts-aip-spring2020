@@ -94,7 +94,7 @@ const favorIdPage = () => {
     }
 
     useEffect(()=>{
-        if (!sessionCheck()) return;
+        if (!sessionCheck()) return; //reroutes annonymous users
         if (!test_data_sanity()) return;
         getFavor();
     }, []);
@@ -179,11 +179,11 @@ const favorIdPage = () => {
                         <div className="row">
                             <div hidden={user == favorData.payerEmail} className="col-md-3 task-image-holder">
                                 <img src={imgFile} alt="Upload Image" className="task-image container"></img>
-                                <div className="task-image-upload container-fluid center">
-                                    <label htmlFor="task-image-edit">
+                                <div className="image-upload container-fluid center">
+                                    <label htmlFor="favor-image-edit" className="image-upload-label">
                                         <h6>Upload image</h6>
                                     </label>
-                                    <input type="file" onChange={(e) => uploadImage(e.target.files[0])} id="task-image-edit"></input>
+                                    <input type="file" onChange={(e) => uploadImage(e.target.files[0])} id="favor-image-edit"></input>
                                 </div>
                             </div>
                         </div>

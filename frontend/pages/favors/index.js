@@ -15,7 +15,7 @@ import LoadingComponent from '../../elements/LoadingComponent';
 
 const dashboard = (props) => {
     useEffect(() => {
-        if (!sessionCheck()) return;
+        if (!sessionCheck()) return; //reroutes annonymous users
         fetchFavorData();
     }, []);
 

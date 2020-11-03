@@ -18,7 +18,7 @@ const UserId = (props) => {
     const { sessionCheck } = useContext(UserContext);
     
     useEffect(() => {
-        if (!sessionCheck()) return;
+        if (!sessionCheck()) return; //reroutes annonymous users
     }, []);
 
     return(

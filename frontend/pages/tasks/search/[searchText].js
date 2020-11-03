@@ -81,7 +81,6 @@ const SearchText = (props) => {
 
 
     useEffect(() => {
-        //if (!sessionCheck()) return; //this page is no auth
         if (!test_data_sanity()) return;
         fetchTasks("All", currentPage.current, itemsPerPage, searchText)
     }, []);

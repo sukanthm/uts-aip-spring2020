@@ -212,14 +212,14 @@ const TaskId = () => {
         }
         catch (err) {
             setIsLoading(false);
-            setErrMsg("err");
+            setErrMsg(err);
             setShowAlert(true);
         }
     }
 
     useEffect(() => {
-        if (!sessionCheck()) return;
-        fetchTaskDetails()
+        if (!sessionCheck()) return; //reroutes annonymous users
+        fetchTaskDetails();
     }, [])
     function testTaskDeletion() {
         setShowModalWarning(false);
@@ -388,8 +388,8 @@ const TaskId = () => {
                                 <div className="row">
                                     <div className="col-md-3 task-image-holder">
                                         <img src={imgFile} alt="Upload Image" className="task-image container"></img>
-                                        <div className="task-image-upload container-fluid center">
-                                            <label htmlFor="task-image-edit">
+                                        <div className="image-upload container-fluid center">
+                                            <label htmlFor="task-image-edit" className="image-upload-label">
                                                 <h6>Upload image</h6>
                                             </label>
                                             <input type="file" onChange={(e) => uploadImage(e.target.files[0])} id="task-image-edit"></input>

@@ -21,7 +21,7 @@ const New = () => {
     const [rewardJson, setRewardJson] = useState({});
     
     useEffect(() => {
-        if (!sessionCheck()) return;
+        if (!sessionCheck()) return; //reroutes annonymous users
     }, []);
 
     function uploadImage(file){
