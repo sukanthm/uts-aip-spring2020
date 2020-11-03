@@ -123,7 +123,7 @@
     color: white;
 }
 
-.task-image-upload{
+.image-upload-label{
     background: $green;
     color: white;   
     cursor: pointer;
@@ -132,15 +132,15 @@
     margin-top: 10px;
 }
 
-.task-image-upload label{
-    margin-bottom: 0px;
-}
+// .image-upload label{
+//     margin-bottom: 0px;
+// }
 
-.task-image-upload:hover{
+.image-upload-label:hover{
     background: $teal;
 }
 
-.task-image-upload>input{
+.image-upload>input{
     display: none;
 }
 

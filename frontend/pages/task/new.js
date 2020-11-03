@@ -97,8 +97,8 @@ const New = () => {
                         
                         
 
-                        <div className="task-image-upload container center">
-                            <label htmlFor="task-image-edit">
+                        <div className="image-upload container center">
+                            <label htmlFor="task-image-edit" className="image-upload-label">
                                 Add / Edit Image
                             </label>
                             <input type="file" onChange={(e) => uploadImage(e.target.files[0])} id="task-image-edit"></input>
