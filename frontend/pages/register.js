@@ -28,7 +28,7 @@ const Register = () => {
     const handleShowCla = () => setShowCla(true);
 
     useEffect(() => {
-        if (sessionCheck('annonymous')) return; //reroutes loggedIn users
+        if (!sessionCheck('annonymous')) return; //reroutes loggedIn users
     }, []);
 
     let validator = () => {

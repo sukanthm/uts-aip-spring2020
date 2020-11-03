@@ -9,7 +9,7 @@ const logOut = (props) => {
     const { sessionCheck } = useContext(UserContext);
     const router = useRouter();
     useEffect(() => {
-        if (sessionCheck('annonymous')) return; //reroutes loggedIn users
+        if (!sessionCheck('annonymous')) return; //reroutes loggedIn users
     }, []);
 
     return(

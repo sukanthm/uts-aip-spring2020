@@ -18,7 +18,7 @@ const Login = (props) => {
     const [errMsg, setErrMsg] = useState("");
 
     useEffect(() => {
-        if (sessionCheck('annonymous')) return; //reroutes loggedIn users
+        if (!sessionCheck('annonymous')) return; //reroutes loggedIn users
     }, []);
 
     const submitForm = async() => {

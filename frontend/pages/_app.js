@@ -1,7 +1,7 @@
 import '../styles/core.scss';
 import { useRouter } from 'next/router';
 import UserContext from '../functions/context';
-import { useState, useEffect} from 'react';
+import { useState } from 'react';
 var assert = require('assert');
 
 function MyApp({ Component, pageProps }) {
@@ -9,6 +9,7 @@ function MyApp({ Component, pageProps }) {
   const Router = useRouter();
   const [user, setUser] = useState(null);
 
+  //deletes malformed cookies
   function parse_cookie(){
     try {
       let cookie = document.cookie
@@ -33,7 +34,7 @@ function MyApp({ Component, pageProps }) {
       setUser(cookie.email);
     else
       setUser(null);
-    return;
+    return cookie;
   }
 
   const logout = () => {
@@ -45,23 +46,23 @@ function MyApp({ Component, pageProps }) {
 
   //this function is used to distinguish loggedIn and annonymous users
   //manually called in a page to re-route users
-  //allowed is one of ['annonymous', 'loggedIn']
-  const sessionCheck = (allowed) => {
-    let cookie = parse_cookie();
-    if (allowed=='annonymous' && cookie){
+  //whoIsAllowed is one of ['annonymous', 'loggedIn'], default = ''
+  const sessionCheck = (whoIsAllowed='') => {
+    let cookie = login();
+
+    if (whoIsAllowed=='annonymous' && cookie){
+      //visitng annonymous only page with cookie
       Router.push('/');
       return false;
     } 
-    if (allowed=='loggedIn' && !cookie){
+    if (whoIsAllowed=='loggedIn' && !cookie){
+      //visitng loggedIn only page without cookie
       Router.push('/login');
       return false;
-    } 
+    }
+    //visitng [globally allowed page, annonymous only page without cookie, loggedIn only page with cookie]
     return true;
   }
-
-  useEffect(() => {
-    login(); //runs on all pages
-  }, [])
 
   return (
     <UserContext.Provider value={{ user: user, login: login, logout: logout, sessionCheck: sessionCheck }}>

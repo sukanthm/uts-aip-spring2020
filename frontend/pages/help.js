@@ -1,6 +1,14 @@
 import Header from '../template-parts/Header';
+import UserContext from '../functions/context';
+import { useContext, useEffect } from 'react';
 
 const help = () => {
+
+    const { sessionCheck } = useContext(UserContext);
+
+    useEffect(() => {
+        sessionCheck(); //allow both annonymous & loggedIn users; refresh cookie status
+    }, []);
 
     return (
         <>

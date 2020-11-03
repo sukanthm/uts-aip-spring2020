@@ -15,6 +15,8 @@ const SearchText = (props) => {
     const Router = useRouter();
     if (!Router.query.searchText) return null;
 
+    const { sessionCheck } = useContext(UserContext);
+
     const [searchText, setSearchText] = useState(String(Router.query.searchText).trim().replace(/(?![\x00-\x7F])./g, ''));
     function test_data_sanity(){
         if (searchText != Router.query.searchText){
@@ -81,6 +83,7 @@ const SearchText = (props) => {
 
 
     useEffect(() => {
+        sessionCheck(); //allow both annonymous & loggedIn users; refresh cookie status
         if (!test_data_sanity()) return;
         fetchTasks("All", currentPage.current, itemsPerPage, searchText)
     }, []);

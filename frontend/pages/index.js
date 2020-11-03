@@ -13,6 +13,8 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons';
 
 const Dashboard = (props) => {
 
+    const { sessionCheck } = useContext(UserContext);
+
     const itemsPerPage = 5;
     const currentPage = useRef(0);
 
@@ -86,7 +88,8 @@ const Dashboard = (props) => {
         }
     }
 
-    useEffect(() => { 
+    useEffect(() => {
+        sessionCheck(); //allow both annonymous & loggedIn users; refresh cookie status
         fetchTasks("All", currentPage.current, itemsPerPage, searchText) 
     }, []);
 
