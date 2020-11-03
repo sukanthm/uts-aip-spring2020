@@ -49,7 +49,7 @@ const TaskListContainer = (props) => {
         }
         catch (err) {
             console.log(err);
-            setErrMsg("Server Error");
+            setErrMsg(err);
             setIsLoading(false);
             setShowAlert(true);
         }
@@ -121,7 +121,7 @@ const TaskListContainer = (props) => {
                 <LoadingComponent></LoadingComponent>
             ) : (
             <>
-                <ErrorContainer imgSrc="/images/error_container/error.png" errTitle="No Tasks Detected!" errMsg="You haven't completed any task yet." />
+                <ErrorContainer imgSrc="/images/error_container/error.png" errTitle="No Tasks detected for this category!" />
             </>
              )}
              </>

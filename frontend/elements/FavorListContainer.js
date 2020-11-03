@@ -53,7 +53,7 @@ const SettledFavorsContainer = (props) => {
             }
         }
         catch (err) {
-            setErrMsg("Server Error");
+            setErrMsg(err);
             setIsLoading(false);
             setShowAlert(true);
         }

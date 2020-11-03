@@ -34,34 +34,33 @@ const New = () => {
     const submitTask = async() => {
         setShowAlert(false);
         
-        if(taskTitle.trim() == ""){
-            setErrMsg("Title cannot be left blank");
-            setShowAlert(true);
-            return;
-        }
-        if (taskTitle != taskTitle.replace(/(?![\x00-\x7F])./g, '')){
-            setErrMsg('non ASCII characters are illegal in TITLE, remove to proceed');
-            setShowAlert(true);
-            return;
-        }
-        if (taskDesc != taskDesc.replace(/(?![\x00-\x7F])./g, '')){
-            setErrMsg('non ASCII characters are illegal in DESCRIPTION, remove to proceed');
-            setShowAlert(true);
-            return;
-        }
-        if (Math.min.apply(null, Object.values(rewardJson)) <= 0 && 
-            Math.max.apply(null, Object.values(rewardJson)) <= 0) {
-                setShowAlert(true);
-                setErrMsg('creator must sponsor some rewards to create a task');
-                return;
-        }
-
-        const formData = new FormData();
-        formData.append('proofImage', formImg);
-
-        // Title and Rewards are compulsory
-
         try{
+            if(taskTitle.trim() == ""){
+                setErrMsg("Title cannot be left blank");
+                setShowAlert(true);
+                return;
+            }
+            if (taskTitle != taskTitle.replace(/(?![\x00-\x7F])./g, '')){
+                setErrMsg('non ASCII characters are illegal in TITLE, remove to proceed');
+                setShowAlert(true);
+                return;
+            }
+            if (taskDesc != taskDesc.replace(/(?![\x00-\x7F])./g, '')){
+                setErrMsg('non ASCII characters are illegal in DESCRIPTION, remove to proceed');
+                setShowAlert(true);
+                return;
+            }
+            if (Math.min.apply(null, Object.values(rewardJson)) <= 0 && 
+                Math.max.apply(null, Object.values(rewardJson)) <= 0) {
+                    setShowAlert(true);
+                    setErrMsg('creator must sponsor some rewards to create a task');
+                    return;
+            }
+
+            const formData = new FormData();
+            formData.append('proofImage', formImg);
+
+            // Title and Rewards are compulsory
             formData.append('title', taskTitle);
             formData.append('description', taskDesc);
             formData.append('rewards', JSON.stringify(rewardJson));
@@ -78,11 +77,9 @@ const New = () => {
         }
         catch(err){
             console.log(err);
-            setErrMsg("Server Error. Please try again later");
+            setErrMsg(err);
             setShowAlert(true);
-            
         }
-        
     }
 
     function rewardData(category, count){

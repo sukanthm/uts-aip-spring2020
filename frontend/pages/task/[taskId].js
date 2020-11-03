@@ -221,6 +221,7 @@ const TaskId = () => {
         if (!sessionCheck()) return; //reroutes annonymous users
         fetchTaskDetails();
     }, [])
+
     function testTaskDeletion() {
         setShowModalWarning(false);
         if (taskData.rewards && user in taskData.rewards && Object.keys(taskData.rewards).length === 1) {
@@ -235,6 +236,7 @@ const TaskId = () => {
                 setShowModalWarning('If you proceed, this task will be deleted as no sponsored rewards will be left');
         }
     }
+    
     return (
         <>
             <Header></Header>

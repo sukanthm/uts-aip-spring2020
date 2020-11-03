@@ -42,45 +42,50 @@ const New = () => {
     }
 
     async function createFavor(){
-        setShowAlert(false);
-        if (targetEmail === ''){
-            setErrMsg('Please enter Target Email');
-            setShowAlert(true);
-            return;
-        }
-        if (rewardID === ''){
-            setErrMsg('Please select a reward');
-            setShowAlert(true);
-            return;
-        }
-        if (isIncoming && formImg===''){
-            setErrMsg('proof required if target is to owe you');
-            setShowAlert(true);
-            return;
-        }
-        if (targetEmail != targetEmail.replace(/(?![\x00-\x7F])./g, '')){
-            setErrMsg('non ASCII characters are illegal, remove to proceed');
-            setShowAlert(true);
-            return;
-        }
+        try {
+            setShowAlert(false);
+            if (targetEmail === ''){
+                setErrMsg('Please enter Target Email');
+                setShowAlert(true);
+                return;
+            }
+            if (rewardID === ''){
+                setErrMsg('Please select a reward');
+                setShowAlert(true);
+                return;
+            }
+            if (isIncoming && formImg===''){
+                setErrMsg('proof required if target is to owe you');
+                setShowAlert(true);
+                return;
+            }
+            if (targetEmail != targetEmail.replace(/(?![\x00-\x7F])./g, '')){
+                setErrMsg('non ASCII characters are illegal, remove to proceed');
+                setShowAlert(true);
+                return;
+            }
 
-        const formData = new FormData();
-        formData.append('rewardID', rewardID);
-        if (isIncoming){
-            formData.append('payeeEmail', targetEmail);
-            formData.append('payerEmail', user);
-            formData.append('proofImage', formImg);
-        } else {
-            formData.append('payeeEmail', user);
-            formData.append('payerEmail', targetEmail);
-        }
-        let result = await fetch("/api/favor", {credentials: 'include', method: "POST", body: formData});
-        let json = await result.json();
+            const formData = new FormData();
+            formData.append('rewardID', rewardID);
+            if (isIncoming){
+                formData.append('payeeEmail', targetEmail);
+                formData.append('payerEmail', user);
+                formData.append('proofImage', formImg);
+            } else {
+                formData.append('payeeEmail', user);
+                formData.append('payerEmail', targetEmail);
+            }
+            let result = await fetch("/api/favor", {credentials: 'include', method: "POST", body: formData});
+            let json = await result.json();
 
-        if(json.success == true)
-            Router.push(`/favor/${json.newFavorID}`);
-        else {
-            setErrMsg(json.message);
+            if(json.success == true)
+                Router.push(`/favor/${json.newFavorID}`);
+            else {
+                setErrMsg(json.message);
+                setShowAlert(true);
+            }
+        } catch (err){
+            setErrMsg(err);
             setShowAlert(true);
         }
     }

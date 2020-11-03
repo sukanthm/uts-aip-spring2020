@@ -48,47 +48,59 @@ const favorIdPage = () => {
     }
 
     async function getFavor(){
-        setShowClaim(false);
-        setShowAlert(false);
+        try {
+            setShowClaim(false);
+            setShowAlert(false);
 
-        let result = await fetch(`/api/favor/${favorId}`, {credentials: 'include', method: "GET"});
-        let json = await result.json();
+            let result = await fetch(`/api/favor/${favorId}`, {credentials: 'include', method: "GET"});
+            let json = await result.json();
 
-        if(json.success == false){
-            setErrMsg(json.message);
-            setIsLoading(false);
+            if(json.success == false){
+                setErrMsg(json.message);
+                setIsLoading(false);
+                setShowAlert(true);
+                return;
+            } else {
+                setFetchSuccess(true);
+                setFavorData(json.output);
+                setRewardTitle(helpers.rewardTitle(json.output.rewardID));
+                setCreationImage(json.output.creationProofPath);
+                setCompletionImage(json.output.completionProofPath);
+                setIsLoading(false);
+            }
+        } catch (err){
+            setShowClaim(false);
+            setErrMsg(err);
             setShowAlert(true);
-            return;
-        } else {
-            setFetchSuccess(true);
-            setFavorData(json.output);
-            setRewardTitle(helpers.rewardTitle(json.output.rewardID));
-            setCreationImage(json.output.creationProofPath);
-            setCompletionImage(json.output.completionProofPath);
-            setIsLoading(false);
         }
     }
 
     async function payFavor(){
-        const formData = new FormData();
-        formData.append('favorID', favorId);
+        try {
+            const formData = new FormData();
+            formData.append('favorID', favorId);
 
-        if(user === favorData.payeeEmail && formImg === ''){
-            setShowClaim(false);
-            setErrMsg('payee must give image proof to close favor');
-            setShowAlert(true);
-            return;
-        }
-        formData.append('proofImage', formImg);
-        
-        let result = await fetch(`/api/favor/`, {credentials: 'include', method: "PUT", body: formData});
-        let json = await result.json();
+            if(user === favorData.payeeEmail && formImg === ''){
+                setShowClaim(false);
+                setErrMsg('payee must give image proof to close favor');
+                setShowAlert(true);
+                return;
+            }
+            formData.append('proofImage', formImg);
+            
+            let result = await fetch(`/api/favor/`, {credentials: 'include', method: "PUT", body: formData});
+            let json = await result.json();
 
-        if(json.success == true)
-            getFavor();
-        else {
+            if(json.success == true)
+                getFavor();
+            else {
+                setShowClaim(false);
+                setErrMsg(json.message);
+                setShowAlert(true);
+            }
+        } catch (err){
             setShowClaim(false);
-            setErrMsg(json.message);
+            setErrMsg(err);
             setShowAlert(true);
         }
     }

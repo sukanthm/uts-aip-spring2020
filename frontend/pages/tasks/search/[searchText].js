@@ -65,7 +65,7 @@ const SearchText = (props) => {
         }
         catch (err) {
             console.log(err);
-            setErrMsg("Server Error");
+            setErrMsg(err);
             setIsLoading(false);
             setShowAlert(true);
         }
