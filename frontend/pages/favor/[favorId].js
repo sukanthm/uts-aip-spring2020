@@ -16,7 +16,13 @@ const favorIdPage = () => {
     const Router = useRouter();
     if (!Router.query.favorId) return null;
     
-    let favorId = Router.query.favorId;
+    let favorId = String(Router.query.favorId).trim().replace(/(?![\x00-\x7F])./g, '');
+    function test_data_sanity(){
+        if (favorId != Router.query.favorId){
+            Router.push('/favor/'+favorId);
+            return false;
+        } return true;
+    }
 
     const { user, sessionCheck } = useContext(UserContext);
     const [isLoading, setIsLoading] = useState(true);
@@ -89,6 +95,7 @@ const favorIdPage = () => {
 
     useEffect(()=>{
         if (!sessionCheck()) return;
+        if (!test_data_sanity()) return;
         getFavor();
     }, []);
 

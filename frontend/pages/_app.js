@@ -21,7 +21,7 @@ function MyApp({ Component, pageProps }) {
     return;
   }
 
-  const sessionCheck = () => {
+  const sessionCheck = (route='/') => {
     let cookie = decodeURIComponent(document.cookie).substring(7);
 
     try {
@@ -32,13 +32,13 @@ function MyApp({ Component, pageProps }) {
       login(cookie.email);
       return true;
     } catch (err){
-      logout('/');
+      logout(route);
       return false;
     }
   }
 
   useEffect(() => {
-    sessionCheck();
+    // sessionCheck(); //this runs on all pages, wrongly forcing /register and /login to /
   }, [])
 
   return (

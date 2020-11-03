@@ -16,9 +16,6 @@ const Register = () => {
     const [emailFlag, setEmailFlag] = useState(false);
     const [passwordFlag, setPasswordFlag] = useState(false);
 
-    const [firstRender, setFirstRender] = useState(0);
-    const [validated, setValidated] = useState(false);
-
     const [showAlert, setShowAlert] = useState(false);
     const [errMsg, setErrMsg] = useState("");
 
@@ -27,54 +24,31 @@ const Register = () => {
     const handleCloseCla = () => setShowCla(false);
     const handleShowCla = () => setShowCla(true);
 
-    useEffect(() => {  // watcher on validated hook variable
-        if(firstRender == 0){
-            // used to prevent running useEffect on first load
-            setFirstRender(firstRender + 1);
-            console.log(firstRender);
-            return;
-        }
-        console.log("validated now", validated);
-        if(!validated){
-            console.log("reenter");
-        }
-        else{
-            // if value of validated is true at any time
-            // which should be when user clicks submit and all values a acceptable
-            // data will be submitted
-           submitForm();
-        }
-    }, [validated]);
-
     let validator = () => {
+        setShowAlert(false);
         setNameFlag(false);
         setEmailFlag(false);
         setPasswordFlag(false);
 
-        // function to check if all values are correct
-        // will set validated hook variable as false if any value is not acceptable
-
-        if(fullName.trim().length < 5){
+        if(fullName.trim().length < 5 || fullName != fullName.replace(/(?![\x00-\x7F])./g, '')){
             setNameFlag(true);
-            setValidated(false);
         }
-        else if(!/^[\w\d\.]+@[\w\d\.]+\.[\w\d\.]+$/.test(email)){ 
+        else if(!/^[\w\d\.]+@[\w\d\.]+\.[\w\d\.]+$/.test(email) || email != email.replace(/(?![\x00-\x7F])./g, '')){ 
             /* 
             allows "s..b@g.com" and others even though they are theoretically illegal
             follow RFC 5322 if you feel fancy (official standard)
             */
             setEmailFlag(true);
-            setValidated(false);
         }
-        else if(password.trim().length < 5){
+        else if(password.trim().length < 5  || password != password.replace(/(?![\x00-\x7F])./g, '')){
             setPasswordFlag(true);
-            setValidated(false);
         }
         else{
-            setValidated(true);
             setNameFlag(false);
             setEmailFlag(false);
             setPasswordFlag(false);
+            submitForm();
+            return;
         }
     }
 
@@ -101,14 +75,12 @@ const Register = () => {
                 handleShowCla();
             }
             else if (json.success == false){
-                setValidated(false);
                 setErrMsg(json.message);
                 setShowAlert(true);
             }
         }
         catch(err){
             console.log(err);
-            setValidated(false);
             setErrMsg("Server Error");
             setShowAlert(true);
         }
@@ -128,19 +100,19 @@ const Register = () => {
                         <div className="form-group">
                             <label htmlFor="register-name">Full Name</label>
                             <input type="text" className="form-control" id="register-name" placeholder="Your Name" value={fullName} onChange={(e) => setFullName(e.target.value)} onKeyDown={(e) => enterPressed(e)}/>
-                            {nameFlag ? <small className="form-text text-danger">Name must be atleast 5 characters</small> : null}
+                            {nameFlag ? <small className="form-text text-danger">Name must be atleast 5 characters with only ASCII characters</small> : null}
 
 
                         </div>
                         <div className="form-group">
                             <label htmlFor="register-email">Email address</label>
                             <input type="email" className="form-control" id="register-email" placeholder="Enter email" value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={(e) => enterPressed(e)}/>
-                            {emailFlag ? <small className="form-text text-danger">Email not valid</small> : null}
+                            {emailFlag ? <small className="form-text text-danger">Email not valid (do you have non-ASCII characters?)</small> : null}
                         </div>
                         <div className="form-group">
                             <label htmlFor="register-password">Password</label>
                             <input type="password" className="form-control" id="register-password" aria-describedby="register-password-help" placeholder="Create a password" value={password} onChange={(e) => setPass(e.target.value)} onKeyDown={(e) => enterPressed(e)}/>
-                            {passwordFlag ? <small className="form-text text-danger">Password must be atleast 5 characters</small> : null}
+                            {passwordFlag ? <small className="form-text text-danger">Password must be atleast 5 characters with only ASCII characters</small> : null}
                         </div>
                         <br />
                         <button type="submit" className="btn btn-primary btn-lg" onClick={() => validator()}>Sign Up</button>

@@ -13,8 +13,18 @@ import LoadingComponent from '../../../elements/LoadingComponent';
 
 const SearchText = (props) => {
     const Router = useRouter();
-    const searchText = Router.query.searchText;
-    if (!searchText) return null;
+    if (!Router.query.searchText) return null;
+
+    const [searchText, setSearchText] = useState(String(Router.query.searchText).trim().replace(/(?![\x00-\x7F])./g, ''));
+    function test_data_sanity(){
+        if (searchText != Router.query.searchText){
+            setSearchText(Router.query.searchText);
+            setErrMsg('non ASCII characters are illegal in SEARCH box, remove to proceed');
+            setIsLoading(false);
+            setShowAlert(true);
+            return false;
+        } return true;
+    }
 
     const itemsPerPage = 5;
     const currentPage = useRef(0);
@@ -72,6 +82,7 @@ const SearchText = (props) => {
 
     useEffect(() => {
         //if (!sessionCheck()) return; //this page is no auth
+        if (!test_data_sanity()) return;
         fetchTasks("All", currentPage.current, itemsPerPage, searchText)
     }, []);
 
@@ -89,12 +100,12 @@ const SearchText = (props) => {
                     <hr />
                     {isLoading ? <LoadingComponent></LoadingComponent> : null}
 
-                    <div hidden={isLoading || taskRows.length > 0}>
+                    <div hidden={isLoading || taskRows.length > 0 || showAlert}>
                         <ErrorContainer imgSrc="/images/error_container/error.png" errTitle="No Search Results!" errMsg="There are currently no tasks available that match your seach criteria." />
                     </div>
 
-                    <Alert show={showAlert} variant="danger" onClose={() => setShowAlert(false)} dismissible>
-                        <Alert.Heading>Oh snap! Error in loading task!</Alert.Heading>
+                    <Alert show={showAlert} variant="danger" onClose={() => setShowAlert(false)}>
+                        <Alert.Heading>Oh snap! Error in loading search!</Alert.Heading>
                         <p>
                             {errMsg}
                         </p>

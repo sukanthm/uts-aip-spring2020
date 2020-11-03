@@ -77,6 +77,12 @@ const Dashboard = (props) => {
     }
 
     const sendSearch = () => {
+        if (searchText != searchText.replace(/(?![\x00-\x7F])./g, '')) {
+            setErrMsg('non ASCII characters are illegal in SEARCH box, remove to proceed');
+            setIsLoading(false);
+            setShowAlert(true);
+            return;
+        }
         if (searchText.trim() != "") {
             router.push("/tasks/search/" + searchText);
         }

@@ -12,6 +12,13 @@ const SettledFavorsContainer = (props) => {
 
     if (!props.user.targetEmail) return null;
 
+    let targetEmail = String(props.user.targetEmail).trim().replace(/(?![\x00-\x7F])./g, '');
+    function test_data_sanity(){
+        if (targetEmail != props.user.targetEmail){
+            return false;
+        } return true;
+    }
+
     const itemsPerPage = 10;
     const currentPage = useRef(0);
     const router = useRouter();
@@ -26,7 +33,7 @@ const SettledFavorsContainer = (props) => {
     const fetchFavors = async ( currentPage, itemsPerPage) => {
         try {
             
-            let result = await fetch(`/api/favors/${props.user.targetEmail}?currentPage=${currentPage}&itemsPerPage=${itemsPerPage}`, { method: "GET", headers: {statusFilter: props.type} });
+            let result = await fetch(`/api/favors/${targetEmail}?currentPage=${currentPage}&itemsPerPage=${itemsPerPage}`, { method: "GET", headers: {statusFilter: props.type} });
             let json = await result.json();
             if (json.success == true) {
                 if (json.output.currentPage == (json.output.totalPages - 1)) {
@@ -60,7 +67,14 @@ const SettledFavorsContainer = (props) => {
     }
 
 
-    useEffect(() => { fetchFavors(currentPage.current, itemsPerPage) }, []);
+    useEffect(() => {
+        if (!test_data_sanity()){
+            setErrMsg('bad chars detected: '+ props.user.targetEmail);
+            setIsLoading(false);
+            return;
+        }
+        fetchFavors(currentPage.current, itemsPerPage);
+    }, []);
 
 
     if (favorRows.length > 0) {
@@ -93,7 +107,6 @@ const SettledFavorsContainer = (props) => {
                                 <b>Yay! You have seen it all</b>
                             </p>
                         }
-
                     >
                         {
                             favorRows.map((key) => {
@@ -116,7 +129,7 @@ const SettledFavorsContainer = (props) => {
             <LoadingComponent></LoadingComponent>
         ) : (
             <>
-                <ErrorContainer imgSrc="/images/error_container/error.png" errTitle="No Favors Detected!" />
+                <ErrorContainer imgSrc="/images/error_container/error.png" errTitle="No Favors!" errMsg={errMsg}/>
             </>
              )}
              </>

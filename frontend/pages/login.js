@@ -13,8 +13,6 @@ const Login = (props) => {
 
     const [emailFlag, setEmailFlag] = useState(false);
     const [passwordFlag, setPasswordFlag] = useState(false);
-    const [firstRender, setFirstRender] = useState(0);
-    const [validated, setValidated] = useState(false);
 
     const [showAlert, setShowAlert] = useState(false);
     const [errMsg, setErrMsg] = useState("");
@@ -33,64 +31,40 @@ const Login = (props) => {
                 router.push('/');
             }
             else if(json.success == false){
-                setValidated(false);
                 setErrMsg(json.message);
                 setShowAlert(true);
             }
             
         }
         catch(err){
-            console.log(err);
-            setValidated(false);
-            setErrMsg("Server Error");
+            setErrMsg(err);
             setShowAlert(true);
         }
-        }
+    }
 
-        const enterPressed = (e) => {
-            console.log("pressa");
-            if(e.key === "Enter"){
-                validator();
-            }
+    const enterPressed = (e) => {
+        console.log("pressa");
+        if(e.key === "Enter"){
+            validator();
         }
-
-    useEffect(() => {  // watcher on validated hook variable
-        if(firstRender == 0){
-            // used to prevent running useEffect on first load
-            setFirstRender(firstRender + 1);
-            console.log(firstRender);
-            return;
-        }
-        console.log("validated now", validated);
-        if(!validated){
-            console.log("reenter");
-        }
-        else{
-            // if value of validated is true at any time
-            // which should be when user clicks submit and all values a acceptable
-            // data will be submitted
-            submitForm();
-        }
-    }, [validated]);
+    }
 
     let validator = () => {
+        setShowAlert(false);
+        setEmailFlag(false);
+        setPasswordFlag(false);
+
         // function to check if all values are correct
         // will set validated hook variable as false if any value is not acceptable
-        if(email.trim() == ""){
+        if(email.trim() == "" || email != email.replace(/(?![\x00-\x7F])./g, '')){
             setEmailFlag(true);
-            setValidated(false);
         }
-        // else if(!/^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[A-Za-z]+$/.test(email)){
-        //     setEmailFlag(true);
-        //     setValidated(false);
-        // }
-        else if(password.trim() == ""){
+        else if(password.trim() == "" || password != password.replace(/(?![\x00-\x7F])./g, '')){
             setPasswordFlag(true);
-            setValidated(false);
         }
         else{
-            setValidated(true);
-            setEmailFlag(false);
+            submitForm();
+            return;
         }
     }
 
@@ -104,12 +78,12 @@ const Login = (props) => {
                         <div className="form-group">
                             <label htmlFor="login-user">Email address</label>
                             <input type="text" className="form-control" id="login-user" placeholder="Enter email" value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={(e) => enterPressed(e)}/>
-                            {emailFlag ? <small className="form-text text-danger">Email not valid</small> : null}
+                            {emailFlag ? <small className="form-text text-danger">Email not valid (do you have non-ASCII characters?)</small> : null}
                         </div>
                         <div className="form-group">
                             <label htmlFor="login-password">Password</label>
                             <input type="password" className="form-control" id="login-password" placeholder="Password"  value={password} onChange={(e) => setPass(e.target.value)} onKeyDown={(e) => enterPressed(e)}/>
-                            {passwordFlag ? <small className="form-text text-danger">Password can't be left blank</small> : null}
+                            {passwordFlag ? <small className="form-text text-danger">Password not valid (do you have non-ASCII characters?)</small> : null}
                         </div>
                         <br />
                         <button type="submit" className="btn btn-primary btn-lg" onClick={() => validator()}>Log In</button>

@@ -133,6 +133,12 @@ const TaskId = () => {
             setShowAlert(true);
             return;
         }
+        if (taskComment !== '' && taskComment != taskComment.replace(/(?![\x00-\x7F])./g, '')){
+            handleCloseCla();
+            setErrMsg('non ASCII characters are illegal in COMMENT, remove to proceed');
+            setShowAlert(true);
+            return;
+        }
 
         const formData = new FormData();
         formData.append('proofImage', formImg);

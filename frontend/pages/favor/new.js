@@ -58,6 +58,11 @@ const New = () => {
             setShowAlert(true);
             return;
         }
+        if (targetEmail != targetEmail.replace(/(?![\x00-\x7F])./g, '')){
+            setErrMsg('non ASCII characters are illegal, remove to proceed');
+            setShowAlert(true);
+            return;
+        }
 
         const formData = new FormData();
         formData.append('rewardID', rewardID);
