@@ -11,9 +11,10 @@ import FABComponent from '../../elements/FABComponent';
 import FavorListContainer from '../../elements/FavorListContainer';
 
 
-const UserId = () => {
+const UserId = (props) => {
     const Router = useRouter();
-    const [key, setKey] = useState('open');
+    console.log(Router.query.type);
+    const [key, setKey] = useState(Router.query.type);
     const { sessionCheck } = useContext(UserContext);
     
     useEffect(() => {
@@ -29,12 +30,12 @@ const UserId = () => {
                     activeKey={key}
                     onSelect={(k) => setKey(k)}
                 >
-                    <Tab eventKey="open" title="Pending Favors">
+                    <Tab eventKey="Pending" title="Pending Favors">
                         <div>
                             <FavorListContainer user={Router.query} type="Pending"></FavorListContainer>
                         </div>
                     </Tab>
-                    <Tab eventKey="settled" title="Paid Favors">
+                    <Tab eventKey="Paid" title="Paid Favors">
                         <div>
                             <FavorListContainer user={Router.query} type="Paid"></FavorListContainer>
                         </div>

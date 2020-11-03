@@ -9,7 +9,7 @@ const UserCard = (props) => {
     console.log("propsiya rahein", props);
 
     const routeUser = () => {
-        Router.push(`/favors/${props.userName}`)
+        Router.push(`/favors/${props.userName}?type=${props.type}`)
     }
 
     return(
