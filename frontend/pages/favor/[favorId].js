@@ -149,14 +149,16 @@ const favorIdPage = () => {
                 </tbody>
             </table>
             
-            <Alert show={showAlert} variant="danger" onClose={() => setShowAlert(false)} dismissible>
+            <Alert show={showAlert} variant="danger" onClose={() => setShowAlert(false)}>
                 <Alert.Heading>Oh snap! Error in displaying favor!</Alert.Heading>
                     <p>
                         {errMsg}
                     </p>
             </Alert>
-            <button hidden={isLoading} disabled={ favorData.status ? favorData.status === 'Paid' : true} 
-                className="btn btn-primary right  btn-forward-main" onClick={() => setShowClaim(true)}><FontAwesomeIcon icon={faTimesCircle}/> Pay favor</button>
+            <button hidden={isLoading || !favorData.status} disabled={ favorData.status ? favorData.status === 'Paid' : true} 
+                className="btn btn-primary right  btn-forward-main" onClick={() => {setShowClaim(true);setShowAlert(false)}}>
+                    <FontAwesomeIcon icon={faTimesCircle}/> Pay favor
+            </button>
         </div>
 
         {/* Modal for Claim */}
@@ -166,19 +168,16 @@ const favorIdPage = () => {
             </Modal.Header>
             <Modal.Body>
                 <div className="container">
-                    <p>You are about to close this favor. Are you sure?</p>
                     <div className="container-fluid">
                         <div className="row">
                             <div hidden={user == favorData.payerEmail} className="col-md-3 task-image-holder">
-                                <b>Upload Proof Image</b>
                                 <img src={imgFile} alt="Upload Image" className="task-image container"></img>
                                 <div className="task-image-upload container-fluid center">
                                     <label htmlFor="task-image-edit">
-                                        <h6>Edit Image</h6>
+                                        <h6>Upload image</h6>
                                     </label>
                                     <input type="file" onChange={(e) => uploadImage(e.target.files[0])} id="task-image-edit"></input>
                                 </div>
-
                             </div>
                         </div>
                     </div>
@@ -186,7 +185,7 @@ const favorIdPage = () => {
             </Modal.Body>
             <Modal.Footer>
                 <Button variant="danger" onClick={() => setShowClaim(false)}>Cancel</Button>
-                <Button variant="primary" onClick={() => payFavor()}>Pay Favor</Button>
+                <Button variant="primary" onClick={() => payFavor()}>Pay</Button>
             </Modal.Footer>
         </Modal>
         </>

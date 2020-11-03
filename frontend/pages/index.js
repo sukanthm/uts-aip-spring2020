@@ -102,7 +102,9 @@ const Dashboard = (props) => {
 
                     {isLoading ? <LoadingComponent></LoadingComponent> : null}
                     <div hidden={isLoading || taskRows.length > 0}>
-                        <ErrorContainer imgSrc="/images/error_container/error.png" errTitle="No Tasks Detected!" errMsg="There are currently no tasks available. Create a new task to get started." />
+                        <ErrorContainer imgSrc="/images/error_container/error.png" errTitle="No Tasks Detected!" 
+                            errMsg={user ? 'Create a new task to get started.' : 'Sign In to create a new task.'}
+                        />
                     </div>
 
                     <Alert show={showAlert} variant="danger" onClose={() => setShowAlert(false)} dismissible>
