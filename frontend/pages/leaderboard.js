@@ -25,7 +25,7 @@ const leaderboard = (props) => {
     }
 
     useEffect(() => { 
-        if (!sessionCheck()) return; //reroutes annonymous users
+        if (!sessionCheck('loggedIn')) return; //reroutes annonymous users
         fetchTasks("All", currentPage.current, itemsPerPage, "");
     }, []);
 

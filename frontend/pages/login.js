@@ -18,10 +18,7 @@ const Login = (props) => {
     const [errMsg, setErrMsg] = useState("");
 
     useEffect(() => {
-        if (sessionCheck()){
-            router.push('/'); //reroutes non-annonymous users
-            return;
-        }
+        if (sessionCheck('annonymous')) return; //reroutes loggedIn users
     }, []);
 
     const submitForm = async() => {

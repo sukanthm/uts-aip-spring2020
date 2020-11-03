@@ -26,7 +26,7 @@ const Party = (props) => {
     }
 
     useEffect(() => { 
-        if (!sessionCheck()) return; //reroutes annonymous users
+        if (!sessionCheck('loggedIn')) return; //reroutes annonymous users
         fetchTasks();
     }, []);
 

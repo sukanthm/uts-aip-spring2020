@@ -218,7 +218,7 @@ const TaskId = () => {
     }
 
     useEffect(() => {
-        if (!sessionCheck()) return; //reroutes annonymous users
+        if (!sessionCheck('loggedIn')) return; //reroutes annonymous users
         fetchTaskDetails();
     }, [])
 

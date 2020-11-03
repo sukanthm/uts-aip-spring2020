@@ -1,16 +1,19 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useContext } from 'react';
 import { useRouter } from 'next/router';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import Alert from 'react-bootstrap/Alert';
 import ErrorContainer from './ErrorContainer';
 import FavorContainer from './FavorContainer';
 import LoadingComponent from './LoadingComponent';
+import UserContext from '../functions/context';
 
 
 
 const SettledFavorsContainer = (props) => {
 
     if (!props.user.targetEmail) return null;
+
+    const { sessionCheck } = useContext(UserContext);
 
     let targetEmail = String(props.user.targetEmail).trim().replace(/(?![\x00-\x7F])./g, '');
     function test_data_sanity(){
@@ -68,6 +71,7 @@ const SettledFavorsContainer = (props) => {
 
 
     useEffect(() => {
+        if (!sessionCheck('loggedIn')) return; //reroutes annonymous users
         if (!test_data_sanity()){
             setErrMsg('bad chars detected: '+ props.user.targetEmail);
             setIsLoading(false);

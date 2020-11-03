@@ -106,7 +106,7 @@ const favorIdPage = () => {
     }
 
     useEffect(()=>{
-        if (!sessionCheck()) return; //reroutes annonymous users
+        if (!sessionCheck('loggedIn')) return; //reroutes annonymous users
         if (!test_data_sanity()) return;
         getFavor();
     }, []);

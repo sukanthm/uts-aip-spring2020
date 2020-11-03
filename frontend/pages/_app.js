@@ -11,13 +11,17 @@ function MyApp({ Component, pageProps }) {
 
   function parse_cookie(){
     try {
-      let cookie = decodeURIComponent(document.cookie).substring(7);
-      cookie = JSON.parse(cookie);
+      let cookie = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('aip_fp'))
+        .split('=')[1];
+      cookie = JSON.parse(decodeURIComponent(cookie));
       assert(Object.keys(cookie).length === 2);
       assert(Object.keys(cookie).includes('email'));
       assert(Object.keys(cookie).includes('loginToken'));
       return cookie;
     } catch (err){
+      document.cookie = 'aip_fp=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
       return false;
     }
   }
@@ -27,7 +31,8 @@ function MyApp({ Component, pageProps }) {
     let cookie = parse_cookie();
     if (cookie)
       setUser(cookie.email);
-    else setUser(null);
+    else
+      setUser(null);
     return;
   }
 
@@ -39,12 +44,19 @@ function MyApp({ Component, pageProps }) {
   }
 
   //this function is used to distinguish loggedIn and annonymous users
-  //manually called in a page to re-route as desired
-  const sessionCheck = () => {
+  //manually called in a page to re-route users
+  //allowed is one of ['annonymous', 'loggedIn']
+  const sessionCheck = (allowed) => {
     let cookie = parse_cookie();
-    if (cookie)
-      return true;
-    return false;
+    if (allowed=='annonymous' && cookie){
+      Router.push('/');
+      return false;
+    } 
+    if (allowed=='loggedIn' && !cookie){
+      Router.push('/login');
+      return false;
+    } 
+    return true;
   }
 
   useEffect(() => {

@@ -31,7 +31,7 @@ const New = () => {
     }
 
     useEffect(()=>{
-        if (!sessionCheck()) return; //reroutes annonymous users
+        if (!sessionCheck('loggedIn')) return; //reroutes annonymous users
         setRadio(isIncoming);
     }, [targetEmail]);
 
