@@ -181,7 +181,7 @@ const favorIdPage = () => {
                                 <img src={imgFile} alt="Upload Image" className="task-image container"></img>
                                 <div className="image-upload container-fluid center">
                                     <label htmlFor="favor-image-edit" className="image-upload-label">
-                                        <h6>Upload image</h6>
+                                        <h6>Upload Image</h6>
                                     </label>
                                     <input type="file" onChange={(e) => uploadImage(e.target.files[0])} id="favor-image-edit"></input>
                                 </div>

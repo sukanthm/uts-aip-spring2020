@@ -109,7 +109,7 @@ const New = () => {
 
                         <div className="image-upload container center">
                             <label htmlFor="task-image-edit" className="image-upload-label">
-                                Add / Edit Image
+                                Upload Image (optional)
                             </label>
                             <input type="file" onChange={(e) => uploadImage(e.target.files[0])} id="task-image-edit"></input>
                         </div>
