@@ -21,7 +21,7 @@ const Login = (props) => {
         if (sessionCheck()){
             router.push('/'); //reroutes non-annonymous users
             return;
-        } else render_page();
+        }
     }, []);
 
     const submitForm = async() => {
@@ -75,9 +75,6 @@ const Login = (props) => {
         }
     }
 
-    return(<></>)
-
-    function render_page(){
     return(
         <>
             <Header />
@@ -112,8 +109,7 @@ const Login = (props) => {
                 </div>
             </div>
         </>
-        )
-    }
+    )
 }
 
 export default Login;

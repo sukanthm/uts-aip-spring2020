@@ -23,25 +23,24 @@ function MyApp({ Component, pageProps }) {
   }
 
   //this function is used to set global variable 'user' (and then populate topNavbar with "signed in as {email}" )
-  //runs on all pages as this is present in useEffect
   const login = () => { 
     let cookie = parse_cookie();
     if (cookie)
       setUser(cookie.email);
-    else logout();
+    else setUser(null);
     return;
   }
 
   const logout = () => {
     setUser(null);
     document.cookie = 'aip_fp=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-    Router.push('/');
+    Router.push('/logOut');
     return;
   }
 
   //this function is used to distinguish loggedIn and annonymous users
   //manually called in a page to re-route as desired
-  const sessionCheck = (route='/') => { 
+  const sessionCheck = () => {
     let cookie = parse_cookie();
     if (cookie)
       return true;
@@ -49,8 +48,7 @@ function MyApp({ Component, pageProps }) {
   }
 
   useEffect(() => {
-    // sessionCheck(); //this runs on all pages, wrongly forcing /register and /login to /
-    login(); //login is good cookie present, else annonymous
+    login(); //runs on all pages
   }, [])
 
   return (

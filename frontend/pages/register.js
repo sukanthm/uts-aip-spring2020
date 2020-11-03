@@ -31,7 +31,7 @@ const Register = () => {
         if (sessionCheck()){
             router.push('/'); //reroutes non-annonymous users
             return;
-        } else render_page();
+        }
     }, []);
 
     let validator = () => {
@@ -100,8 +100,6 @@ const Register = () => {
         router.push('/login');
 }
 
-    return(<></>)
-    function render_page(){
     return(
         <>
             <Header />
@@ -154,8 +152,7 @@ const Register = () => {
                 </Modal.Footer>
             </Modal>
         </>
-        )
-    }
+    )
 }
 
 export default Register;
