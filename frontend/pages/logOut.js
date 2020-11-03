@@ -1,8 +1,5 @@
 import Header from '../template-parts/Header';
 import ErrorContainer from '../elements/ErrorContainer';
-import UserContext from '../functions/context';
-import { useState,useContext } from 'react';
-
 
 const logOut = (props) => {
     return(

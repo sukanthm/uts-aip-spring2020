@@ -22,6 +22,7 @@ const TopNavbar = (props) => {
         <span className="navbar-toggler-icon"></span>
       </button>
 
+      {/* isLoggedIn is used to show or hide certain elements based on if the user is logged in or not */}
       <div className="collapse navbar-collapse" id="navbarSupportedContent">
         <ul className="navbar-nav mr-auto">
           <li className="nav-item">

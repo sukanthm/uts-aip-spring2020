@@ -10,7 +10,6 @@ const AllRewardsRadio = (props) => {
 
     function setRadio(input, targetCLass){
         setSelectedRewardID(input);
-        // targetDOM.checked;
         setDynamicClass1('');
         setDynamicClass2('');
         setDynamicClass3('');

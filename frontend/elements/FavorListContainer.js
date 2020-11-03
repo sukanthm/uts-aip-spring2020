@@ -32,7 +32,6 @@ const SettledFavorsContainer = (props) => {
                 if (json.output.currentPage == (json.output.totalPages - 1)) {
                     setMoreScroll(false);
                 }
-                // let arr = taskRows;
                 const arr = [...favorRows];
                 json.output.rows.map((row) => {
                     arr.push(row);

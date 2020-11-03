@@ -3,11 +3,7 @@ import { useRouter } from 'next/router'
 import RewardsContainer from './RewardsContainer';
 
 const UserCard = (props) => {
-
     const Router = useRouter();
-
-    console.log("propsiya rahein", props);
-
     const routeUser = () => {
         Router.push(`/favors/${props.userName}?type=${props.type}`)
     }

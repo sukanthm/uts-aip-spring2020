@@ -4,11 +4,7 @@ import helpers from '../functions/helpers.js';
 import UserContext from '../functions/context';
 import { useContext } from 'react';
 
-
 const TaskContainer = (props) => {
-    // console.log(props.taskVals);
-    // console.log(props.taskVals.rewards);
-
     const router = useRouter();
     let taskImagePath;
 

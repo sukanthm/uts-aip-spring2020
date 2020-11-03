@@ -57,15 +57,6 @@ const help = () => {
                         </table>
                     </li>
                 </ol>
-
-
-
-
-
-
-
-
-
             </div>
         </>
     );

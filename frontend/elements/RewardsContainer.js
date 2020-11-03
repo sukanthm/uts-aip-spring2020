@@ -9,7 +9,6 @@ export default class RewardsContainer extends React.Component{
         return(<div className="rewards-container">
             {rewardNames.map((reward,index) => {
                 const rewardTitle = helpers.rewardTitle(reward);
-                // console.log("titli", rewardTitle);
                 return <RewardItem reward={rewardTitle} count={rewardsData[reward]} key={index}/>
             })}
         </div>);

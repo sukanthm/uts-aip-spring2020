@@ -1,3 +1,6 @@
+// ActiveLink code reused from the following link
+// https://stackoverflow.com/questions/53262263/target-active-link-when-the-route-is-active-in-next-js
+
 import { useRouter } from 'next/router'
 import PropTypes from 'prop-types'
 import Link from 'next/link'

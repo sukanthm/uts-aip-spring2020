@@ -1,6 +1,7 @@
 
 import {sequelize, Sequelize} from './sequelize';
 const DataTypes = require('sequelize');
+const helperModule = require('../../api/helper.js');
 
 const fpUser = sequelize.define('fp_user', {
     id: {
@@ -25,3 +26,16 @@ const fpUser = sequelize.define('fp_user', {
 });
 
 export default fpUser;
+
+module.exports = {
+    create_users: async function() {
+        return fpUser.bulkCreate([
+            {   
+                //no real admin rights :P
+                email: 'admin',
+                name: 'admin',
+                password: await helperModule.custom_hash(`R"A7x&^~s42:UMaF`),
+            },
+        ]);
+    }
+}

@@ -4,10 +4,6 @@ import ErrorContainer from '../elements/ErrorContainer';
 import UserContext from '../functions/context';
 import LoadingComponent from '../elements/LoadingComponent';
 
-
-
-    
-
 const leaderboard = (props) => {
     const itemsPerPage = 10;
     const currentPage = 0;
@@ -27,7 +23,6 @@ const leaderboard = (props) => {
         if (!sessionCheck()) return;
         fetchTasks("All", currentPage.current, itemsPerPage, "");
     }, []);
-    // If leaders are detected
 
         return ( 
             <>
@@ -36,6 +31,7 @@ const leaderboard = (props) => {
                     <LoadingComponent></LoadingComponent>
                 </div>
 
+                {/* Show result when leaderData is detected */}
                 <div hidden={!Object.keys(leaderData).length} className="container">
                     <h4>Top {itemsPerPage} Most Pending Incoming Favors:</h4>
                     {
@@ -56,6 +52,7 @@ const leaderboard = (props) => {
                     }
                 </div>
 
+                {/* Show empty message when leaderboard is empty */}
                 <div hidden={isLoading || Object.keys(leaderData).length} className="container">
                     <ErrorContainer imgSrc="/images/error_container/error.png" 
                         errTitle="No Leaders Detected!" errMsg="Oh no. There are no active leaders currently." needBtn={true} btnMsg="Go to Home" destin="/" />

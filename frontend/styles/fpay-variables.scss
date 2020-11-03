@@ -14,7 +14,7 @@ $black:    #000 !default;
 $blue:    #2c537e !default;
 $indigo:  #3c0694 !default;
 $purple:  #764ABC !default;
-$pink:    #aa577e !default;
+$pink:    #dfccfc !default;
 $red:     #97222e !default;
 $orange:  #c06a23 !default;
 $yellow:  #9c7500 !default;
@@ -23,7 +23,7 @@ $teal:    #158a67 !default;
 $cyan:    #148c9e !default;
 
 $primary:       $purple !default;
-$secondary:     $indigo !default;
+$secondary:     $pink !default;
 $success:       $green !default;
 $info:          $cyan !default;
 $warning:       $yellow !default;
@@ -45,7 +45,6 @@ $rewards: () !default;
 $rewards: map-merge(
     (
         "candy":"candy.png",
-        // "cheers":"003-cocktail.png",
         "coffee":"coffee.png",
         "drink":"drink.png",
         "meal":"meal.png",

@@ -12,8 +12,8 @@ module.exports = function(app){
     app.post('/api/signup', backendModule.multerUpload.none(), async function(req, res){
         /*
         request body keys:
-            email (string): regex checked in react
-            password (string): plaintext
+            email (string)
+            password (string)
             name (string)
         response headers:
             success (bool)
@@ -27,6 +27,14 @@ module.exports = function(app){
         ], res);
         if (!successFlag)
             return;
+
+        if(!/^[\w\d\.]+@[\w\d\.]+\.[\w\d\.]+$/.test(email)){ 
+            helperModule.manipulate_response_and_send(req, res, {
+                'success': false, 
+                'message': email+' is not a valid email',
+                }, 400);
+            return;
+        }
 
         const [newUser, created] = await fpUser.findOrCreate({
             where: {email: email},

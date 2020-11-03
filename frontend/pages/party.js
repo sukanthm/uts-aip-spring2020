@@ -32,6 +32,7 @@ const Party = (props) => {
                     <LoadingComponent></LoadingComponent>
                 </div>
                 
+                {/* Show data when party is detected */}
                 <div hidden={!Object.keys(partyData).length} className="container">
                     <div className="row">
                         {
@@ -65,6 +66,7 @@ const Party = (props) => {
                     </div>
                 </div>
                 
+                {/* Show empty message when party is not detected */}
                 <div hidden={isLoading || Object.keys(partyData).length} className="container">
                     <ErrorContainer imgSrc="/images/error_container/error.png" errTitle="No Party Detected!" 
                         errMsg="You are not involved in any parties yet. Parties are formed when reward loops occur." 

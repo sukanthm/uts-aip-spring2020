@@ -126,7 +126,6 @@ const Dashboard = (props) => {
                     >
                         {
                             taskRows.map((key) => {
-                                console.log("enter");
                                 return <TaskContainer taskVals={key} key={key.id} alert={alert}></TaskContainer>
                             })
                         }

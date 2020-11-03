@@ -76,24 +76,19 @@ const Login = (props) => {
     let validator = () => {
         // function to check if all values are correct
         // will set validated hook variable as false if any value is not acceptable
-        console.log("getting in");
         if(email.trim() == ""){
-            console.log("Email cannot be empty");
             setEmailFlag(true);
             setValidated(false);
         }
-        else if(!/^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[A-Za-z]+$/.test(email)){
-                    console.log("Email not valid");
-                    setEmailFlag(true);
-                    setValidated(false);
-        }
+        // else if(!/^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[A-Za-z]+$/.test(email)){
+        //     setEmailFlag(true);
+        //     setValidated(false);
+        // }
         else if(password.trim() == ""){
-            console.log("Password can't be left blank");
             setPasswordFlag(true);
             setValidated(false);
-}
+        }
         else{
-            console.log("elsing");
             setValidated(true);
             setEmailFlag(false);
         }

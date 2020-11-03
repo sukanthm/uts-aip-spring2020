@@ -55,7 +55,6 @@ const Register = () => {
         // will set validated hook variable as false if any value is not acceptable
 
         if(fullName.trim().length < 5){
-            console.log("Name must be atleast 5 characters");
             setNameFlag(true);
             setValidated(false);
         }
@@ -64,17 +63,14 @@ const Register = () => {
             allows "s..b@g.com" and others even though they are theoretically illegal
             follow RFC 5322 if you feel fancy (official standard)
             */
-            console.log("Email not valid");
             setEmailFlag(true);
             setValidated(false);
         }
         else if(password.trim().length < 5){
-            console.log("Password must be atleast 5 characters");
             setPasswordFlag(true);
             setValidated(false);
         }
         else{
-            console.log("elsing");
             setValidated(true);
             setNameFlag(false);
             setEmailFlag(false);
@@ -83,7 +79,6 @@ const Register = () => {
     }
 
     const enterPressed = (e) => {
-        console.log("pressa");
         if(e.key === "Enter"){
             validator();
         }
