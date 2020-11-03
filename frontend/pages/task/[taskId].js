@@ -382,11 +382,11 @@ const TaskId = () => {
                                 <div className="row">
                                     <div className="col-md-3 task-image-holder">
                                         <img src={imgFile} alt="Upload Image" className="task-image container"></img>
-                                        <div className="task-image-upload container-fluid center">
-                                            <label htmlFor="task-image-edit">
+                                        <div className="image-upload container-fluid center">
+                                            <label htmlFor="task-completion-image-edit" className="image-upload-label">
                                                 <h6>Upload image</h6>
                                             </label>
-                                            <input type="file" onChange={(e) => uploadImage(e.target.files[0])} id="task-image-edit"></input>
+                                            <input type="file" onChange={(e) => uploadImage(e.target.files[0])} id="task-completion-image-edit"></input>
                                         </div>
 
                                     </div>
