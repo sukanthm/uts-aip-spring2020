@@ -1,21 +1,19 @@
 const express = require('express');
 import {sequelize} from './initORM.js';
 const fpRewardModule = require('./objects/fpReward.js');
+const fpUserModule = require('./objects/fpUser.js');
 
-
-// ------------------------------------------------
-// Initialize database and create sample data
-// ------------------------------------------------
+// Drop and Create the database tables (force wipe all)
 async function buildDatabase() {
-    // Create the database tables (force them to be created from scratch)
     await sequelize.sync({force: true}).catch(function (err) {
         if(err.constructor.name == 'ConnectionRefusedError'){
             console.log('Connection refused, have you run `npm run postgres` ?')
         }
     });
     await fpRewardModule.create_rewards();
+    await fpUserModule.create_users();
 }
 
 buildDatabase().then(() =>
-console.log('\n\n Database Table Built, script will end momentarily \n\n')
+    console.log('\n\n Database Table Built, script will end momentarily \n\n')
 );
