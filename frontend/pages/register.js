@@ -1,11 +1,14 @@
-import {useState, useEffect, useRef} from 'react';
+import {useState, useEffect, useContext} from 'react';
 import Header from '../template-parts/Header';
 import { useRouter } from 'next/router';
+import UserContext from '../functions/context';
 import Alert from 'react-bootstrap/Alert';
 import Modal from 'react-bootstrap/Modal';
 import { Button, ButtonToolbar } from 'react-bootstrap';
 
 const Register = () => {
+
+    const { sessionCheck } = useContext(UserContext);
     
     const router = useRouter();
     const [fullName, setFullName] = useState("");
@@ -23,6 +26,13 @@ const Register = () => {
     const [showCla, setShowCla] = useState(false);
     const handleCloseCla = () => setShowCla(false);
     const handleShowCla = () => setShowCla(true);
+
+    useEffect(() => {
+        if (sessionCheck()){
+            router.push('/'); //reroutes non-annonymous users
+            return;
+        } else render_page();
+    }, []);
 
     let validator = () => {
         setShowAlert(false);
@@ -90,6 +100,8 @@ const Register = () => {
         router.push('/login');
 }
 
+    return(<></>)
+    function render_page(){
     return(
         <>
             <Header />
@@ -142,7 +154,8 @@ const Register = () => {
                 </Modal.Footer>
             </Modal>
         </>
-    )
+        )
+    }
 }
 
 export default Register;

@@ -7,7 +7,7 @@ import ActiveLink from '../template-parts/ActiveLink';
 
 const Login = (props) => {
     const router = useRouter();
-    const { login } = useContext(UserContext);
+    const { login, sessionCheck } = useContext(UserContext);
     const [email, setEmail] = useState("");
     const [password, setPass] = useState("");
 
@@ -16,6 +16,13 @@ const Login = (props) => {
 
     const [showAlert, setShowAlert] = useState(false);
     const [errMsg, setErrMsg] = useState("");
+
+    useEffect(() => {
+        if (sessionCheck()){
+            router.push('/'); //reroutes non-annonymous users
+            return;
+        } else render_page();
+    }, []);
 
     const submitForm = async() => {
         try{
@@ -68,6 +75,9 @@ const Login = (props) => {
         }
     }
 
+    return(<></>)
+
+    function render_page(){
     return(
         <>
             <Header />
@@ -102,7 +112,8 @@ const Login = (props) => {
                 </div>
             </div>
         </>
-    )
+        )
+    }
 }
 
 export default Login;
