@@ -2,6 +2,7 @@ import '../styles/core.scss';
 import { useRouter } from 'next/router';
 import UserContext from '../functions/context';
 import { useState, useEffect} from 'react';
+var assert = require('assert');
 
 function MyApp({ Component, pageProps }) {
 
@@ -10,39 +11,40 @@ function MyApp({ Component, pageProps }) {
 
   const login = (userMail) => {
     setUser(userMail);
+    return;
   }
 
-  const logout = () => {
-    setUser(null);
+  const logout = (route='/logOut') => {
+    login(null);
     document.cookie = 'aip_fp=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-    Router.push("/logOut");
+    Router.push(route);
+    return;
   }
 
   const sessionCheck = () => {
-    const cookie = decodeURIComponent(document.cookie).substring(7);
-    if(cookie.trim() == ""){
-      setUser(null);
-      Router.push("/");
+    let cookie = decodeURIComponent(document.cookie).substring(7);
+
+    try {
+      cookie = JSON.parse(cookie);
+      assert(Object.keys(cookie).length === 2);
+      assert(Object.keys(cookie).includes('email'));
+      assert(Object.keys(cookie).includes('loginToken'));
+      login(cookie.email);
+      return true;
+    } catch (err){
+      logout('/');
       return false;
     }
-    return true;
   }
 
   useEffect(() => {
-    const cookie = decodeURIComponent(document.cookie).substring(7);
-    if(cookie.trim() != ""){
-      const userMail = JSON.parse(cookie).email;
-      setUser(userMail);
-    }
+    sessionCheck();
   }, [])
-
 
   return (
     <UserContext.Provider value={{ user: user, login: login, logout: logout, sessionCheck: sessionCheck }}>
       <Component {...pageProps} />
     </UserContext.Provider>
   );
-
 }
-
 export default MyApp
