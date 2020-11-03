@@ -19,8 +19,6 @@ const SearchText = (props) => {
     const itemsPerPage = 5;
     const currentPage = useRef(0);
 
-    //const { sessionCheck } = useContext(UserContext);
-
     const [taskRows, setTaskRows] = useState([]);
     const [moreScroll, setMoreScroll] = useState(true);
     const [isLoading, setIsLoading] = useState(true);
@@ -42,13 +40,10 @@ const SearchText = (props) => {
                     console.log("ruk gaya");
                     setMoreScroll(false);
                 }
-                // let arr = taskRows;
                 const arr = [...taskRows];
                 json.output.rows.map((row) => {
                     arr.push(row);
                 })
-                console.log("arro", arr);
-                console.log("rumba", currentPage);
                 setTaskRows(arr);
                 setIsLoading(false);
             }
@@ -69,9 +64,7 @@ const SearchText = (props) => {
 
 
     const fetchNext = () => {
-        console.log("abhi", currentPage.current);
         currentPage.current = currentPage.current + 1;
-        console.log("abhi bhi", currentPage.current);
         fetchTasks("All", currentPage.current, itemsPerPage, searchText);
     }
 

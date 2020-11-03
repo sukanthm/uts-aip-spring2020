@@ -6,9 +6,6 @@ import Alert from 'react-bootstrap/Alert';
 import ErrorContainer from './ErrorContainer';
 import LoadingComponent from './LoadingComponent';
 
-
-
-
 const TaskListContainer = (props) => {
 
     const itemsPerPage = 5;
@@ -22,7 +19,6 @@ const TaskListContainer = (props) => {
     const [errMsg, setErrMsg] = useState("");
     const [isLoading, setIsLoading] = useState(true);
 
-    console.log(props);
     const fetchTasks = async (status, currentPage, itemsPerPage, search) => {
         try {
             let fetchJson = {
@@ -38,13 +34,10 @@ const TaskListContainer = (props) => {
                     console.log("ruk gaya");
                     setMoreScroll(false);
                 }
-                // let arr = taskRows;
                 const arr = [...taskRows];
                 json.output.rows.map((row) => {
                     arr.push(row);
                 })
-                console.log("arro", arr);
-                console.log("rumba", currentPage);
                 setTaskRows(arr);
                 setIsLoading(false);
             }
@@ -65,9 +58,7 @@ const TaskListContainer = (props) => {
 
 
     const fetchNext = () => {
-        console.log("abhi", currentPage.current);
         currentPage.current = currentPage.current + 1;
-        console.log("abhi bhi", currentPage.current);
         fetchTasks("All", currentPage.current, itemsPerPage, "");
     }
 

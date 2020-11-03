@@ -10,7 +10,6 @@ function MyApp({ Component, pageProps }) {
 
   const login = (userMail) => {
     setUser(userMail);
-    // Router.push('/');
   }
 
   const logout = () => {
