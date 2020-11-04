@@ -31,7 +31,7 @@ frontend/build
 .env.development.local
 .env.test.local
 .env.production.local
-*.pem
+#*.pem
 
 # debug
 npm-debug.log*

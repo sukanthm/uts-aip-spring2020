@@ -12,6 +12,8 @@ module.exports = {
     multerUpload: upload,
 }
 
+helperModule.set_up_rsa();
+
 import { sequelize } from './persistence/initORM.js';
 
 const app = express();

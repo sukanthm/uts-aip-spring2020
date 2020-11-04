@@ -8,6 +8,11 @@ const dev = process.argv[4] ? process.argv[4] !== 'production' : true
 const app = next({ dev })
 const handle = app.getRequestHandler()
 
+// const rsaModule = require('./functions/rsa.js');
+// console.log('(@#(*$');
+// console.log(rsaModule.pki_verify('1','2', 'SHA256'));
+// console.log('(@#(*$');
+
 const apiPaths = {
     '/api': {
         target: 'http://localhost:' + String(backendPort), 

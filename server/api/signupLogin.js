@@ -102,15 +102,22 @@ module.exports = function(app){
         }
 
         const loginToken = await helperModule.custom_hash(user.id.toString());
+        const signature = helperModule.pki_sign(Buffer.from(email+loginToken, 'utf8'));
+        console.log(signature);
+
         res.cookie('aip_fp', JSON.stringify({
             loginToken: loginToken,
-            email: email }), 
-          {maxAge: 3600 * 1000});
+            email: email,
+            signature: signature,
+        }), {
+            maxAge: 3600 * 1000
+        });
         helperModule.manipulate_response_and_send(req, res, {
             'success': true, 
             'message': 'login token generated and cookie set for '+email,
             'email': email,
             'loginToken': loginToken,
+            'signature': signature,
             }, 200);
         return;
     });

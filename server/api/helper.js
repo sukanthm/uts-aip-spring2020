@@ -5,8 +5,25 @@ var multer  = require('multer');
 const fs = require('fs');
 import fpUser from '../persistence/objects/fpUser';
 const bcrypt = require('bcrypt');
-
 const saltRounds = 10;
+const crypto = require("crypto");
+const NodeCache = require( "node-cache" );
+
+const myCache = new NodeCache();
+
+function set_up_rsa(){
+    let privateKey = fs.readFileSync(path.join(__dirname + '../../../key.pem')).toString();    
+    myCache.set('privateKey', privateKey);
+    console.log(crypto.getHashes());
+}
+
+function pki_sign(input){
+    const sign = crypto.createSign('id-rsassa-pkcs1-v1_5-with-sha3-256');
+    sign.write(input);
+    sign.end();
+    const signature = sign.sign(myCache.get('privateKey'), 'hex');
+    return signature;
+}
 
 function date_sort(a, b) {
     //custom sort function to target output json's data rows
@@ -222,9 +239,10 @@ async function validate_user_loginToken(req, res){
 
     try {
         aipFpCookie = JSON.parse(aipFpCookie);
-        assert(Object.keys(aipFpCookie).length === 2);
+        assert(Object.keys(aipFpCookie).length === 3);
         assert(Object.keys(aipFpCookie).includes('email'));
         assert(Object.keys(aipFpCookie).includes('loginToken'));
+        assert(Object.keys(aipFpCookie).includes('signature'));
     }
     catch (err) {
         manipulate_response_and_send(req, res, {
@@ -309,4 +327,8 @@ module.exports = {
     get_req_headers: get_req_headers, //for GET
     get_req_body_json: get_req_body_json, //for POST, PUT
     get_req_query_params: get_req_query_params, //for all http methods
+
+    set_up_rsa: set_up_rsa,
+    myCache: myCache,
+    pki_sign: pki_sign,
 }
