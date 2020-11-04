@@ -5,7 +5,7 @@ import Header from '../../template-parts/Header';
 import helpers from '../../functions/helpers.js';
 import UserContext from '../../functions/context';
 import Modal from 'react-bootstrap/Modal';
-import { Button, ButtonToolbar } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import Alert from 'react-bootstrap/Alert';
 import LoadingComponent from '../../elements/LoadingComponent';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -79,6 +79,19 @@ const favorIdPage = () => {
             setShowClaim(false);
             setErrMsg(err);
             setShowAlert(true);
+        }
+    }
+
+    const pay = () => {
+        console.log("aya");
+        if(user !== favorData.payeeEmail){
+            payFavor();
+            console.log("gaya");
+        }
+        else{
+            console.log("kya");
+            setShowClaim(true);
+            setShowAlert(false);
         }
     }
 
@@ -188,7 +201,7 @@ const favorIdPage = () => {
                     </p>
             </Alert>
             <button hidden={isLoading || !favorData.status} disabled={ favorData.status ? favorData.status === 'Paid' : true} 
-                className="btn btn-primary right  btn-forward-main" onClick={() => {setShowClaim(true);setShowAlert(false)}}>
+                className="btn btn-primary right  btn-forward-main" onClick={() => pay()}>
                     <FontAwesomeIcon icon={faTimesCircle}/> Pay favor
             </button>
         </div>
@@ -199,20 +212,17 @@ const favorIdPage = () => {
                 <Modal.Title>Pay this favor</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <div className="container">
-                    <div className="container-fluid">
-                        <div className="row">
-                            <div hidden={user == favorData.payerEmail} className="col-md-3 task-image-holder">
-                                <img src={imgFile} alt="Upload Image" className="task-image container"></img>
-                                <div className="image-upload container-fluid center">
-                                    <label htmlFor="favor-completion-image-edit" className="image-upload-label">
+                <div className="container col-md-3">
+                    
+                            
+                                <img src={imgFile} alt="Upload Image" className="task-image container center"></img>
+                                <div className="image-upload center">
+                                    <label htmlFor="favor-completion-image-edit" className="image-upload-label center">
                                         <h6>Upload image</h6>
                                     </label>
                                     <input type="file" onChange={(e) => uploadImage(e.target.files[0])} id="favor-completion-image-edit"></input>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
+                           
                 </div>
             </Modal.Body>
             <Modal.Footer>
