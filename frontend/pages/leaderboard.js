@@ -12,15 +12,20 @@ const leaderboard = (props) => {
     const [isLoading, setIsLoading] = useState(true);
 
     const fetchTasks = async () => {
-        let result = await fetch(`/api/leaderboard/1?currentPage=${currentPage}&itemsPerPage=${itemsPerPage}`, { method: "GET" });
-        let json = await result.json();
-        if (json.success)
-            setLeaderData(json.output);
-            setIsLoading(false);
+        try{
+            let result = await fetch(`/api/leaderboard/1?currentPage=${currentPage}&itemsPerPage=${itemsPerPage}`, { method: "GET" });
+            let json = await result.json();
+            if (json.success)
+                setLeaderData(json.output);
+                setIsLoading(false);
+        } catch (err){
+            setLeaderData({});
+            console.log(err);
+        }
     }
 
     useEffect(() => { 
-        if (!sessionCheck()) return;
+        if (!sessionCheck('loggedIn')) return; //reroutes annonymous users
         fetchTasks("All", currentPage.current, itemsPerPage, "");
     }, []);
 

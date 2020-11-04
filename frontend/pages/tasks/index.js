@@ -17,7 +17,7 @@ const dashboard = (props) => {
     const { sessionCheck } = useContext(UserContext);
 
     useEffect(() => { 
-        if (!sessionCheck()) return;
+        if (!sessionCheck('loggedIn')) return; //reroutes annonymous users
     }, []);
 
     return (

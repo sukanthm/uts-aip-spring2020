@@ -16,7 +16,13 @@ const favorIdPage = () => {
     const Router = useRouter();
     if (!Router.query.favorId) return null;
     
-    let favorId = Router.query.favorId;
+    let favorId = String(Router.query.favorId).trim().replace(/(?![\x00-\x7F])./g, '');
+    function test_data_sanity(){
+        if (favorId != Router.query.favorId){
+            Router.push('/favor/'+favorId);
+            return false;
+        } return true;
+    }
 
     const { user, sessionCheck } = useContext(UserContext);
     const [isLoading, setIsLoading] = useState(true);
@@ -42,53 +48,66 @@ const favorIdPage = () => {
     }
 
     async function getFavor(){
-        setShowClaim(false);
-        setShowAlert(false);
+        try {
+            setShowClaim(false);
+            setShowAlert(false);
 
-        let result = await fetch(`/api/favor/${favorId}`, {credentials: 'include', method: "GET"});
-        let json = await result.json();
+            let result = await fetch(`/api/favor/${favorId}`, {credentials: 'include', method: "GET"});
+            let json = await result.json();
 
-        if(json.success == false){
-            setErrMsg(json.message);
-            setIsLoading(false);
+            if(json.success == false){
+                setErrMsg(json.message);
+                setIsLoading(false);
+                setShowAlert(true);
+                return;
+            } else {
+                setFetchSuccess(true);
+                setFavorData(json.output);
+                setRewardTitle(helpers.rewardTitle(json.output.rewardID));
+                setCreationImage(json.output.creationProofPath);
+                setCompletionImage(json.output.completionProofPath);
+                setIsLoading(false);
+            }
+        } catch (err){
+            setShowClaim(false);
+            setErrMsg(err);
             setShowAlert(true);
-            return;
-        } else {
-            setFetchSuccess(true);
-            setFavorData(json.output);
-            setRewardTitle(helpers.rewardTitle(json.output.rewardID));
-            setCreationImage(json.output.creationProofPath);
-            setCompletionImage(json.output.completionProofPath);
-            setIsLoading(false);
         }
     }
 
     async function payFavor(){
-        const formData = new FormData();
-        formData.append('favorID', favorId);
+        try {
+            const formData = new FormData();
+            formData.append('favorID', favorId);
 
-        if(user === favorData.payeeEmail && formImg === ''){
-            setShowClaim(false);
-            setErrMsg('payee must give image proof to close favor');
-            setShowAlert(true);
-            return;
-        }
-        formData.append('proofImage', formImg);
-        
-        let result = await fetch(`/api/favor/`, {credentials: 'include', method: "PUT", body: formData});
-        let json = await result.json();
+            if(user === favorData.payeeEmail && formImg === ''){
+                setShowClaim(false);
+                setErrMsg('payee must give image proof to close favor');
+                setShowAlert(true);
+                return;
+            }
+            formData.append('proofImage', formImg);
+            
+            let result = await fetch(`/api/favor/`, {credentials: 'include', method: "PUT", body: formData});
+            let json = await result.json();
 
-        if(json.success == true)
-            getFavor();
-        else {
+            if(json.success == true)
+                getFavor();
+            else {
+                setShowClaim(false);
+                setErrMsg(json.message);
+                setShowAlert(true);
+            }
+        } catch (err){
             setShowClaim(false);
-            setErrMsg(json.message);
+            setErrMsg(err);
             setShowAlert(true);
         }
     }
 
     useEffect(()=>{
-        if (!sessionCheck()) return;
+        if (!sessionCheck('loggedIn')) return; //reroutes annonymous users
+        if (!test_data_sanity()) return;
         getFavor();
     }, []);
 
@@ -105,48 +124,50 @@ const favorIdPage = () => {
                     <LoadingComponent></LoadingComponent>
                 </div>
                 
-                <tbody hidden={!fetchSuccess}>
-                    <tr>
-                        <td>Status:</td>
-                        <td><h4><strong><span className={"status-"+favorData.status}>{favorData.status}</span></strong></h4></td>
-                    </tr>
-                    <tr>
-                        <td>Payee Email:</td>
-                        <td><strong>{favorData.payeeEmail}</strong></td>
-                    </tr>
-                    <tr>
-                        <td>Payee &rArr; Payer</td>
-                        <td>&dArr;</td>
-                    </tr>
-                    <tr>
-                        <td>Payer Email:</td>
-                        <td><strong>{favorData.payerEmail}</strong></td>
-                    </tr>
-                    <tr>
-                        <td>Reward:</td>
-                        <td><strong>{rewardTitle}</strong><br/><img src={'/images/reward/'+rewardTitle+'.png'}></img></td>
-                    </tr>
-                    <tr>
-                        <td>Created at:</td>
-                        <td>{helpers.readableDate(favorData.createdAt)}</td>
-                    </tr>
-                    <tr hidden={favorData.status == 'Pending'}>
-                        <td>Paid at:</td>
-                        <td>{helpers.readableDate(favorData.paidAt)}</td>
-                    </tr>
-                    <tr hidden={creationImage==''}>
-                        <td>Creation Image:</td>
-                        <td><img src={`/api/image/${creationImage}`} alt="creation Image" className="img-size-maintain"></img></td>
-                    </tr>
-                    <tr hidden={completionImage==''}>
-                        <td>Completion Image:</td>
-                        <td><img src={`/api/image/${completionImage}`} alt="completion Image" className="img-size-maintain"></img></td>
-                    </tr>
-                    <tr>
-                        <td>Comment:</td>
-                        <td>{favorData.comment}</td>
-                    </tr>
-                </tbody>
+                { fetchSuccess ? 
+                    <tbody>
+                        <tr>
+                            <td>Status:</td>
+                            <td><h4><strong><span className={"status-"+favorData.status}>{favorData.status}</span></strong></h4></td>
+                        </tr>
+                        <tr>
+                            <td>Payee Email:</td>
+                            <td><strong>{favorData.payeeEmail}</strong></td>
+                        </tr>
+                        <tr>
+                            <td>Payee &rArr; Payer</td>
+                            <td>&dArr;</td>
+                        </tr>
+                        <tr>
+                            <td>Payer Email:</td>
+                            <td><strong>{favorData.payerEmail}</strong></td>
+                        </tr>
+                        <tr>
+                            <td>Reward:</td>
+                            <td><strong>{rewardTitle}</strong><br/><img src={'/images/reward/'+rewardTitle+'.png'}></img></td>
+                        </tr>
+                        <tr>
+                            <td>Created at:</td>
+                            <td>{helpers.readableDate(favorData.createdAt)}</td>
+                        </tr>
+                        <tr hidden={favorData.status == 'Pending'}>
+                            <td>Paid at:</td>
+                            <td>{helpers.readableDate(favorData.paidAt)}</td>
+                        </tr>
+                        <tr hidden={creationImage==''}>
+                            <td>Creation Image:</td>
+                            <td><img src={`/api/image/${creationImage}`} alt="creation Image" className="img-size-maintain"></img></td>
+                        </tr>
+                        <tr hidden={completionImage==''}>
+                            <td>Completion Image:</td>
+                            <td><img src={`/api/image/${completionImage}`} alt="completion Image" className="img-size-maintain"></img></td>
+                        </tr>
+                        <tr>
+                            <td>Comment:</td>
+                            <td>{favorData.comment}</td>
+                        </tr>
+                    </tbody> 
+                : <tbody></tbody> }
             </table>
             
             <Alert show={showAlert} variant="danger" onClose={() => setShowAlert(false)}>

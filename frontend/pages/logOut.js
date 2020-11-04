@@ -1,7 +1,17 @@
 import Header from '../template-parts/Header';
 import ErrorContainer from '../elements/ErrorContainer';
+import { useEffect, useContext } from 'react';
+import UserContext from '../functions/context';
+import { useRouter } from 'next/router';
 
 const logOut = (props) => {
+
+    const { sessionCheck } = useContext(UserContext);
+    const router = useRouter();
+    useEffect(() => {
+        if (!sessionCheck('annonymous')) return; //reroutes loggedIn users
+    }, []);
+
     return(
         <>
             <Header />

@@ -13,6 +13,8 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons';
 
 const Dashboard = (props) => {
 
+    const { sessionCheck } = useContext(UserContext);
+
     const itemsPerPage = 5;
     const currentPage = useRef(0);
 
@@ -22,12 +24,11 @@ const Dashboard = (props) => {
     const [searchText, setSearchText] = useState("");
 
     const [moreScroll, setMoreScroll] = useState(true);
-    const [taskData, setTaskData] = useState({});
 
     const [showAlert, setShowAlert] = useState(false);
     const [errMsg, setErrMsg] = useState("");
 
-    const { user, logout } = useContext(UserContext);
+    const { user } = useContext(UserContext);
 
     const fetchTasks = async (status, currentPage, itemsPerPage, search) => {
         try {
@@ -38,7 +39,6 @@ const Dashboard = (props) => {
             let result = await fetch(`/api/requests?currentPage=${currentPage}&itemsPerPage=${itemsPerPage}`, { method: "GET", headers: fetchJson });
             let json = await result.json();
 
-            setTaskData(json.output);
             if (json.success == true) {
                 if (json.output.currentPage == (json.output.totalPages - 1)) {
                     setMoreScroll(false);
@@ -58,7 +58,7 @@ const Dashboard = (props) => {
             }
         }
         catch (err) {
-            setErrMsg("err");
+            setErrMsg(err);
             setIsLoading(false);
             setShowAlert(true);
         }
@@ -77,12 +77,22 @@ const Dashboard = (props) => {
     }
 
     const sendSearch = () => {
+        if (searchText != searchText.replace(/(?![\x00-\x7F])./g, '')) {
+            setErrMsg('non ASCII characters are illegal in SEARCH box, remove to proceed');
+            setIsLoading(false);
+            setShowAlert(true);
+            return;
+        }
         if (searchText.trim() != "") {
             router.push("/tasks/search/" + searchText);
         }
     }
 
-    useEffect(() => { fetchTasks("All", currentPage.current, itemsPerPage, searchText) }, []);
+    useEffect(() => {
+        sessionCheck(); //allow both annonymous & loggedIn users; refresh cookie status
+        fetchTasks("All", currentPage.current, itemsPerPage, searchText) 
+    }, []);
+
     return (
         <>
             <Header />

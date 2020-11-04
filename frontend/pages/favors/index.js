@@ -14,12 +14,12 @@ import LoadingComponent from '../../elements/LoadingComponent';
 
 
 const dashboard = (props) => {
+    const { sessionCheck } = useContext(UserContext);
+
     useEffect(() => {
-        if (!sessionCheck()) return;
+        if (!sessionCheck('loggedIn')) return; //reroutes annonymous users
         fetchFavorData();
     }, []);
-
-    const { sessionCheck } = useContext(UserContext);
 
     const [showAlert, setShowAlert] = useState(false);
     const [errMsg, setErrMsg] = useState("");
@@ -141,16 +141,15 @@ const dashboard = (props) => {
                         </div>
                     </Tab>
                 </Tabs>
+
+                <Alert show={showAlert} variant="danger" onClose={() => setShowAlert(false)} dismissible>
+                    <Alert.Heading>Oh snap! Error in loading data!</Alert.Heading>
+                    <p>
+                        {errMsg}
+                    </p>
+                </Alert>
+
             </div>
-
-
-            <Alert show={showAlert} variant="danger" onClose={() => setShowAlert(false)} dismissible>
-                <Alert.Heading>Oh snap! Error in loading data!</Alert.Heading>
-                <p>
-                    {errMsg}
-                </p>
-            </Alert>
-
 
             <FABComponent type="Favor"></FABComponent>
 

@@ -1,10 +1,11 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useContext } from 'react';
 import { useRouter } from 'next/router';
 import TaskContainer from './TaskContainer';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import Alert from 'react-bootstrap/Alert';
 import ErrorContainer from './ErrorContainer';
 import LoadingComponent from './LoadingComponent';
+import UserContext from '../functions/context';
 
 const TaskListContainer = (props) => {
 
@@ -18,6 +19,8 @@ const TaskListContainer = (props) => {
     const [showAlert, setShowAlert] = useState(false);
     const [errMsg, setErrMsg] = useState("");
     const [isLoading, setIsLoading] = useState(true);
+
+    const { sessionCheck } = useContext(UserContext);
 
     const fetchTasks = async (status, currentPage, itemsPerPage, search) => {
         try {
@@ -49,7 +52,7 @@ const TaskListContainer = (props) => {
         }
         catch (err) {
             console.log(err);
-            setErrMsg("Server Error");
+            setErrMsg(err);
             setIsLoading(false);
             setShowAlert(true);
         }
@@ -63,7 +66,10 @@ const TaskListContainer = (props) => {
     }
 
 
-    useEffect(() => { fetchTasks("All", currentPage.current, itemsPerPage, "") }, []);
+    useEffect(() => { 
+        if (!sessionCheck('loggedIn')) return; //reroutes annonymous users
+        fetchTasks("All", currentPage.current, itemsPerPage, "") 
+    }, []);
 
     
     if (taskRows.length > 0) {
@@ -121,7 +127,7 @@ const TaskListContainer = (props) => {
                 <LoadingComponent></LoadingComponent>
             ) : (
             <>
-                <ErrorContainer imgSrc="/images/error_container/error.png" errTitle="No Tasks Detected!" errMsg="You haven't completed any task yet." />
+                <ErrorContainer imgSrc="/images/error_container/error.png" errTitle="No Tasks detected for this category!" />
             </>
              )}
              </>

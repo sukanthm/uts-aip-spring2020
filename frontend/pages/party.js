@@ -13,15 +13,20 @@ const Party = (props) => {
     const { sessionCheck } = useContext(UserContext);
 
     const fetchTasks = async () => {
-        let result = await fetch("/api/party", { method: "GET" });
-        let json = await result.json();
-        if (json.success)
-            setPartyData(json.output);
-            setIsLoading(false);
+        try{
+            let result = await fetch("/api/party", { method: "GET" });
+            let json = await result.json();
+            if (json.success)
+                setPartyData(json.output);
+                setIsLoading(false);
+        } catch (err){
+            setPartyData({});
+            console.log(err);
+        }
     }
 
     useEffect(() => { 
-        if (!sessionCheck()) return;
+        if (!sessionCheck('loggedIn')) return; //reroutes annonymous users
         fetchTasks();
     }, []);
 

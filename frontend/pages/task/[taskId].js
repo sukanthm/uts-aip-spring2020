@@ -133,6 +133,12 @@ const TaskId = () => {
             setShowAlert(true);
             return;
         }
+        if (taskComment !== '' && taskComment != taskComment.replace(/(?![\x00-\x7F])./g, '')){
+            handleCloseCla();
+            setErrMsg('non ASCII characters are illegal in COMMENT, remove to proceed');
+            setShowAlert(true);
+            return;
+        }
 
         const formData = new FormData();
         formData.append('proofImage', formImg);
@@ -206,15 +212,16 @@ const TaskId = () => {
         }
         catch (err) {
             setIsLoading(false);
-            setErrMsg("err");
+            setErrMsg(err);
             setShowAlert(true);
         }
     }
 
     useEffect(() => {
-        if (!sessionCheck()) return;
-        fetchTaskDetails()
+        if (!sessionCheck('loggedIn')) return; //reroutes annonymous users
+        fetchTaskDetails();
     }, [])
+
     function testTaskDeletion() {
         setShowModalWarning(false);
         if (taskData.rewards && user in taskData.rewards && Object.keys(taskData.rewards).length === 1) {
@@ -229,6 +236,7 @@ const TaskId = () => {
                 setShowModalWarning('If you proceed, this task will be deleted as no sponsored rewards will be left');
         }
     }
+    
     return (
         <>
             <Header></Header>

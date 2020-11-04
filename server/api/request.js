@@ -1,3 +1,4 @@
+const fs = require('fs');
 import {sequelize, Sequelize} from '../persistence/objects/sequelize';
 const { Op, QueryTypes } = require("sequelize");
 import fpUser from '../persistence/objects/fpUser';
@@ -604,6 +605,11 @@ module.exports = function(app){
             }
         );
         if (totalRewardsCount[0]['sum'] === null){
+            //delete file with request
+            fs.unlink(helperModule.imagesDir + oneRequest.taskImagePath, (err) => {
+                if (err) throw err;
+                console.log('successfully deleted upload @ '+oneRequest.taskImagePath+' for task id:'+oneRequest.id+' deleteion');
+            });
             oneRequest.destroy();
             helperModule.manipulate_response_and_send(req, res, {
                 'success': true, 
