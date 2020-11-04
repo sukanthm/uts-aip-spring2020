@@ -1,16 +1,15 @@
 import Header from '../template-parts/Header';
 import ErrorContainer from '../elements/ErrorContainer';
-import { useRouter } from 'next/router';
 import {useEffect, useContext} from 'react';
 import UserContext from '../functions/context';
 import FABComponent from '../elements/FABComponent';
 
 
 
-const DeleteTask = (props) => {
+const DeleteTask = () => {
+    //Check if user is logged in
     const { sessionCheck } = useContext(UserContext);
 
-    const Router = useRouter();
     useEffect(() => { 
         if (!sessionCheck('loggedIn')) return; //reroutes annonymous users
     }, []);

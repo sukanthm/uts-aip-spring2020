@@ -4,19 +4,17 @@ import ActiveLink from '../../template-parts/ActiveLink'
 import { useState, useEffect, useContext } from 'react';
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
-import helpers from '../../functions/helpers.js';
-import { useRouter } from 'next/router';
 import UserContext from '../../functions/context';
 import FABComponent from '../../elements/FABComponent';
 
-
-const dashboard = (props) => {
+// Task dashboard component to display Task list containers
+const dashboard = () => {
    
-    const Router = useRouter();
     const [key, setKey] = useState('home');
     const { sessionCheck } = useContext(UserContext);
 
     useEffect(() => { 
+        // Check if user is logged in
         if (!sessionCheck('loggedIn')) return; //reroutes annonymous users
     }, []);
 
@@ -30,6 +28,7 @@ const dashboard = (props) => {
                     activeKey={key}
                     onSelect={(k) => setKey(k)}
                 >
+                    {/* Task list container in tabs */}
                     <Tab eventKey="home" title="Created by Me">
                         <div>
                             <TaskListContainer type="Creator"></TaskListContainer>

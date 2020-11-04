@@ -1,9 +1,10 @@
-
+//Helper functions to be used in multiple modules
 
 const helpers = {
     emptyRewardsDict: {1:0 ,2:0, 3:0, 4:0, 5:0},
-    //Helper functions to be used in multiple modules
-    rewardID : (name) => {  // return ID corresponding to Reward Name
+   
+    // return ID corresponding to Reward Name
+    rewardID : (name) => {  
         let id = null;
         name = name.toLowerCase();
         switch(name) {
@@ -30,8 +31,8 @@ const helpers = {
         }
         return id;
     },
-
-    rewardTitle : (id) => {  // return Title corresponding to Reward ID
+    // return Title corresponding to Reward ID
+    rewardTitle : (id) => {  
         let name = null;
         id = parseInt(id);
         switch(id) {
@@ -59,13 +60,12 @@ const helpers = {
 
     return name;
 },
-
+// Convert ISO date string to human readable format
 readableDate : (s) => {
-               // console.log("drool", s);
-
+                // ISO date pattern regex 
                let datePattern = /\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z)/;
                let flag = datePattern.test(s);
-               // console.log(flag);
+               // Convert only if in ISO pattern
                if(flag){
                let b = s.split(/\D+/);
                let newDate = new Date(Date.UTC(b[0], --b[1], b[2], b[3], b[4], b[5], b[6]));    
@@ -81,17 +81,6 @@ readableDate : (s) => {
                 return false;
         }
         return true;
-    },
-
-    // Check cookie
-    checkCookie : () => {
-            const cookie = decodeURIComponent(document.cookie).substring(7);
-            if(cookie.trim() == ""){
-                return 0;
-            }
-            else{
-                return 1;
-            }
     }
 }
 

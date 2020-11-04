@@ -1,22 +1,25 @@
 
 import UserContext from '../functions/context';
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import helpers from '../functions/helpers';
 import { useRouter } from 'next/router';
 
+
+//Container for individual favors in list
 const FavorContainer = (props) => {
 
     const { user } = useContext(UserContext);
     const Router = useRouter();
     
     const openFavor = () => {
+        // Routing to individual favor based on id
         Router.push(`/favor/${props.favorVals.id}`);
     }
 
     let stringData = "";
     let stringDate = "";
 
-
+    // String to be displayed based on type of favor
     if(props.favorVals.status == "Pending"){
         if(user == props.favorVals.payerEmail){
                  stringData =  `${props.favorVals.payeeEmail} owes you a ${helpers.rewardTitle(props.favorVals.rewardID)}`;

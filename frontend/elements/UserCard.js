@@ -1,9 +1,11 @@
-import { route } from 'next/dist/next-server/server/router';
 import { useRouter } from 'next/router'
 import RewardsContainer from './RewardsContainer';
 
+// User card to display favor associated with a user
 const UserCard = (props) => {
     const Router = useRouter();
+
+    // Route user to favors list page
     const routeUser = () => {
         Router.push(`/favors/${props.userName}?type=${props.type}`)
     }

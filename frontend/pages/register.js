@@ -6,6 +6,7 @@ import Alert from 'react-bootstrap/Alert';
 import Modal from 'react-bootstrap/Modal';
 import { Button, ButtonToolbar } from 'react-bootstrap';
 
+// Component to Register new users
 const Register = () => {
 
     const { sessionCheck } = useContext(UserContext);
@@ -28,9 +29,11 @@ const Register = () => {
     const handleShowCla = () => setShowCla(true);
 
     useEffect(() => {
+        // check if user is loggen in
         if (!sessionCheck('annonymous')) return; //reroutes loggedIn users
     }, []);
 
+    // Function to validate user inputs before submitting
     let validator = () => {
         setShowAlert(false);
         setNameFlag(false);
@@ -59,12 +62,14 @@ const Register = () => {
         }
     }
 
+    // Function to detect eneter key press on input boxes
     const enterPressed = (e) => {
         if(e.key === "Enter"){
             validator();
         }
     }
 
+    // Submit values from user 
     const submitForm = async () => {
         try{
             let formData = new FormData();

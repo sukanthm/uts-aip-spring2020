@@ -1,8 +1,10 @@
 import {useState, useEffect} from 'react';
 import helpers from '../functions/helpers';
 
+// Component to display each Reward associated with a user and update its value
 const RewardCard = (props) => {
     
+    // Assign itital value from API if available
     const [count, setCount] = useState(props.originalValue[helpers.rewardID(props.category)] || 0);
     
     function updateCount(operator){
@@ -19,7 +21,7 @@ const RewardCard = (props) => {
     }
 
     useEffect(() => {
-        // useEffect was used here as the count variable was being updated in the HTML, but value could not be used in the JS
+        // Send the count to parent component's function on update
         props.amount(props.category, count - (props.originalValue[helpers.rewardID(props.category)] || 0));
     }, [count])
 

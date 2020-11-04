@@ -1,13 +1,14 @@
 import ActiveLink from './ActiveLink'
 import UserContext from '../functions/context';
-import { useEffect, useContext } from 'react';
+import { useContext } from 'react';
 import Navbar from 'react-bootstrap/Navbar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome, faHeart, faTasks, faUserFriends, faGlassCheers, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
 
-const TopNavbar = (props) => {
+const TopNavbar = () => {
   const { user, logout } = useContext(UserContext);
   const isLoggedIn = user != null;
+  // Logout function for user
   const logOut = () => {
     logout();
   }
@@ -18,12 +19,10 @@ const TopNavbar = (props) => {
         <img style={{ cursor: 'default' }} src="/images/logo.png" alt="IOU Logo" className="img-responsive logo-forward" />
         Forward Pay
       </a>
-      <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span className="navbar-toggler-icon"></span>
-      </button>
-
+      
+      {/* Dynamic Navbar based on user login */}
       {/* isLoggedIn is used to show or hide certain elements based on if the user is logged in or not */}
-      <div className="collapse navbar-collapse" id="navbarSupportedContent">
+      {/* <div className="collapse navbar-collapse" id="navbarSupportedContent"> */}
         <ul className="navbar-nav mr-auto">
           <li className="nav-item">
             <ActiveLink activeClassName="active" href="/">
@@ -74,7 +73,7 @@ const TopNavbar = (props) => {
           <Navbar.Text className="text-light mr-4"><i>Logged in as: <b>{user}</b></i></Navbar.Text>
           <button className="btn btn-outline-light mr-sm-2" type="submit" onClick={() => logOut()}>Logout</button>
         </div>
-      </div>
+      {/* </div> */}
     </nav>
   )
 }

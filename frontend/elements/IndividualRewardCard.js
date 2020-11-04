@@ -1,6 +1,7 @@
-import {useState, useEffect} from 'react';
+
 import RewardsContainer from './RewardsContainer';
 
+// Compenent to display Username along with their rewards
 const IndividualRewardCard = (props) => {
  
     let rewards = Object.keys(props.rewards);

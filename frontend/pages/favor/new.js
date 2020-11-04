@@ -1,13 +1,12 @@
-import { Button, ButtonToolbar } from 'react-bootstrap';
+
 import { useState, useEffect, useContext } from 'react';
 import UserContext from '../../functions/context';
 import Header from '../../template-parts/Header';
-import RewardCard from '../../elements/RewardCard';
 import AllRewardsRadio from '../../elements/AllRewardsRadio';
-import helpers from '../../functions/helpers.js';
 import Alert from 'react-bootstrap/Alert';
 import { useRouter } from 'next/router';
 
+// Compenent to create a new favor
 const New = () => {
 
     const Router = useRouter();
@@ -64,7 +63,7 @@ const New = () => {
                 return;
             }
             if (targetEmail != targetEmail.replace(/(?![\x00-\x7F])./g, '')) {
-                setErrMsg('non ASCII characters are illegal, remove to proceed');
+                setErrMsg('Illegal characters used in email, remove to proceed');
                 setShowAlert(true);
                 return;
             }
@@ -113,7 +112,6 @@ const New = () => {
                                 <br />
                                 <br />
                                 <div className="form-group">
-                                    {/* <p htmlFor="task-title" className="forward-cust-title">Is this email payer or payee?</p> */}
                                     <input id='radioForm2' name='radioForm' type="radio" className="reward-num-btn2" onClick={() => setRadio(false)} />
                                     <span> </span>
                                     <label htmlFor="radioForm2">I owe <b>{targetEmail || 'them'}</b></label>

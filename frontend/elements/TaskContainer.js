@@ -4,24 +4,27 @@ import helpers from '../functions/helpers.js';
 import UserContext from '../functions/context';
 import { useContext } from 'react';
 
+// Component to display individual task in a list
 const TaskContainer = (props) => {
     const router = useRouter();
     let taskImagePath;
 
     const { user } = useContext(UserContext);
 
+    // Function to open Task detail page
+    // Works only if the user is logged in
+    // Other wise displays alert
     const detailedTask = (id) => {
         if(user){
-            console.log("Khol rahe hain", id);
             router.push("/task/" + id);
         }
         else{
-            console.log("user nahi");
             props.alert();
         }
 
     }
 
+    // Display placeholder image for a task if none is available
     if(props.taskVals.taskImagePath.trim() == ""){
         taskImagePath = '/images/no_image.png';
     } else taskImagePath = `/api/image/${props.taskVals.taskImagePath}`;
@@ -47,17 +50,19 @@ const TaskContainer = (props) => {
                     <b>Date:</b> {props.taskVals.createdAt}
                     <br/>
                     <b>Status:</b> <span className={"status-"+props.taskVals.status}>{props.taskVals.status}</span>
-                    { props.taskVals.completedAt ? (
-                        
-                       <div> <b>Completed at </b> {props.taskVals.completedAt} </div>
-                        
-                    ) : (
-                        null
-                    )}
+                    {
+                        // Display completion date-time for the completed tasks only
+                        props.taskVals.completedAt ? (
+                        <div> <b>Completed at </b> {props.taskVals.completedAt} </div>
+                        ) : (
+                            null
+                        )
+                    }
 
                 </div>
                 <div className="col-sm-2">
                     <b>Rewards</b>
+                    {/* // Display rewards associated with a task */}
                     <RewardsContainer rewardsData={props.taskVals.rewards} />
                 </div>
             </div>

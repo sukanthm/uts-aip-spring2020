@@ -11,7 +11,8 @@ import LoadingComponent from '../elements/LoadingComponent';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 
-const Dashboard = (props) => {
+// Homepage to display global tasks and search bar
+const Dashboard = () => {
 
     const { sessionCheck } = useContext(UserContext);
 
@@ -30,6 +31,7 @@ const Dashboard = (props) => {
 
     const { user } = useContext(UserContext);
 
+    //Function to fetch task data from api
     const fetchTasks = async (status, currentPage, itemsPerPage, search) => {
         try {
             let fetchJson = {
@@ -40,6 +42,7 @@ const Dashboard = (props) => {
             let json = await result.json();
 
             if (json.success == true) {
+                // Check if current page is the last one
                 if (json.output.currentPage == (json.output.totalPages - 1)) {
                     setMoreScroll(false);
                 }
@@ -70,15 +73,16 @@ const Dashboard = (props) => {
     }
 
 
-
+    // Infinite scroll function to update page number and request new data
     const fetchNext = () => {
         currentPage.current = currentPage.current + 1;
         fetchTasks("All", currentPage.current, itemsPerPage, searchText);
     }
 
+    // Function to fetch serarch data
     const sendSearch = () => {
         if (searchText != searchText.replace(/(?![\x00-\x7F])./g, '')) {
-            setErrMsg('non ASCII characters are illegal in SEARCH box, remove to proceed');
+            setErrMsg('Illegal characters in SEARCH box, remove to proceed');
             setIsLoading(false);
             setShowAlert(true);
             return;
@@ -89,6 +93,7 @@ const Dashboard = (props) => {
     }
 
     useEffect(() => {
+        //Check if user is logged in or not
         sessionCheck(); //allow both annonymous & loggedIn users; refresh cookie status
         fetchTasks("All", currentPage.current, itemsPerPage, searchText) 
     }, []);
@@ -138,6 +143,7 @@ const Dashboard = (props) => {
                     >
                         {
                             taskRows.map((key) => {
+                                // Component to display Task data from list fetched via API
                                 return <TaskContainer taskVals={key} key={key.id} alert={alert}></TaskContainer>
                             })
                         }

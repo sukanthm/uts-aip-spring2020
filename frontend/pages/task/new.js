@@ -6,6 +6,7 @@ import Alert from 'react-bootstrap/Alert';
 import { useRouter } from 'next/router';
 import UserContext from '../../functions/context';
 
+// Component to create a new task
 const New = () => {
 
     const Router = useRouter();
@@ -24,16 +25,20 @@ const New = () => {
     let sessionCheckValueCopy = false;
 
     useEffect(() => {
+        // Check if a user is logged or not
         sessionCheckValueCopy = sessionCheck('loggedIn'); //for instant js validation
         setSessionCheckValue(sessionCheckValueCopy); //for html update (as hooks update async)
         if (!sessionCheckValueCopy) return; //reroutes annonymous users
     }, []);
 
+    // Function to upload image and display it on screen
+    // Inspired from https://medium.com/@650egor/react-30-day-challenge-day-2-image-upload-preview-2d534f8eaaa
     function uploadImage(file) {
         setImgFile(URL.createObjectURL(file));
         setFormImg(file);
     }
 
+    // Function to submit the task details by user
     const submitTask = async () => {
         setShowAlert(false);
 
@@ -60,6 +65,7 @@ const New = () => {
                 return;
             }
 
+            // Image data appended in form
             const formData = new FormData();
             formData.append('proofImage', formImg);
 
@@ -70,7 +76,7 @@ const New = () => {
 
             let result = await fetch("/api/request", { credentials: 'include', method: "POST", body: formData });
             let json = await result.json();
-            console.log("kya?", json);
+            // Route to Task detail page on creation
             if (json.success == true)
                 Router.push(`/task/${json.newRequestID}`);
             else {
@@ -79,7 +85,7 @@ const New = () => {
             }
         }
         catch (err) {
-            console.log(err);
+
             setErrMsg(err);
             setShowAlert(true);
         }

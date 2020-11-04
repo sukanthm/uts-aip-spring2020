@@ -1,7 +1,6 @@
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
 import Header from '../../template-parts/Header';
-import ActiveLink from '../../template-parts/ActiveLink';
 import RewardsContainer from '../../elements/RewardsContainer';
 import UserCard from '../../elements/UserCard';
 import helpers from '../../functions/helpers.js';
@@ -12,11 +11,12 @@ import FABComponent from '../../elements/FABComponent';
 import LoadingComponent from '../../elements/LoadingComponent';
 
 
-
-const dashboard = (props) => {
+// Component to display consolidated favors data
+const dashboard = () => {
     const { sessionCheck } = useContext(UserContext);
 
     useEffect(() => {
+        // Check if user is logged in
         if (!sessionCheck('loggedIn')) return; //reroutes annonymous users
         fetchFavorData();
     }, []);
@@ -35,6 +35,7 @@ const dashboard = (props) => {
     const [usersPaid, setUsersPaid] = useState({});
     const [isLoading, setIsLoading] = useState(true);
 
+    // Function to fetc data for favor dashboard
     const fetchFavorData = async () => {
         try {
             let result1 = await fetch("/api/dashboard/favors", { method: "GET", headers: { statusFilter: "Pending" } });
@@ -86,12 +87,14 @@ const dashboard = (props) => {
                                 <div className="col-md-6">
                                     <h4 hidden={isLoading} className="forward-page-header">Total rewards you have yet to pay</h4>
                                     {isLoading ? <LoadingComponent></LoadingComponent> : null}
+                                    {/* Rewards data component display */}
                                     <RewardsContainer rewardsData={outgoingPending} />
                                 </div>
 
                                 <div className="col-md-6">
                                     <h4 hidden={isLoading} className="forward-page-header">Total rewards you are yet to receive</h4>
                                     {isLoading ? <LoadingComponent></LoadingComponent> : null}
+                                    {/* Rewards data component display */}
                                     <RewardsContainer rewardsData={incomingPending} />
                                 </div>
                             </div>
@@ -117,12 +120,14 @@ const dashboard = (props) => {
                                 <div className="col-md-6">
                                     <h4 hidden={isLoading} className="forward-page-header">Total rewards you have paid</h4>
                                     {isLoading ? <LoadingComponent></LoadingComponent> : null}
+                                    {/* Rewards data component display */}
                                     <RewardsContainer rewardsData={outgoingPaid} />
                                 </div>
 
                                 <div className="col-md-6">
                                     <h4 hidden={isLoading} className="forward-page-header">Total rewards you have received</h4>
                                     {isLoading ? <LoadingComponent></LoadingComponent> : null}
+                                    {/* Rewards data component display */}
                                     <RewardsContainer rewardsData={incomingPaid} />
                                 </div>
                             </div>
@@ -134,6 +139,7 @@ const dashboard = (props) => {
                             <div className="row">
                                 {
                                     Object.keys(usersPaid).map((key, i) => {
+                                        // Favors associated with each user
                                         return <UserCard key={i} userData={usersPaid[key]} userName={key} type='Paid'></UserCard>;
                                     })
                                 }

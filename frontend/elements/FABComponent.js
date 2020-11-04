@@ -8,25 +8,23 @@ import { useRouter } from 'next/router';
 const FABComponent = (props) => {
 
     const Router = useRouter();
-    const secondaryStyle = {
-        color: "#fff",
-        backgroundColor: "#dfccfc",
-        borderColor: "#764ABC"
-    }
+    // Style for FAB 
     const mainStyle = {
         color: "#fff",
         backgroundColor: "#3c0694",
         borderColor: "#3c0694"
     }
 
+    // Dynamic floating buttons based on page they are rendered on
+    // Action button used from library : https://github.com/dericgw/react-tiny-fab
     const actionBtns = () => {
-        if(props.type == "All"){
+        // Homepage
+        if(props.type == "All"){ 
             return (
                     <Fab
                     mainButtonStyles={mainStyle}
                     icon={<FontAwesomeIcon icon={faPlus} />}
                     alwaysShowTitle={true}
-                    onClick={()=>console.log("yeeeehaaa")}
                     >
                         <Action
                         text="Add Task"
@@ -43,6 +41,7 @@ const FABComponent = (props) => {
                     </Fab>
                     )
         }
+        // Task Page
         else if(props.type == "Task"){
             return(
                     <Fab
@@ -60,6 +59,7 @@ const FABComponent = (props) => {
                     </Fab>
                 )
         }
+        // Favor Page
         else if(props.type == "Favor"){
             return(
                     <Fab
@@ -81,7 +81,10 @@ const FABComponent = (props) => {
 
     return (
         <div>
-            {actionBtns()}
+            {
+                // precreated action button based on condition
+                actionBtns()
+            }
         </div>
         
     )

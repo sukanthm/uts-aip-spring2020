@@ -1,5 +1,4 @@
 import { useEffect, useState, useRef, useContext } from 'react';
-import { useRouter } from 'next/router';
 import TaskContainer from './TaskContainer';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import Alert from 'react-bootstrap/Alert';
@@ -7,11 +6,11 @@ import ErrorContainer from './ErrorContainer';
 import LoadingComponent from './LoadingComponent';
 import UserContext from '../functions/context';
 
+//Component displaying list of individual tasks
 const TaskListContainer = (props) => {
 
     const itemsPerPage = 5;
     const currentPage = useRef(0);
-    const router = useRouter();
 
     const [taskRows, setTaskRows] = useState([]);
     const [moreScroll, setMoreScroll] = useState(true);
@@ -20,8 +19,10 @@ const TaskListContainer = (props) => {
     const [errMsg, setErrMsg] = useState("");
     const [isLoading, setIsLoading] = useState(true);
 
+    // Sessioncheck to determine if user is logged in
     const { sessionCheck } = useContext(UserContext);
 
+    // Function to fetch task data from API
     const fetchTasks = async (status, currentPage, itemsPerPage, search) => {
         try {
             let fetchJson = {
@@ -31,10 +32,9 @@ const TaskListContainer = (props) => {
             }
             let result = await fetch(`/api/requests?currentPage=${currentPage}&itemsPerPage=${itemsPerPage}`, { method: "GET", headers: fetchJson });
             let json = await result.json();
-            console.log("kya?", json);
             if (json.success == true) {
+                // Check if current page is the last one
                 if (json.output.currentPage == (json.output.totalPages - 1)) {
-                    console.log("ruk gaya");
                     setMoreScroll(false);
                 }
                 const arr = [...taskRows];
@@ -44,6 +44,7 @@ const TaskListContainer = (props) => {
                 setTaskRows(arr);
                 setIsLoading(false);
             }
+            // Alert for user in case of failure
             else if (json.success == false) {
                 setErrMsg(json.message);
                 setIsLoading(false);
@@ -51,15 +52,12 @@ const TaskListContainer = (props) => {
             }
         }
         catch (err) {
-            console.log(err);
             setErrMsg(err);
             setIsLoading(false);
             setShowAlert(true);
         }
     }
-
-
-
+    // Function to update the page value and fetch data
     const fetchNext = () => {
         currentPage.current = currentPage.current + 1;
         fetchTasks("All", currentPage.current, itemsPerPage, "");
@@ -73,10 +71,10 @@ const TaskListContainer = (props) => {
 
     
     if (taskRows.length > 0) {
-        console.log("checkiya", taskRows);
         return (
             <>
             {
+                // Loading screen logic inspired from https://stackoverflow.com/questions/53868223/how-to-correctly-do-a-loading-screen-using-react-redux
                 isLoading ? (
                 <LoadingComponent></LoadingComponent>
             ) : (
@@ -107,7 +105,7 @@ const TaskListContainer = (props) => {
                     >
                         {
                             taskRows.map((key) => {
-                                console.log("enter");
+                                // Display each task in list using TaskContainer
                                 return <TaskContainer taskVals={key} key={key.id}></TaskContainer>
                             })
                         }

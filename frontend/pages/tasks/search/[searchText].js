@@ -10,9 +10,11 @@ import LoadingComponent from '../../../elements/LoadingComponent';
 
 
 
-
+// Component to display search results
 const SearchText = (props) => {
     const Router = useRouter();
+
+    // Check if searchText exists inititally, return null if not
     if (!Router.query.searchText) return null;
 
     const { sessionCheck } = useContext(UserContext);
@@ -37,6 +39,7 @@ const SearchText = (props) => {
     const [showAlert, setShowAlert] = useState(false);
     const [errMsg, setErrMsg] = useState("");
 
+    // Function to search fetch Task data from API
     const fetchTasks = async (status, currentPage, itemsPerPage, search) => {
         try {
             let fetchJson = {
@@ -48,8 +51,8 @@ const SearchText = (props) => {
             let json = await result.json();
             console.log("kya?", json);
             if (json.success == true) {
+                // Check if the current page is the last one
                 if (json.output.currentPage == (json.output.totalPages - 1)) {
-                    console.log("ruk gaya");
                     setMoreScroll(false);
                 }
                 const arr = [...taskRows];
@@ -66,7 +69,6 @@ const SearchText = (props) => {
             }
         }
         catch (err) {
-            console.log(err);
             setErrMsg(err);
             setIsLoading(false);
             setShowAlert(true);
@@ -74,7 +76,7 @@ const SearchText = (props) => {
     }
 
 
-
+    // Infinite scroll function to update current page and request new data
     const fetchNext = () => {
         currentPage.current = currentPage.current + 1;
         fetchTasks("All", currentPage.current, itemsPerPage, searchText);
@@ -83,6 +85,7 @@ const SearchText = (props) => {
 
 
     useEffect(() => {
+        // Check if user is logged in
         sessionCheck(); //allow both annonymous & loggedIn users; refresh cookie status
         if (!test_data_sanity()) return;
         fetchTasks("All", currentPage.current, itemsPerPage, searchText)
@@ -130,7 +133,7 @@ const SearchText = (props) => {
                     >
                         {
                             taskRows.map((key) => {
-                                console.log("enter");
+                                // Display Task rows from fetched data list
                                 return <TaskContainer taskVals={key} key={key.id}></TaskContainer>
                             })
                         }

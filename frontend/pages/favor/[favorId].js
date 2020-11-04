@@ -11,11 +11,15 @@ import LoadingComponent from '../../elements/LoadingComponent';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimesCircle} from '@fortawesome/free-solid-svg-icons';
 
-
+// Component to display details on an individual favor
 const favorIdPage = () => {
     const Router = useRouter();
+
+    // Check if Favor ID exists intitially
     if (!Router.query.favorId) return null;
     
+
+    // @sukanthm comment here
     let favorId = String(Router.query.favorId).trim().replace(/(?![\x00-\x7F])./g, '');
     function test_data_sanity(){
         if (favorId != Router.query.favorId){
@@ -41,12 +45,15 @@ const favorIdPage = () => {
     const [creationImage, setCreationImage] = useState(false);
     const [completionImage, setCompletionImage] = useState(false);
 
+    // function to upload image and display it on screen
+    // Inspired from https://medium.com/@650egor/react-30-day-challenge-day-2-image-upload-preview-2d534f8eaaa
     function uploadImage(file){
         setShowAlert(false);
         setImgFile(URL.createObjectURL(file));
         setFormImg(file);
     }
 
+    // Call API to fetch favor details
     async function getFavor(){
         try {
             setShowClaim(false);
@@ -75,17 +82,20 @@ const favorIdPage = () => {
         }
     }
 
+    // Function to return favor
     async function payFavor(){
         try {
             const formData = new FormData();
             formData.append('favorID', favorId);
 
+            // Proof Image is mandatory in case if user is payee
             if(user === favorData.payeeEmail && formImg === ''){
                 setShowClaim(false);
                 setErrMsg('payee must give image proof to close favor');
                 setShowAlert(true);
                 return;
             }
+            // Image data to be sent in form
             formData.append('proofImage', formImg);
             
             let result = await fetch(`/api/favor/`, {credentials: 'include', method: "PUT", body: formData});
@@ -106,6 +116,7 @@ const favorIdPage = () => {
     }
 
     useEffect(()=>{
+        // Check if user is logged in
         if (!sessionCheck('loggedIn')) return; //reroutes annonymous users
         if (!test_data_sanity()) return;
         getFavor();

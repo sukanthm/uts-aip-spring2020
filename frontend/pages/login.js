@@ -5,7 +5,8 @@ import UserContext from '../functions/context';
 import Alert from 'react-bootstrap/Alert';
 import ActiveLink from '../template-parts/ActiveLink';
 
-const Login = (props) => {
+// Component for login screen
+const Login = () => {
     const router = useRouter();
     const { login, sessionCheck } = useContext(UserContext);
     const [email, setEmail] = useState("");
@@ -21,6 +22,7 @@ const Login = (props) => {
         if (!sessionCheck('annonymous')) return; //reroutes loggedIn users
     }, []);
 
+    // Function to send details from user
     const submitForm = async() => {
         try{
             let userData = {
@@ -29,7 +31,6 @@ const Login = (props) => {
             }
             let result = await fetch("/api/login", {method: "GET", headers: userData});
             let json = await result.json();
-            console.log("kya?", json);
             if(json.success == true){
                 login(json.email);
                 router.push('/');
@@ -46,13 +47,14 @@ const Login = (props) => {
         }
     }
 
+    // Enter key event on input boxes
     const enterPressed = (e) => {
-        console.log("pressa");
         if(e.key === "Enter"){
             validator();
         }
     }
 
+    // Validate user inputs 
     let validator = () => {
         setShowAlert(false);
         setEmailFlag(false);
@@ -66,6 +68,7 @@ const Login = (props) => {
         else if(password.trim() == "" || password != password.replace(/(?![\x00-\x7F])./g, '')){
             setPasswordFlag(true);
         }
+        // Submit only if checks are passed
         else{
             submitForm();
             return;

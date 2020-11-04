@@ -5,13 +5,14 @@ import ErrorContainer from '../elements/ErrorContainer';
 import UserContext from '../functions/context';
 import LoadingComponent from '../elements/LoadingComponent';
 
-
-const Party = (props) => {
+// Component to display party data
+const Party = () => {
     const [partyData, setPartyData] = useState({});
     const [isLoading, setIsLoading] = useState(true);
 
     const { sessionCheck } = useContext(UserContext);
 
+    // Fetch party data from api
     const fetchTasks = async () => {
         try{
             let result = await fetch("/api/party", { method: "GET" });
@@ -26,6 +27,7 @@ const Party = (props) => {
     }
 
     useEffect(() => { 
+        // Check if user is logged in
         if (!sessionCheck('loggedIn')) return; //reroutes annonymous users
         fetchTasks();
     }, []);

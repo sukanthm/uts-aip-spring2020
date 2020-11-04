@@ -9,6 +9,8 @@ function MyApp({ Component, pageProps }) {
   const Router = useRouter();
   const [user, setUser] = useState(null);
 
+  // Context method inspired from https://reacttricks.com/sharing-global-data-in-next-with-custom-app-and-usecontext-hook/
+
   //deletes malformed cookies
   function parse_cookie(){
     try {
@@ -65,6 +67,8 @@ function MyApp({ Component, pageProps }) {
   }
 
   return (
+    // UserContext retains username value and functions for login, logout and sessionCheck gloabally
+    //These functions can be used anywhere
     <UserContext.Provider value={{ user: user, login: login, logout: logout, sessionCheck: sessionCheck }}>
       <Component {...pageProps} />
     </UserContext.Provider>

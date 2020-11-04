@@ -8,15 +8,16 @@ import LoadingComponent from '../../elements/LoadingComponent';
 import helpers from '../../functions/helpers.js';
 import UserContext from '../../functions/context';
 import Modal from 'react-bootstrap/Modal';
-import { Button, ButtonToolbar } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import Alert from 'react-bootstrap/Alert';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlusCircle, faCheckCircle } from '@fortawesome/free-solid-svg-icons';
-
+// Component to display data for individual task
 const TaskId = () => {
     const Router = useRouter();
-    console.log("jeanpaul", Router.query);
     const taskId = Router.query.taskId;
+
+    // Return null if taskID is empty initially
     if (!taskId) return null;
     const { user, sessionCheck } = useContext(UserContext);
 
@@ -68,6 +69,7 @@ const TaskId = () => {
 
     const [rewardJson, setRewardJson] = useState({});
 
+    // Function to update reward data called by child component
     let rewardData = (category, count) => {
         let id = helpers.rewardID(category); // get id for the selected reward
         let temp_json = rewardJson;
@@ -83,9 +85,6 @@ const TaskId = () => {
             return;
         }
 
-        let rewardFlag = 0;
-        let keys = Object.keys(rewardJson);
-
 
         try {
             let formData = new FormData();
@@ -98,6 +97,7 @@ const TaskId = () => {
             if (json.success == true) {
                 setUsers([]);
                 handleCloseRew();
+                // Route to Task deleted page if all rewards go nil
                 if (json.deletedRequestID) {
                     setErrMsg(json.message);
                     Router.push(`/deleteTask`);
@@ -121,12 +121,16 @@ const TaskId = () => {
 
     }
 
+    // function to upload image and display it on screen
+    // Inspired from https://medium.com/@650egor/react-30-day-challenge-day-2-image-upload-preview-2d534f8eaaa
     function uploadImage(file) {
         setImgFile(URL.createObjectURL(file));
         setFormImg(file);
     }
 
+    // Function to claim a task
     const completeTask = async () => {
+        // Mandatory image proof for task completion
         if (formImg===''){
             handleCloseCla();
             setErrMsg('image proof is needed to claim a task');
@@ -135,11 +139,12 @@ const TaskId = () => {
         }
         if (taskComment !== '' && taskComment != taskComment.replace(/(?![\x00-\x7F])./g, '')){
             handleCloseCla();
-            setErrMsg('non ASCII characters are illegal in COMMENT, remove to proceed');
+            setErrMsg('Illegal characters in comment, remove to proceed');
             setShowAlert(true);
             return;
         }
 
+        // Image data sent in form
         const formData = new FormData();
         formData.append('proofImage', formImg);
         if (taskComment!=='')
@@ -169,7 +174,7 @@ const TaskId = () => {
     }
 
 
-
+    // Function to fetch details of individual task
     const fetchTaskDetails = async () => {
         setClaimDisable(false);
         try {
@@ -178,6 +183,7 @@ const TaskId = () => {
             let json = await result.json();
             if (json.success == true) {
 
+                // Default task image f none available
                 if (json.output.taskImagePath === '') {
                     setTaskImagePath('/images/no_image.png');
                 } else setTaskImagePath(`/api/image/${json.output.taskImagePath}`);
@@ -190,10 +196,9 @@ const TaskId = () => {
                 let sponsors = Object.keys(json.output.rewards);
                 setUsers(sponsors);
                 sponsors.map((userSponsor) => {
-
+                    // Disable claiming if current user is a sponsor or task is already completed
                     if (userSponsor == user || taskData.status == "Completed")
                         setClaimDisable(true);
-
                 })
 
                 if (json.output.status == "Completed") {
@@ -218,6 +223,7 @@ const TaskId = () => {
     }
 
     useEffect(() => {
+        // Check if user is already logged in
         if (!sessionCheck('loggedIn')) return; //reroutes annonymous users
         fetchTaskDetails();
     }, [])
@@ -259,8 +265,6 @@ const TaskId = () => {
                             <p>Created by <strong>{taskData.creatorEmail}</strong> at <i>{(taskData.createdAt)}</i></p>
                             <b>Status:</b> <span className={"status-" + taskData.status}>{taskData.status}</span>
 
-                            {/* show information of completor if the task has been completed */}
-                            {/* {showCompletor ? <Completor /> : null} */}
 
                         </div>
                     </div>
@@ -272,8 +276,8 @@ const TaskId = () => {
                         </div>
                     </div>
                     <div className="row">
-                        {/* {individualUser} */}
                         {
+                            // Display rewards assosicated with each spaonsor for the task
                             users.map((key, i) => {
                                 return <IndividualRewardCard user={key} key={i} rewards={taskData.rewards[key]}></IndividualRewardCard>
                             })
