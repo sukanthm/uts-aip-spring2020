@@ -19,8 +19,8 @@ const favorIdPage = () => {
     if (!Router.query.favorId) return null;
     
 
-    // @sukanthm comment here
-    let favorId = String(Router.query.favorId).trim().replace(/(?![\x00-\x7F])./g, '');
+    // force all user input to only ASCII
+    let favorId = String(Router.query.favorId).replace(/(?![\x00-\x7F])./g, '');
     function test_data_sanity(){
         if (favorId != Router.query.favorId){
             Router.push('/favor/'+favorId);
@@ -39,6 +39,7 @@ const favorIdPage = () => {
     const [showAlert, setShowAlert] = useState(false);
     const [errMsg, setErrMsg] = useState("");
 
+    //hooks update async as and when data is presented
     const [favorData, setFavorData] = useState({});
     const [rewardTitle, setRewardTitle] = useState('');
     const [fetchSuccess, setFetchSuccess] = useState(false);
@@ -83,19 +84,16 @@ const favorIdPage = () => {
     }
 
     const pay = () => {
-        console.log("aya");
         if(user !== favorData.payeeEmail){
             payFavor();
-            console.log("gaya");
         }
         else{
-            console.log("kya");
             setShowClaim(true);
             setShowAlert(false);
         }
     }
 
-    // Function to return favor
+    // Function to close/pay the favor
     async function payFavor(){
         try {
             const formData = new FormData();
@@ -129,7 +127,7 @@ const favorIdPage = () => {
     }
 
     useEffect(()=>{
-        // Check if user is logged in
+        
         if (!sessionCheck('loggedIn')) return; //reroutes annonymous users
         if (!test_data_sanity()) return;
         getFavor();

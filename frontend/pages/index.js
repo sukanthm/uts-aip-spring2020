@@ -93,7 +93,6 @@ const Dashboard = () => {
     }
 
     useEffect(() => {
-        //Check if user is logged in or not
         sessionCheck(); //allow both annonymous & loggedIn users; refresh cookie status
         fetchTasks("All", currentPage.current, itemsPerPage, searchText) 
     }, []);

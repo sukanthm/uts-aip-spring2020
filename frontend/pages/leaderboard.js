@@ -20,7 +20,7 @@ const leaderboard = (props) => {
                 setIsLoading(false);
         } catch (err){
             setLeaderData({});
-            console.log(err);
+            // console.log(err);
         }
     }
 

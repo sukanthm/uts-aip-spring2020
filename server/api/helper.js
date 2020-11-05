@@ -154,7 +154,6 @@ function get_req_headers(req, headers, res, allOptional=false){
 function get_req_body_json(req, keys, res, allOptional=false){
     //get json data from request body (only multipart/form-data) after multer extracts optional image
     let key, output = [], testDataType;
-    console.log(req.body);
     const bodyObject = req.body ? req.body : {};
     for (let i = 0; i < keys.length; i++) {
         key = bodyObject[keys[i][0]];

@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useContext } from 'react';
 import UserContext from '../../functions/context';
 import Header from '../../template-parts/Header';
@@ -6,7 +5,7 @@ import AllRewardsRadio from '../../elements/AllRewardsRadio';
 import Alert from 'react-bootstrap/Alert';
 import { useRouter } from 'next/router';
 
-// Compenent to create a new favor
+// Page to create a new favor
 const New = () => {
 
     const Router = useRouter();
@@ -36,7 +35,7 @@ const New = () => {
         sessionCheckValueCopy = sessionCheck('loggedIn'); //for instant js validation
         setSessionCheckValue(sessionCheckValueCopy); //for html update (as hooks update async)
         if (!sessionCheckValueCopy) return; //reroutes annonymous users
-    }, [targetEmail]);
+    }, []);
 
     function uploadImage(file) {
         setShowAlert(false);
@@ -63,7 +62,7 @@ const New = () => {
                 return;
             }
             if (targetEmail != targetEmail.replace(/(?![\x00-\x7F])./g, '')) {
-                setErrMsg('Illegal characters used in email, remove to proceed');
+                setErrMsg('Illegal non-ASCII characters used in email, remove to proceed');
                 setShowAlert(true);
                 return;
             }

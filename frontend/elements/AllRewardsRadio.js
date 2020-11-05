@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 
+// show all rewards, let user select one
 const AllRewardsRadio = (props) => {
     const [selectedRewardID, setSelectedRewardID] = useState('');
     const [dynamicClass1, setDynamicClass1] = useState('');
@@ -8,6 +9,7 @@ const AllRewardsRadio = (props) => {
     const [dynamicClass4, setDynamicClass4] = useState('');
     const [dynamicClass5, setDynamicClass5] = useState('');
 
+    //highlights radio selection
     function setRadio(input, targetCLass){
         setSelectedRewardID(input);
         setDynamicClass1('');
@@ -33,7 +35,7 @@ const AllRewardsRadio = (props) => {
     }
 
     useEffect(() => {
-        props.id(selectedRewardID);
+        props.id(selectedRewardID); //change upstream data on every selection
     }, [selectedRewardID]);
 
     return (

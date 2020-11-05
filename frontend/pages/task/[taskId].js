@@ -19,6 +19,12 @@ const TaskId = () => {
 
     // Return null if taskID is empty initially
     if (!taskId) return null;
+    function test_data_sanity(){ // force all user input to only ASCII
+        if (taskId != taskId.replace(/(?![\x00-\x7F])./g, '')){
+            Router.push('/task/'+taskId.trim().replace(/(?![\x00-\x7F])./g, ''));
+            return false;
+        } return true;
+    }
     const { user, sessionCheck } = useContext(UserContext);
 
     const [taskImagePath, setTaskImagePath] = useState('');
@@ -225,6 +231,7 @@ const TaskId = () => {
     useEffect(() => {
         // Check if user is already logged in
         if (!sessionCheck('loggedIn')) return; //reroutes annonymous users
+        if (!test_data_sanity()) return;
         fetchTaskDetails();
     }, [])
 

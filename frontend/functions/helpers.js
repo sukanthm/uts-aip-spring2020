@@ -1,6 +1,7 @@
 //Helper functions to be used in multiple modules
 
 const helpers = {
+    // to help populate /favors on no favors
     emptyRewardsDict: {1:0 ,2:0, 3:0, 4:0, 5:0},
    
     // return ID corresponding to Reward Name
@@ -31,6 +32,7 @@ const helpers = {
         }
         return id;
     },
+    
     // return Title corresponding to Reward ID
     rewardTitle : (id) => {  
         let name = null;
@@ -58,10 +60,11 @@ const helpers = {
             }
         }
 
-    return name;
-},
-// Convert ISO date string to human readable format
-readableDate : (s) => {
+        return name;
+    },
+
+    // Convert ISO date string to human readable format
+    readableDate : (s) => {
                 // ISO date pattern regex 
                let datePattern = /\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z)/;
                let flag = datePattern.test(s);

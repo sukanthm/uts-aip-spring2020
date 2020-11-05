@@ -16,7 +16,7 @@ const dashboard = () => {
     const { sessionCheck } = useContext(UserContext);
 
     useEffect(() => {
-        // Check if user is logged in
+        
         if (!sessionCheck('loggedIn')) return; //reroutes annonymous users
         fetchFavorData();
     }, []);

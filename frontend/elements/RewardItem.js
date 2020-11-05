@@ -1,3 +1,4 @@
+//small icon with attached count
 export default class RewardItem extends React.Component{
     render(){
         return(

@@ -22,12 +22,12 @@ const Party = () => {
                 setIsLoading(false);
         } catch (err){
             setPartyData({});
-            console.log(err);
+            // console.log(err);
         }
     }
 
     useEffect(() => { 
-        // Check if user is logged in
+        
         if (!sessionCheck('loggedIn')) return; //reroutes annonymous users
         fetchTasks();
     }, []);

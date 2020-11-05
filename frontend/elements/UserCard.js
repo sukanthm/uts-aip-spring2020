@@ -20,6 +20,7 @@ const UserCard = (props) => {
             {   
                 props.userData.outgoing ? (
                     <div className="col-6">
+                        {/* change text based on Pending or Paid */}
                         <b>{props.type==='Pending' ? 'Rewards to be paid' : 'Rewards you paid'}</b>
                         <RewardsContainer rewardsData={props.userData.outgoing} />
                     </div>
@@ -30,6 +31,7 @@ const UserCard = (props) => {
             {
                 props.userData.incoming ? (
                     <div className="col-6">
+                        {/* change text based on Pending or Paid */}
                         <b>{props.type==='Pending' ? 'Rewards you are owed' : 'Rewards you were owed'}</b>
                         <RewardsContainer rewardsData={props.userData.incoming} />
                     </div>

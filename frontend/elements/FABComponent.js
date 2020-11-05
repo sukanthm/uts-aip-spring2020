@@ -48,7 +48,6 @@ const FABComponent = (props) => {
                     mainButtonStyles={mainStyle}
                     icon={<FontAwesomeIcon icon={faPlus} />}
                     alwaysShowTitle={true}
-                    onClick={()=>console.log("yeeeehaaa")}
                     >
                         <Action
                         text="Add Task"
@@ -66,7 +65,6 @@ const FABComponent = (props) => {
                     mainButtonStyles={mainStyle}
                     icon={<FontAwesomeIcon icon={faPlus} />}
                     alwaysShowTitle={true}
-                    onClick={()=>console.log("yeeeehaaa")}
                     >
                         <Action
                             text="Add Favor"

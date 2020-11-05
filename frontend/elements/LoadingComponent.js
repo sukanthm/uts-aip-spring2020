@@ -1,3 +1,4 @@
+//loading wheel for after frontend initial render and till backend api call returns
 const LoadingComponent = () => {
     return (
         <div className="container text-center">

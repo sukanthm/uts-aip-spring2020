@@ -4,19 +4,17 @@ import helpers from '../functions/helpers';
 // Component to display each Reward associated with a user and update its value
 const RewardCard = (props) => {
     
-    // Assign itital value from API if available
+    // Assign itital value from parent component if available
     const [count, setCount] = useState(props.originalValue[helpers.rewardID(props.category)] || 0);
     
     function updateCount(operator){
 
         let val = count;
-        if(operator == "+"){
+        if(operator == "+")
             setCount(val + 1);
-        }
         else if(operator == "-"){
-            if(count > 0){
+            if(count > 0)
                 setCount(val - 1);
-            }
         }
     }
 

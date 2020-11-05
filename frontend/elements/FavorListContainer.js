@@ -12,13 +12,14 @@ const FavorListContainer = (props) => {
     // Return null initially if no targetEmail is found
     if (!props.user.targetEmail) return null;
 
-    // sessionCheck from User Context to check if the user is logged in
     const { sessionCheck } = useContext(UserContext);
 
-    // @sukanthm comment here
-    let targetEmail = String(props.user.targetEmail).trim().replace(/(?![\x00-\x7F])./g, '');
+    // force all user input to only ASCII
+    let targetEmail = String(props.user.targetEmail).replace(/(?![\x00-\x7F])./g, '');
     function test_data_sanity(){
         if (targetEmail != props.user.targetEmail){
+            setErrMsg('bad chars detected: '+ props.user.targetEmail);
+            setIsLoading(false);
             return false;
         } return true;
     }
@@ -74,11 +75,7 @@ const FavorListContainer = (props) => {
 
     useEffect(() => {
         if (!sessionCheck('loggedIn')) return; //reroutes annonymous users
-        if (!test_data_sanity()){
-            setErrMsg('bad chars detected: '+ props.user.targetEmail);
-            setIsLoading(false);
-            return;
-        }
+        if (!test_data_sanity()) return; //reroutes on bad user input
         fetchFavors(currentPage.current, itemsPerPage);
     }, []);
 

@@ -8,6 +8,7 @@ const dev = process.argv[4] ? process.argv[4] !== 'production' : true
 const app = next({ dev })
 const handle = app.getRequestHandler()
 
+//proxy to backend
 const apiPaths = {
     '/api': {
         target: 'http://localhost:' + String(backendPort), 
@@ -24,13 +25,13 @@ app.prepare().then(() => {
   server.use('/api', createProxyMiddleware(apiPaths['/api']));
 
   server.all('*', (req, res) => {
-    return handle(req, res)
+    return handle(req, res);
   })
 
   server.listen(frontendPort, (err) => {
-    if (err) throw err
     console.log(`> Ready on http://localhost:${frontendPort}`)
   })
 }).catch(err => {
-    console.log('Error:::::', err)
+    console.log('Error:: ', err);
+    throw err;
 })

@@ -19,8 +19,8 @@ const SearchText = (props) => {
 
     const { sessionCheck } = useContext(UserContext);
 
-    const [searchText, setSearchText] = useState(String(Router.query.searchText).trim().replace(/(?![\x00-\x7F])./g, ''));
-    function test_data_sanity(){
+    const [searchText, setSearchText] = useState(String(Router.query.searchText).replace(/(?![\x00-\x7F])./g, ''));
+    function test_data_sanity(){ //force all user input to only ASCII
         if (searchText != Router.query.searchText){
             setSearchText(Router.query.searchText);
             setErrMsg('non ASCII characters are illegal in SEARCH box, remove to proceed');
@@ -49,7 +49,6 @@ const SearchText = (props) => {
 
             let result = await fetch(`/api/requests?currentPage=${currentPage}&itemsPerPage=${itemsPerPage}`, { method: "GET", headers: fetchJson });
             let json = await result.json();
-            console.log("kya?", json);
             if (json.success == true) {
                 // Check if the current page is the last one
                 if (json.output.currentPage == (json.output.totalPages - 1)) {
@@ -85,7 +84,6 @@ const SearchText = (props) => {
 
 
     useEffect(() => {
-        // Check if user is logged in
         sessionCheck(); //allow both annonymous & loggedIn users; refresh cookie status
         if (!test_data_sanity()) return;
         fetchTasks("All", currentPage.current, itemsPerPage, searchText)

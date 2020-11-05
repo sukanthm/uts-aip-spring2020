@@ -19,7 +19,6 @@ const TaskListContainer = (props) => {
     const [errMsg, setErrMsg] = useState("");
     const [isLoading, setIsLoading] = useState(true);
 
-    // Sessioncheck to determine if user is logged in
     const { sessionCheck } = useContext(UserContext);
 
     // Function to fetch task data from API

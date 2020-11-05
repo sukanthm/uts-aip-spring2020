@@ -7,10 +7,9 @@ import UserContext from '../../functions/context';
 import FABComponent from '../../elements/FABComponent';
 import FavorListContainer from '../../elements/FavorListContainer';
 
-// Component to display favor Paid and Pending favor lists associated with a user
+// Page to display favor Paid and Pending favor lists associated with a user
 const UserId = () => {
     const Router = useRouter();
-    console.log(Router.query.type);
     const [key, setKey] = useState(Router.query.type);
     const { sessionCheck } = useContext(UserContext);
     

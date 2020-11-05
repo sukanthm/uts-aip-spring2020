@@ -2,7 +2,7 @@ import RewardItem from './RewardItem';
 import helpers from '../functions/helpers'
 
 export default class RewardsContainer extends React.Component{
-   
+   // a container with RewardItem(s)
     render(){
         const rewardNames = Object.keys(this.props.rewardsData);
         const rewardsData = this.props.rewardsData;
