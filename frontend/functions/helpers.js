@@ -47,7 +47,7 @@ const helpers = {
                 break;
             }
             case 3 : {
-                name = "snack";
+                name = "snacks";
                 break;
             }
             case 4 : {
