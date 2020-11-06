@@ -45,8 +45,8 @@ const TaskId = () => {
 
     //Variables for Claim Modal
     const [showCla, setShowCla] = useState(false);
-    const handleCloseCla = () => {setShowCla(false); setShowAlert(false);}
-    const handleShowCla = () => {setShowCla(true); setShowAlert(false);}
+    const handleCloseCla = () => {setShowCla(false); }
+    const handleShowCla = () => {setShowCla(true); }
 
     //Variables for CLaiming Function
     const [imgFile, setImgFile] = useState("/images/upload-img.png");
