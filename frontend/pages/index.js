@@ -122,7 +122,7 @@ const Dashboard = () => {
                     </div>
 
                     <Alert show={showAlert} variant="danger" onClose={() => setShowAlert(false)} dismissible>
-                        <Alert.Heading>Oh snap! Error in loading task!</Alert.Heading>
+                        <Alert.Heading>Oh snap! Error in loading tasks!</Alert.Heading>
                         <p>
                             {errMsg}
                         </p>

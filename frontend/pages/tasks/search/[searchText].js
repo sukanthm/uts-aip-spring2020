@@ -74,6 +74,11 @@ const SearchText = (props) => {
         }
     }
 
+    const alert = () => {
+        setErrMsg("Log in to view task");
+        setShowAlert(true);
+    }
+
 
     // Infinite scroll function to update current page and request new data
     const fetchNext = () => {
@@ -108,7 +113,7 @@ const SearchText = (props) => {
                     </div>
 
                     <Alert show={showAlert} variant="danger" onClose={() => setShowAlert(false)}>
-                        <Alert.Heading>Oh snap! Error in loading search!</Alert.Heading>
+                        <Alert.Heading>Oh snap! Error in loading tasks!</Alert.Heading>
                         <p>
                             {errMsg}
                         </p>
@@ -132,7 +137,7 @@ const SearchText = (props) => {
                         {
                             taskRows.map((key) => {
                                 // Display Task rows from fetched data list
-                                return <TaskContainer taskVals={key} key={key.id}></TaskContainer>
+                                return <TaskContainer taskVals={key} key={key.id} alert={alert}></TaskContainer>
                             })
                         }
                     </InfiniteScroll>
