@@ -468,8 +468,8 @@ module.exports = function(app){
         for (let i=0; i<favors.length; i++){
             for (let j=0; j<Number(favors[i]['rewardCount']); j++){
                 let favor = fpFavor.build({
-                    payeeID: user.id,
-                    payerID: favors[i]['sponsorID'],
+                    payeeID: favors[i]['sponsorID'],
+                    payerID: user.id,
                     rewardID: favors[i]['rewardID'],
                     comment: 'automagically created for requestID: '+oneRequest.id+' completion; ',
                     creationProofPath: req.file.filename,
