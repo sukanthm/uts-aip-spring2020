@@ -49,19 +49,19 @@ const New = () => {
                 return;
             }
             if (taskTitle != taskTitle.replace(/(?![\x00-\x7F])./g, '')) {
-                setErrMsg('non ASCII characters are illegal in TITLE, remove to proceed');
+                setErrMsg('Non ASCII characters are illegal in TITLE, remove to proceed');
                 setShowAlert(true);
                 return;
             }
             if (taskDesc != taskDesc.replace(/(?![\x00-\x7F])./g, '')) {
-                setErrMsg('non ASCII characters are illegal in DESCRIPTION, remove to proceed');
+                setErrMsg('Non ASCII characters are illegal in DESCRIPTION, remove to proceed');
                 setShowAlert(true);
                 return;
             }
             if (Math.min.apply(null, Object.values(rewardJson)) <= 0 &&
                 Math.max.apply(null, Object.values(rewardJson)) <= 0) {
                 setShowAlert(true);
-                setErrMsg('creator must sponsor some rewards to create a task');
+                setErrMsg('You must sponsor some rewards to create a task');
                 return;
             }
 

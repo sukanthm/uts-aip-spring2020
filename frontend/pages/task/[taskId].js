@@ -237,18 +237,16 @@ const TaskId = () => {
 
     function testTaskDeletion() {
         setShowModalWarning(false);
-        if (taskData.rewards && user in taskData.rewards && Object.keys(taskData.rewards).length === 1) {
-            let mapEqualFlag = true;
-            for (let rewardID in taskData.rewards[user]) {
-                if (taskData.rewards[user][rewardID] != -1 * rewardJson[rewardID]) {
-                    mapEqualFlag = false;
-                    break;
-                }
-            }
-            if (mapEqualFlag)
+        if (taskData.rewards && user in taskData.rewards) {
+            let rewardsChangeTo = JSON.parse(JSON.stringify(helpers.emptyRewardsDict)); //deep copy
+            for (let rewardID in rewardsChangeTo)
+                rewardsChangeTo[rewardID] = (taskData.rewards[user][rewardID] || 0) + (rewardJson[rewardID] || 0);
+            
+            if ((Object.values(rewardsChangeTo)).reduce((a, b) => a + b, 0) === 0)
                 setShowModalWarning('If you proceed, this task will be deleted as no sponsored rewards will be left');
         }
     }
+    
     
     return (
         <>
